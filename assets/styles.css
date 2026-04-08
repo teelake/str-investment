@@ -439,7 +439,7 @@ footer{
 
 .social-icons{
   display:flex !important;
-  flex-wrap:wrap;
+  flex-wrap:nowrap;
   gap: 10px !important;
   align-items:center;
 }
