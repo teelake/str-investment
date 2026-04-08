@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#0c1810"/>
+  <rect x="60" y="60" width="1080" height="510" rx="32" fill="#f7f4ee" opacity=".95"/>
+  <text x="120" y="220" font-family="Georgia, serif" font-size="56" fill="#0c1810">STR Investment</text>
+  <text x="120" y="290" font-family="system-ui, sans-serif" font-size="28" fill="#1e3d2d">Where trust meets opportunity</text>
+  <rect x="120" y="360" width="200" height="6" rx="3" fill="#b8942e"/>
+  <text x="120" y="430" font-family="system-ui, sans-serif" font-size="22" fill="#142920">Microcredit · Nigeria</text>
+</svg>
