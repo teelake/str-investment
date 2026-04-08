@@ -27,17 +27,37 @@ $year = (int)date('Y');
     </div>
     <div>
       <h4>Social</h4>
-      <ul>
-        <li><a href="#">LinkedIn</a></li>
-        <li><a href="#">X</a></li>
-        <li><a href="#">Facebook</a></li>
+      <ul class="social-icons" aria-label="Social links">
+        <li>
+          <a class="icon-link" href="#" aria-label="LinkedIn">
+            <i class="bx bxl-linkedin" aria-hidden="true"></i>
+          </a>
+        </li>
+        <li>
+          <a class="icon-link" href="#" aria-label="X (Twitter)">
+            <i class="bx bxl-twitter" aria-hidden="true"></i>
+          </a>
+        </li>
+        <li>
+          <a class="icon-link" href="#" aria-label="Facebook">
+            <i class="bx bxl-facebook" aria-hidden="true"></i>
+          </a>
+        </li>
       </ul>
     </div>
   </div>
   <div class="container" style="margin-top: 20px">
     <small>© <?= $year ?> STR Investment Services Limited.</small>
+    <small class="made-with">
+      <span>Made with</span>
+      <i class="bx bxs-heart" aria-hidden="true"></i>
+      <a href="https://www.webspace.ng" target="_blank" rel="noopener">Webspace</a>
+    </small>
   </div>
 </footer>
 
-<a class="wa-fab" href="https://wa.me/2340000000000" target="_blank" rel="noopener">WhatsApp</a>
+<a class="wa-fab" href="https://wa.me/2340000000000" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
+  <i class="bx bxl-whatsapp" aria-hidden="true"></i>
+  <span class="sr-only">WhatsApp</span>
+</a>
 
