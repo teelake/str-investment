@@ -1,0 +1,19 @@
+Options -Indexes
+
+RewriteEngine On
+
+# If the requested resource exists, serve it directly
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Clean URLs -> .php files
+RewriteRule ^$ index.php [L]
+RewriteRule ^about/?$ about.php [L]
+RewriteRule ^loans/?$ products.php [L]
+RewriteRule ^products/?$ products.php [L]
+RewriteRule ^eligibility/?$ services.php [L]
+RewriteRule ^services/?$ services.php [L]
+RewriteRule ^contact/?$ contact.php [L]
+RewriteRule ^privacy/?$ privacy.php [L]
+
