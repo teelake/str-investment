@@ -9,6 +9,56 @@
     });
   }
 
+  // Home hero slider (visual only)
+  (function () {
+    var slider = document.querySelector("[data-hero-slider]");
+    if (!slider) return;
+
+    var slidesEl = slider.querySelector("[data-hero-slides]");
+    var slides = Array.prototype.slice.call(slider.querySelectorAll("[data-hero-slide]"));
+    var dots = Array.prototype.slice.call(slider.querySelectorAll("[data-hero-dot]"));
+    if (!slidesEl || slides.length === 0 || dots.length !== slides.length) return;
+
+    var prefersReduced =
+      typeof window !== "undefined" &&
+      window.matchMedia &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    var idx = 0;
+    var intervalMs = 7000;
+    var timer = null;
+
+    function render() {
+      slidesEl.style.transform = "translateX(" + idx * -100 + "%)";
+      dots.forEach(function (d, i) {
+        d.setAttribute("aria-current", i === idx ? "true" : "false");
+      });
+      slider.setAttribute("data-index", String(idx));
+    }
+
+    function go(next) {
+      idx = (next + slides.length) % slides.length;
+      render();
+    }
+
+    dots.forEach(function (d, i) {
+      d.addEventListener("click", function () {
+        go(i);
+        if (timer) {
+          clearInterval(timer);
+          timer = null;
+        }
+      });
+    });
+
+    render();
+    if (!prefersReduced) {
+      timer = setInterval(function () {
+        go(idx + 1);
+      }, intervalMs);
+    }
+  })();
+
   document.querySelectorAll("[data-faq-item]").forEach(function (item) {
     var btn = item.querySelector("[data-faq-q]");
     if (!btn) return;

@@ -102,11 +102,49 @@
             </div>
           </div>
 
-          <aside class="hero-side" aria-label="Preview">
+          <aside class="hero-side" aria-label="Loan highlights">
             <div class="frame" aria-hidden="true"></div>
+
+            <div class="hero-slider" data-hero-slider data-index="0" aria-label="Loan highlights slider">
+              <div class="hero-slides" data-hero-slides>
+                <article class="hero-slide" data-hero-slide data-theme="personal" aria-label="Personal Loan slide">
+                  <div class="hero-slide-badge">
+                    <i class="bx bx-id-card" aria-hidden="true"></i>
+                    <span>Personal Loan</span>
+                  </div>
+                  <div class="hero-slide-title">Blue‑chip employee loan</div>
+                  <div class="hero-slide-sub">Fast processing for verified staff with payroll‑friendly repayments.</div>
+                </article>
+
+                <article class="hero-slide" data-hero-slide data-theme="sme" aria-label="SME Term Loan slide">
+                  <div class="hero-slide-badge">
+                    <i class="bx bx-store-alt" aria-hidden="true"></i>
+                    <span>SME Term Loan</span>
+                  </div>
+                  <div class="hero-slide-title">Working capital built for turnover</div>
+                  <div class="hero-slide-sub">Short‑term support (3–6 months typical) with assessment-led structure.</div>
+                </article>
+
+                <article class="hero-slide" data-hero-slide data-theme="school" aria-label="Back to School slide">
+                  <div class="hero-slide-badge">
+                    <i class="bx bx-book-open" aria-hidden="true"></i>
+                    <span>Back to School</span>
+                  </div>
+                  <div class="hero-slide-title">Education support for resumption</div>
+                  <div class="hero-slide-sub">Covers fees and essentials with term‑aligned repayment options.</div>
+                </article>
+              </div>
+
+              <div class="hero-dots" role="tablist" aria-label="Select slide">
+                <button type="button" class="hero-dot" data-hero-dot aria-label="Show Personal Loan slide"></button>
+                <button type="button" class="hero-dot" data-hero-dot aria-label="Show SME Term Loan slide"></button>
+                <button type="button" class="hero-dot" data-hero-dot aria-label="Show Back to School slide"></button>
+              </div>
+            </div>
+
             <div class="mini">
               <span class="dot" aria-hidden="true"></span>
-              <span><b>2+</b> offerings</span>
+              <span><b>3</b> priority products</span>
             </div>
           </aside>
         </div>
