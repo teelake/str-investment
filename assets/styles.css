@@ -245,6 +245,7 @@ i.bx, i.fa, i.fa-solid, i.fa-regular, i.fa-brands{
   will-change: transform;
 }
 .hero-slide{
+  position: relative;
   min-width: 100%;
   height:100%;
   padding: 18px 18px 54px;
@@ -256,6 +257,27 @@ i.bx, i.fa, i.fa-solid, i.fa-regular, i.fa-brands{
   background:
     radial-gradient(520px 300px at 30% 18%, rgba(255,255,255,.18), transparent 55%),
     linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+}
+.hero-slide-img{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit: cover;
+  opacity: .26;
+  filter: saturate(1.1) contrast(1.05);
+  transform: scale(1.02);
+}
+.hero-slide::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background: linear-gradient(180deg, rgba(0,0,0,.10), rgba(0,0,0,.30));
+  pointer-events:none;
+}
+.hero-slide > *{
+  position:relative;
+  z-index: 1;
 }
 .hero-slide[data-theme="personal"]{
   background:

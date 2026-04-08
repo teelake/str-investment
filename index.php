@@ -108,6 +108,13 @@
             <div class="hero-slider" data-hero-slider data-index="0" aria-label="Loan highlights slider">
               <div class="hero-slides" data-hero-slides>
                 <article class="hero-slide" data-hero-slide data-theme="personal" aria-label="Personal Loan slide">
+                  <img
+                    class="hero-slide-img"
+                    src="assets/images/hero-placeholder.svg"
+                    alt=""
+                    aria-hidden="true"
+                    loading="lazy"
+                  />
                   <div class="hero-slide-badge">
                     <i class="bx bx-id-card" aria-hidden="true"></i>
                     <span>Personal Loan</span>
@@ -117,6 +124,13 @@
                 </article>
 
                 <article class="hero-slide" data-hero-slide data-theme="sme" aria-label="SME Term Loan slide">
+                  <img
+                    class="hero-slide-img"
+                    src="assets/images/hero-placeholder.svg"
+                    alt=""
+                    aria-hidden="true"
+                    loading="lazy"
+                  />
                   <div class="hero-slide-badge">
                     <i class="bx bx-store-alt" aria-hidden="true"></i>
                     <span>SME Term Loan</span>
@@ -126,6 +140,13 @@
                 </article>
 
                 <article class="hero-slide" data-hero-slide data-theme="school" aria-label="Back to School slide">
+                  <img
+                    class="hero-slide-img"
+                    src="assets/images/hero-placeholder.svg"
+                    alt=""
+                    aria-hidden="true"
+                    loading="lazy"
+                  />
                   <div class="hero-slide-badge">
                     <i class="bx bx-book-open" aria-hidden="true"></i>
                     <span>Back to School</span>
