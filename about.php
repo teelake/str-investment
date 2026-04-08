@@ -1,0 +1,150 @@
+<?php $active = 'about'; ?>
+<!doctype html>
+<html lang="en-NG">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0f6a4a" />
+    <title>About Us — STR Investment Services Limited</title>
+    <meta
+      name="description"
+      content="Learn about STR Investment Services Limited — a Nigeria-focused microcredit institution built on governance, integrity, and customer-first lending."
+    />
+    <link rel="canonical" href="https://strinvestment.ng/about" />
+    <meta property="og:title" content="About Us — STR Investment" />
+    <meta property="og:url" content="https://strinvestment.ng/about" />
+    <meta property="og:image" content="https://strinvestment.ng/og.svg" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="assets/styles.css" />
+    <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <?php include __DIR__ . '/partials/header.php'; ?>
+
+    <main id="main">
+      <section class="hero">
+        <div class="container hero-grid">
+          <div>
+            <span class="pill"><span class="dot" aria-hidden="true"></span> About STR Investment</span>
+            <h1 class="h1">Built on <span class="accent">Trust</span>. Designed for opportunity.</h1>
+            <p class="lead">
+              STR Investment Services Limited is a microcredit institution incorporated in February 2026
+              to provide accessible and innovative credit solutions for individuals and SMEs across Nigeria.
+            </p>
+            <div class="hero-actions">
+              <a class="btn primary" href="loans">Explore Loan Products</a>
+              <a class="btn ghost" href="contact">Talk to Us</a>
+            </div>
+          </div>
+
+          <aside class="hero-side" aria-label="Company summary">
+            <div class="frame" aria-hidden="true"></div>
+            <div class="mini">
+              <span class="dot" aria-hidden="true"></span>
+              <span><b>Motto</b> Where trust meets opportunity</span>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="section why">
+        <div class="container">
+          <div class="center">
+            <h2 class="h2">Background</h2>
+            <p class="sub">
+              We were established to bridge financing gaps faced by individuals, small businesses, and underserved
+              communities — offering timely, flexible, and customer‑focused loan products.
+            </p>
+          </div>
+
+          <div class="loans equal">
+            <article class="loan-big">
+              <div>
+                <div class="title-row">
+                  <span class="title-ic" aria-hidden="true"><i class="bx bx-group"></i></span>
+                  <div class="title">Who we serve</div>
+                </div>
+                <p>
+                  Individuals and households seeking structured personal support, and small businesses needing working capital
+                  to stabilize operations and grow.
+                </p>
+              </div>
+              <div style="margin-top: 16px"><a class="btn ghost" href="loans">View products</a></div>
+            </article>
+
+            <article class="loan-big" style="background: rgba(255,255,255,.78)">
+              <div>
+                <div class="title-row">
+                  <span class="title-ic" aria-hidden="true"><i class="bx bx-shield-quarter"></i></span>
+                  <div class="title">How we operate</div>
+                </div>
+                <p>
+                  A customer‑centric process built on governance and risk-aware assessment — designed to keep repayments realistic.
+                </p>
+              </div>
+              <div style="margin-top: 16px"><a class="btn ghost" href="eligibility">See eligibility</a></div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container">
+          <div class="center">
+            <h2 class="h2">Leadership & governance</h2>
+            <p class="sub">
+              Founded and fully funded by an experienced ex‑banker with over two decades in marketing, credit analysis, and management —
+              supported by seasoned banking and finance professionals.
+            </p>
+          </div>
+
+          <div class="loan-row">
+            <article class="loan-tile">
+              <strong>Integrity</strong>
+              <span>Clear communication and transparent pricing.</span>
+            </article>
+            <article class="loan-tile">
+              <strong>Risk management</strong>
+              <span>Responsible verification and affordability checks.</span>
+            </article>
+            <article class="loan-tile">
+              <strong>Customer satisfaction</strong>
+              <span>Support through the repayment journey.</span>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container">
+          <div class="cta-panel">
+            <div class="center" style="margin-bottom: 0; max-width: 760px">
+              <h2 class="h2" style="color: white; margin-bottom: 10px">Ready to get started?</h2>
+              <p>Share your needs and we’ll guide you to the right product and required documents.</p>
+              <div class="actions">
+                <a class="btn" href="loans" style="background:#fff;color:var(--green);">Browse Loans</a>
+                <a class="btn primary" href="contact">Apply Now</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <?php include __DIR__ . '/partials/footer.php'; ?>
+    <script src="assets/app.js" defer></script>
+  </body>
+</html>
+
