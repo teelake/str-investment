@@ -425,6 +425,7 @@ i.bx, i.fa, i.fa-solid, i.fa-regular, i.fa-brands{
 footer{
   padding: 46px 0 30px;
   border-top: 1px solid var(--line2);
+  background: rgba(255,255,255,.78);
 }
 .foot{
   display:grid;
