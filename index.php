@@ -110,7 +110,7 @@
                 <article class="hero-slide" data-hero-slide data-theme="personal" aria-label="Personal Loan slide">
                   <img
                     class="hero-slide-img"
-                    src="assets/images/hero-placeholder.svg"
+                    src="assets/images/personal-loan.jpg"
                     alt=""
                     aria-hidden="true"
                     loading="lazy"
