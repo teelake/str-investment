@@ -29,7 +29,8 @@ $active = $active ?? '';
           aria-expanded="false"
           data-nav-toggle
         >
-          Menu
+          <i class="bx bx-menu" aria-hidden="true"></i>
+          <span class="sr-only">Menu</span>
         </button>
       </div>
     </div>
