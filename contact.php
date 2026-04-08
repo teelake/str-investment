@@ -1,3 +1,4 @@
+<?php $active = 'contact'; ?>
 <!doctype html>
 <html lang="en-NG">
   <head>
@@ -9,9 +10,9 @@
       name="description"
       content="Contact STR Investment Services Limited. Send an enquiry about personal loans, salary advances, school loans, or SME working capital."
     />
-    <link rel="canonical" href="https://strinvestment.ng/contact.html" />
+    <link rel="canonical" href="https://strinvestment.ng/contact" />
     <meta property="og:title" content="Contact — STR Investment" />
-    <meta property="og:url" content="https://strinvestment.ng/contact.html" />
+    <meta property="og:url" content="https://strinvestment.ng/contact" />
     <meta property="og:image" content="https://strinvestment.ng/og.svg" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -20,8 +21,8 @@
       href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap"
       rel="stylesheet"
     />
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="/assets/styles.css" />
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="assets/styles.css" />
     <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" />
     <link
       rel="stylesheet"
@@ -33,49 +34,13 @@
         "@context": "https://schema.org",
         "@type": "ContactPage",
         "name": "Contact STR Investment Services Limited",
-        "url": "https://strinvestment.ng/contact.html"
+        "url": "https://strinvestment.ng/contact"
       }
     </script>
   </head>
   <body>
     <a class="skip" href="#main">Skip to content</a>
-
-    <header class="topbar">
-      <div class="container">
-        <div class="nav">
-          <a class="brand" href="/">STR Investment</a>
-
-          <nav class="navlinks" aria-label="Primary">
-            <a href="/">Home</a>
-            <a href="/products.html">Loans</a>
-            <a href="/services.html">Eligibility</a>
-            <a href="/about.html">About Us</a>
-            <a href="/contact.html" aria-current="page">Contact</a>
-          </nav>
-
-          <div class="cta">
-            <a class="btn primary" href="/contact.html">Apply Now</a>
-            <button
-              class="btn ghost mobile-toggle"
-              type="button"
-              aria-label="Open menu"
-              aria-expanded="false"
-              data-mobile-toggle
-            >
-              Menu
-            </button>
-          </div>
-        </div>
-
-        <div class="drawer" data-mobile-drawer data-open="false">
-          <a href="/">Home</a>
-          <a href="/products.html">Loans</a>
-          <a href="/services.html">Eligibility</a>
-          <a href="/about.html">About Us</a>
-          <a href="/contact.html" aria-current="page">Contact</a>
-        </div>
-      </div>
-    </header>
+    <?php include __DIR__ . '/partials/header.php'; ?>
 
     <main id="main">
       <section class="contact-hero">
@@ -167,8 +132,8 @@
               and exclusive rates.
             </p>
             <div class="hero-actions" style="margin-top: 18px">
-              <a class="btn primary" href="/contact.html">Schedule a Call</a>
-              <a class="btn ghost" href="/products.html">View Products</a>
+              <a class="btn primary" href="contact">Schedule a Call</a>
+              <a class="btn ghost" href="loans">View Products</a>
             </div>
           </div>
           <div class="portrait" aria-label="Portrait placeholder">
@@ -182,50 +147,8 @@
       </section>
     </main>
 
-    <footer>
-      <div class="container foot">
-        <div>
-          <div class="brand">STR Investment</div>
-          <small>Microcredit solutions in Nigeria. Incorporated February 2026.</small>
-          <div style="margin-top: 10px">
-            <a href="mailto:strinvestmentservicesltd@gmail.com">strinvestmentservicesltd@gmail.com</a>
-          </div>
-        </div>
-        <div>
-          <h4>Company</h4>
-          <ul>
-            <li><a href="/about.html">About Us</a></li>
-            <li><a href="/services.html">Eligibility</a></li>
-            <li><a href="/products.html">Loans</a></li>
-          </ul>
-        </div>
-        <div>
-          <h4>Support</h4>
-          <ul>
-            <li><a href="/contact.html">Contact</a></li>
-            <li><a href="/privacy.html">Privacy</a></li>
-          </ul>
-        </div>
-        <div>
-          <h4>Social</h4>
-          <ul>
-            <li><a href="#">LinkedIn</a></li>
-            <li><a href="#">X</a></li>
-            <li><a href="#">Facebook</a></li>
-          </ul>
-        </div>
-      </div>
-      <div class="container" style="margin-top: 20px">
-        <small>© <span id="year"></span> STR Investment Services Limited.</small>
-      </div>
-    </footer>
-
-    <a class="wa-fab" href="https://wa.me/2340000000000" target="_blank" rel="noopener">WhatsApp</a>
-
-    <script src="/assets/app.js" defer></script>
-    <script>
-      document.getElementById("year").textContent = new Date().getFullYear();
-    </script>
+    <?php include __DIR__ . '/partials/footer.php'; ?>
+    <script src="assets/app.js" defer></script>
   </body>
 </html>
 

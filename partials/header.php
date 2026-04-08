@@ -27,14 +27,14 @@ $active = $active ?? '';
           type="button"
           aria-label="Open menu"
           aria-expanded="false"
-          data-mobile-toggle
+          data-nav-toggle
         >
           Menu
         </button>
       </div>
     </div>
 
-    <div class="drawer" data-mobile-drawer data-open="false">
+    <div class="drawer" data-nav-drawer data-open="false">
       <a href="./" <?= $active === 'home' ? 'aria-current="page"' : '' ?>>Home</a>
       <a href="loans" <?= $active === 'loans' ? 'aria-current="page"' : '' ?>>Loans</a>
       <a href="eligibility" <?= $active === 'eligibility' ? 'aria-current="page"' : '' ?>>Eligibility</a>

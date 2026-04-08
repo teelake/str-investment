@@ -1,3 +1,4 @@
+<?php $active = 'loans'; ?>
 <!doctype html>
 <html lang="en-NG">
   <head>
@@ -9,9 +10,9 @@
       name="description"
       content="Explore STR Investment loan products: personal loans, salary advances, back-to-school support, and SME term loans — with clear requirements and structured tenors."
     />
-    <link rel="canonical" href="https://strinvestment.ng/products.html" />
+    <link rel="canonical" href="https://strinvestment.ng/loans" />
     <meta property="og:title" content="Loans — STR Investment" />
-    <meta property="og:url" content="https://strinvestment.ng/products.html" />
+    <meta property="og:url" content="https://strinvestment.ng/loans" />
     <meta property="og:image" content="https://strinvestment.ng/og.svg" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -20,8 +21,8 @@
       href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap"
       rel="stylesheet"
     />
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="/assets/styles.css" />
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="assets/styles.css" />
     <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" />
     <link
       rel="stylesheet"
@@ -30,43 +31,7 @@
   </head>
   <body>
     <a class="skip" href="#main">Skip to content</a>
-
-    <header class="topbar">
-      <div class="container">
-        <div class="nav">
-          <a class="brand" href="/">STR Investment</a>
-
-          <nav class="navlinks" aria-label="Primary">
-            <a href="/">Home</a>
-            <a href="/products.html" aria-current="page">Loans</a>
-            <a href="/services.html">Eligibility</a>
-            <a href="/about.html">About Us</a>
-            <a href="/contact.html">Contact</a>
-          </nav>
-
-          <div class="cta">
-            <a class="btn primary" href="/contact.html">Apply Now</a>
-            <button
-              class="btn ghost mobile-toggle"
-              type="button"
-              aria-label="Open menu"
-              aria-expanded="false"
-              data-mobile-toggle
-            >
-              Menu
-            </button>
-          </div>
-        </div>
-
-        <div class="drawer" data-mobile-drawer data-open="false">
-          <a href="/">Home</a>
-          <a href="/products.html" aria-current="page">Loans</a>
-          <a href="/services.html">Eligibility</a>
-          <a href="/about.html">About Us</a>
-          <a href="/contact.html">Contact</a>
-        </div>
-      </div>
-    </header>
+    <?php include __DIR__ . '/partials/header.php'; ?>
 
     <main id="main">
       <section class="hero">
@@ -78,7 +43,7 @@
               Choose the product that fits your repayment reality. Requirements vary by product and assessment.
             </p>
             <div class="hero-actions">
-              <a class="btn primary" href="/contact.html">Request a call back</a>
+              <a class="btn primary" href="contact">Request a call back</a>
               <a class="btn ghost" href="#pricing">Pricing overview</a>
             </div>
           </div>
@@ -114,7 +79,7 @@
                   Typical docs: employment ID, payslips, employer verification, ID, proof of residence, bank statement, guarantor.
                 </p>
               </div>
-              <div style="margin-top: 16px"><a class="btn ghost" href="/contact.html">Apply</a></div>
+              <div style="margin-top: 16px"><a class="btn ghost" href="contact">Apply</a></div>
             </article>
 
             <article class="loan-side" id="sme">
@@ -131,7 +96,7 @@
                 </p>
               </div>
               <div style="margin-top: 16px">
-                <a class="btn" href="/contact.html" style="background:#fff;color:var(--green);">Apply</a>
+                <a class="btn" href="contact" style="background:#fff;color:var(--green);">Apply</a>
               </div>
             </article>
           </div>
@@ -182,7 +147,7 @@
           </div>
 
           <div style="margin-top: 18px; text-align:center">
-            <a class="btn primary" href="/contact.html">Ask about eligibility</a>
+            <a class="btn primary" href="contact">Ask about eligibility</a>
           </div>
         </div>
       </section>
@@ -195,7 +160,7 @@
               <p>Share your needs and we’ll guide you through the right documents and repayment structure.</p>
               <div class="actions">
                 <a class="btn" href="#products" style="background:#fff;color:var(--green);">View loans</a>
-                <a class="btn primary" href="/contact.html">Apply Now</a>
+                <a class="btn primary" href="contact">Apply Now</a>
               </div>
             </div>
           </div>
@@ -203,49 +168,8 @@
       </section>
     </main>
 
-    <footer>
-      <div class="container foot">
-        <div>
-          <div class="brand">STR Investment</div>
-          <small>Microcredit solutions in Nigeria. Incorporated February 2026.</small>
-          <div style="margin-top: 10px">
-            <a href="mailto:strinvestmentservicesltd@gmail.com">strinvestmentservicesltd@gmail.com</a>
-          </div>
-        </div>
-        <div>
-          <h4>Company</h4>
-          <ul>
-            <li><a href="/about.html">About Us</a></li>
-            <li><a href="/services.html">Eligibility</a></li>
-            <li><a href="/products.html">Loans</a></li>
-          </ul>
-        </div>
-        <div>
-          <h4>Support</h4>
-          <ul>
-            <li><a href="/contact.html">Contact</a></li>
-            <li><a href="/privacy.html">Privacy</a></li>
-          </ul>
-        </div>
-        <div>
-          <h4>Social</h4>
-          <ul>
-            <li><a href="#">LinkedIn</a></li>
-            <li><a href="#">X</a></li>
-            <li><a href="#">Facebook</a></li>
-          </ul>
-        </div>
-      </div>
-      <div class="container" style="margin-top: 20px">
-        <small>© <span id="year"></span> STR Investment Services Limited.</small>
-      </div>
-    </footer>
-
-    <a class="wa-fab" href="https://wa.me/2340000000000" target="_blank" rel="noopener">WhatsApp</a>
-    <script src="/assets/app.js" defer></script>
-    <script>
-      document.getElementById("year").textContent = new Date().getFullYear();
-    </script>
+    <?php include __DIR__ . '/partials/footer.php'; ?>
+    <script src="assets/app.js" defer></script>
   </body>
 </html>
 
