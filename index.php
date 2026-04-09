@@ -136,7 +136,6 @@
                     <span>Personal Loan</span>
                   </div>
                   <div class="hero-slide-title">Blue‑chip employee loan</div>
-                  <div class="hero-slide-sub">Fast processing for verified staff with payroll‑friendly repayments.</div>
                 </article>
 
                 <article class="hero-slide" data-hero-slide data-theme="sme" aria-label="SME Term Loan slide">
@@ -152,7 +151,6 @@
                     <span>SME Term Loan</span>
                   </div>
                   <div class="hero-slide-title">Working capital built for turnover</div>
-                  <div class="hero-slide-sub">Short‑term support (3–6 months typical) with assessment-led structure.</div>
                 </article>
 
                 <article class="hero-slide" data-hero-slide data-theme="school" aria-label="Back to School slide">
@@ -168,7 +166,6 @@
                     <span>Back to School</span>
                   </div>
                   <div class="hero-slide-title">Education support for resumption</div>
-                  <div class="hero-slide-sub">Covers fees and essentials with term‑aligned repayment options.</div>
                 </article>
               </div>
 
