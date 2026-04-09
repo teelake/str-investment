@@ -415,7 +415,7 @@
               loading="lazy"
               alt="Bridging the Credit Gap - Rethinking SME Financing"
             />
-            <figcaption class="portrait-cap"></figcaption>
+           
           </figure>
         </div>
       </section>
