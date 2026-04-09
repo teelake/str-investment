@@ -131,11 +131,13 @@
                     aria-hidden="true"
                     loading="lazy"
                   />
-                  <div class="hero-slide-badge">
-                    <i class="bx bx-id-card" aria-hidden="true"></i>
-                    <span>Personal Loan</span>
+                  <div class="hero-slide-text">
+                    <div class="hero-slide-badge">
+                      <i class="bx bx-id-card" aria-hidden="true"></i>
+                      <span>Personal Loan</span>
+                    </div>
+                    <div class="hero-slide-title">Blue‑chip employee loan</div>
                   </div>
-                  <div class="hero-slide-title">Blue‑chip employee loan</div>
                 </article>
 
                 <article class="hero-slide" data-hero-slide data-theme="sme" aria-label="SME Term Loan slide">
@@ -146,11 +148,13 @@
                     aria-hidden="true"
                     loading="lazy"
                   />
-                  <div class="hero-slide-badge">
-                    <i class="bx bx-store-alt" aria-hidden="true"></i>
-                    <span>SME Term Loan</span>
+                  <div class="hero-slide-text">
+                    <div class="hero-slide-badge">
+                      <i class="bx bx-store-alt" aria-hidden="true"></i>
+                      <span>SME Term Loan</span>
+                    </div>
+                    <div class="hero-slide-title">Working capital built for turnover</div>
                   </div>
-                  <div class="hero-slide-title">Working capital built for turnover</div>
                 </article>
 
                 <article class="hero-slide" data-hero-slide data-theme="school" aria-label="Back to School slide">
@@ -161,11 +165,13 @@
                     aria-hidden="true"
                     loading="lazy"
                   />
-                  <div class="hero-slide-badge">
-                    <i class="bx bx-book-open" aria-hidden="true"></i>
-                    <span>Back to School</span>
+                  <div class="hero-slide-text">
+                    <div class="hero-slide-badge">
+                      <i class="bx bx-book-open" aria-hidden="true"></i>
+                      <span>Back to School</span>
+                    </div>
+                    <div class="hero-slide-title">Education support for resumption</div>
                   </div>
-                  <div class="hero-slide-title">Education support for resumption</div>
                 </article>
               </div>
 
