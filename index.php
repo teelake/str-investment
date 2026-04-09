@@ -54,26 +54,42 @@
         "mainEntity": [
           {
             "@type": "Question",
-            "name": "Who can apply for a loan?",
+            "name": "Who can apply for STR Investment loans?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "Salaried workers, parents/guardians, and small businesses can apply, subject to product requirements and assessment."
+              "text": "Salaried workers, parents/guardians, and small and medium business owners can apply, depending on the product requirements and assessment."
             }
           },
           {
             "@type": "Question",
-            "name": "Do you require collateral?",
+            "name": "Do you require collateral or a guarantor?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "Some products are unsecured while others may require a guarantor or collateral depending on assessment."
+              "text": "Some products are unsecured, while others may require a guarantor or collateral depending on the product type and assessment."
             }
           },
           {
             "@type": "Question",
-            "name": "How is repayment structured?",
+            "name": "What documents do I need to apply?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "Repayment is structured around salary dates or business cash-flow to support responsible borrowing."
+              "text": "Typical documents include valid ID, bank statement (3–6 months), proof of income or business activity, and product-specific requirements such as payslips, employer verification, school fee invoice, or business registration."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How long does approval and disbursement take?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Timelines depend on verification and completeness of documents. Salary advance loans are typically processed quickly after approval (often within 24–48 hours), while other products may take longer based on assessment."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How are repayments scheduled and what are the typical tenors?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Repayments are structured around salary dates or business cash-flow. Typical tenors include salary advance (15–30 days), back to school (1–4 months), term loan for SMEs (3–6 months), and personal loans (3–12 months)."
             }
           }
         ]
@@ -298,29 +314,55 @@
           <div class="faq" aria-label="FAQs">
             <div class="qa" data-qa data-open="false">
               <button class="q" type="button" data-q aria-expanded="false">
-                Who can apply for a loan?
+                Who can apply for STR Investment loans?
                 <span aria-hidden="true">+</span>
               </button>
               <div class="a" data-a>
-                Salaried workers, parents/guardians, and SMEs can apply, subject to requirements and assessment.
+                Salaried workers, parents/guardians, and small and medium business owners can apply, depending on the
+                product requirements and assessment.
               </div>
             </div>
             <div class="qa" data-qa data-open="false">
               <button class="q" type="button" data-q aria-expanded="false">
-                What is the eligibility process?
+                Do you require collateral or a guarantor?
                 <span aria-hidden="true">+</span>
               </button>
               <div class="a" data-a>
-                We verify identity, income/trading activity, and affordability to structure responsible repayment.
+                Some products are unsecured, while others may require a guarantor or collateral depending on the
+                product type and assessment.
               </div>
             </div>
             <div class="qa" data-qa data-open="false">
               <button class="q" type="button" data-q aria-expanded="false">
-                How are repayments scheduled?
+                What documents do I need to apply?
                 <span aria-hidden="true">+</span>
               </button>
               <div class="a" data-a>
-                Repayments are aligned to salary dates or business cash-flow where applicable.
+                Typical documents include valid ID, bank statement (3–6 months), proof of income or business activity,
+                and product-specific requirements such as payslips, employer verification, school fee invoice, or
+                business registration.
+              </div>
+            </div>
+            <div class="qa" data-qa data-open="false">
+              <button class="q" type="button" data-q aria-expanded="false">
+                How long does approval and disbursement take?
+                <span aria-hidden="true">+</span>
+              </button>
+              <div class="a" data-a>
+                Timelines depend on verification and completeness of documents. Salary advance loans are typically
+                processed quickly after approval (often within 24–48 hours), while other products may take longer based
+                on assessment.
+              </div>
+            </div>
+            <div class="qa" data-qa data-open="false">
+              <button class="q" type="button" data-q aria-expanded="false">
+                How are repayments scheduled and what are the typical tenors?
+                <span aria-hidden="true">+</span>
+              </button>
+              <div class="a" data-a>
+                Repayments are structured around salary dates or business cash-flow. Typical tenors include salary
+                advance (15–30 days), back to school (1–4 months), term loan for SMEs (3–6 months), and personal loans
+                (3–12 months).
               </div>
             </div>
           </div>
