@@ -28,7 +28,7 @@
       rel="stylesheet"
     />
     <link rel="icon" href="favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="assets/styles.css?v=20260410" />
+    <link rel="stylesheet" href="assets/styles.css?v=20260411" />
     <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" />
     <link
       rel="stylesheet"
