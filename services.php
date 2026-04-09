@@ -22,7 +22,7 @@
       rel="stylesheet"
     />
     <link rel="icon" href="favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="assets/styles.css?v=20260419" />
+    <link rel="stylesheet" href="assets/styles.css?v=20260420" />
     <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" />
     <link
       rel="stylesheet"
@@ -40,9 +40,8 @@
             <span class="pill"><span class="pill-ic" aria-hidden="true"><i class="bx bx-check-shield"></i></span> Eligibility</span>
             <h1 class="h1">Clear requirements. <span class="accent">Fair assessment.</span></h1>
             <p class="lead">
-              STR Investment Services Limited (2025) offers microcredit — including salary advance, personal, school,
-              and business loans — with checks that match each product. Below is what we typically ask for; final lists
-              follow verification.
+              STR Investment (2025) offers salary advance, personal, school, and business loans. Each product has its own
+              checks — below is what we usually ask; your final list follows verification.
             </p>
             <div class="hero-actions">
               <a class="btn primary" href="contact?product=general"><i class="bx bx-send" aria-hidden="true"></i> Start an enquiry</a>
@@ -84,21 +83,21 @@
             <p class="sub">Three steps — fast where documents are complete, never sloppy on fit.</p>
           </div>
 
-          <div class="loan-row">
+          <div class="loan-row loan-row--elig-steps">
             <article class="loan-tile elig-step">
               <span class="elig-step-ic" aria-hidden="true"><i class="bx bx-list-ul"></i></span>
               <strong>1) Pick a product</strong>
-              <span>Amount range, purpose, and tenor — we match you to the right facility.</span>
+              <span>Amount, purpose, and tenor.</span>
             </article>
             <article class="loan-tile elig-step">
               <span class="elig-step-ic" aria-hidden="true"><i class="bx bx-folder"></i></span>
               <strong>2) Submit documents</strong>
-              <span>ID, bank statements, income or trade proof — see product cards below.</span>
+              <span>ID, statements, income or trade proof.</span>
             </article>
             <article class="loan-tile elig-step">
               <span class="elig-step-ic" aria-hidden="true"><i class="bx bx-badge-check"></i></span>
-              <strong>3) Verification &amp; decision</strong>
-              <span>Affordability and KYC; you get clear next steps or an offer.</span>
+              <strong>3) Verify &amp; decide</strong>
+              <span>KYC, affordability check, then offer or next steps.</span>
             </article>
           </div>
         </div>
@@ -110,9 +109,8 @@
             <div>
               <h2 class="h2">Product eligibility &amp; pricing</h2>
               <p class="sub">
-                Typical fees (confirmed before you accept): <strong>4–8% flat per month</strong> on reducing balance;
-                <strong>0.5%</strong> processing and <strong>0.5%</strong> management of approved amount;
-                <strong>1% insurance</strong> where the product includes it. Tenors vary by product.
+                Indicative fees — <strong>confirmed on your offer</strong> before you accept: 4–8% / month (reducing),
+                0.5% processing, 0.5% management, plus 1% insurance on products that include it.
               </p>
             </div>
             <a class="btn ghost" href="contact?product=general"><i class="bx bx-message-rounded" aria-hidden="true"></i> Ask us</a>
@@ -125,15 +123,39 @@
                   <span class="title-ic" aria-hidden="true"><i class="bx bx-id-card"></i></span>
                   <div class="title">Personal loan (blue-chip employee)</div>
                 </div>
-                <p class="elig-target"><i class="bx bx-user-check" aria-hidden="true"></i> Salaried staff at established employers</p>
-                <p class="elig-features">Unsecured; up to <strong>12 months</strong>; repayment often via payroll; loan size from salary &amp; tenure.</p>
+                <p class="elig-target"><i class="bx bx-user-check" aria-hidden="true"></i> Staff at established employers</p>
+                <p class="elig-features">Unsecured · up to <strong>12 months</strong> · payroll-friendly repayment.</p>
                 <p class="elig-label">Usually need</p>
                 <ul class="elig-list">
-                  <li>Employment ID, 3 recent payslips, employer introduction/verification</li>
-                  <li>Valid ID, proof of residence, 6-month bank statement</li>
-                  <li>Guarantor, completed application form</li>
+                  <li>Employment ID, 3 payslips, employer letter</li>
+                  <li>National ID, proof of address, 6-month bank statement</li>
+                  <li>Guarantor, completed application</li>
                 </ul>
-                <p class="elig-pricing"><i class="bx bx-tag" aria-hidden="true"></i> Fees as above + <strong>1% insurance</strong> · Tenor <strong>3–12 months</strong></p>
+                <div class="elig-pricing-block">
+                  <div class="elig-price-row" aria-label="Typical pricing">
+                    <div class="elig-price-cell">
+                      <span class="elig-price-ic" aria-hidden="true"><i class="bx bx-line-chart"></i></span>
+                      <span class="elig-price-val">4–8%</span>
+                      <span class="elig-price-lbl">Monthly · reducing</span>
+                    </div>
+                    <div class="elig-price-cell">
+                      <span class="elig-price-ic" aria-hidden="true"><i class="bx bx-receipt"></i></span>
+                      <span class="elig-price-val">0.5%</span>
+                      <span class="elig-price-lbl">Processing</span>
+                    </div>
+                    <div class="elig-price-cell">
+                      <span class="elig-price-ic" aria-hidden="true"><i class="bx bx-cog"></i></span>
+                      <span class="elig-price-val">0.5%</span>
+                      <span class="elig-price-lbl">Management</span>
+                    </div>
+                    <div class="elig-price-cell">
+                      <span class="elig-price-ic" aria-hidden="true"><i class="bx bx-calendar"></i></span>
+                      <span class="elig-price-val">3–12 mo</span>
+                      <span class="elig-price-lbl">Tenor</span>
+                    </div>
+                  </div>
+                  <p class="elig-pricing-foot">+ <strong>1%</strong> insurance</p>
+                </div>
               </div>
               <div class="elig-card-actions">
                 <a class="btn ghost" href="loans#personal"><i class="bx bx-book-open" aria-hidden="true"></i> Product detail</a>
@@ -147,15 +169,39 @@
                   <span class="title-ic" aria-hidden="true"><i class="bx bx-book-open"></i></span>
                   <div class="title">Back to school</div>
                 </div>
-                <p class="elig-target"><i class="bx bx-group" aria-hidden="true"></i> Parents / guardians (primary–tertiary)</p>
-                <p class="elig-features">Short-term; fees, books, uniforms; disbursement to school or customer; repayment around school terms.</p>
+                <p class="elig-target"><i class="bx bx-group" aria-hidden="true"></i> Parents / guardians</p>
+                <p class="elig-features">School fees, books, uniforms · pay to school or you · term-friendly repayment.</p>
                 <p class="elig-label">Usually need</p>
                 <ul class="elig-list">
-                  <li>Proof of enrollment / fee invoice</li>
-                  <li>Parent or guardian ID, 3–6 month bank statement</li>
-                  <li>Evidence of income; guarantor where required; completed form</li>
+                  <li>Enrollment or fee invoice</li>
+                  <li>Guardian ID, 3–6 month statement</li>
+                  <li>Income proof; guarantor if required</li>
                 </ul>
-                <p class="elig-pricing"><i class="bx bx-tag" aria-hidden="true"></i> Fees as above + <strong>1% insurance</strong> · Tenor <strong>1–4 months</strong></p>
+                <div class="elig-pricing-block">
+                  <div class="elig-price-row" aria-label="Typical pricing">
+                    <div class="elig-price-cell">
+                      <span class="elig-price-ic" aria-hidden="true"><i class="bx bx-line-chart"></i></span>
+                      <span class="elig-price-val">4–8%</span>
+                      <span class="elig-price-lbl">Monthly · reducing</span>
+                    </div>
+                    <div class="elig-price-cell">
+                      <span class="elig-price-ic" aria-hidden="true"><i class="bx bx-receipt"></i></span>
+                      <span class="elig-price-val">0.5%</span>
+                      <span class="elig-price-lbl">Processing</span>
+                    </div>
+                    <div class="elig-price-cell">
+                      <span class="elig-price-ic" aria-hidden="true"><i class="bx bx-cog"></i></span>
+                      <span class="elig-price-val">0.5%</span>
+                      <span class="elig-price-lbl">Management</span>
+                    </div>
+                    <div class="elig-price-cell">
+                      <span class="elig-price-ic" aria-hidden="true"><i class="bx bx-calendar"></i></span>
+                      <span class="elig-price-val">1–4 mo</span>
+                      <span class="elig-price-lbl">Tenor</span>
+                    </div>
+                  </div>
+                  <p class="elig-pricing-foot">+ <strong>1%</strong> insurance</p>
+                </div>
               </div>
               <div class="elig-card-actions">
                 <a class="btn ghost" href="loans#school"><i class="bx bx-book-open" aria-hidden="true"></i> Product detail</a>
@@ -169,16 +215,40 @@
                   <span class="title-ic" aria-hidden="true"><i class="bx bx-store-alt"></i></span>
                   <div class="title">Term loan (business)</div>
                 </div>
-                <p class="elig-target"><i class="bx bx-briefcase-alt-2" aria-hidden="true"></i> SME owners needing working capital</p>
-                <p class="elig-features">3–6 months; stock/operations; guarantor or collateral as agreed; size from cash flow &amp; turnover.</p>
+                <p class="elig-target"><i class="bx bx-briefcase-alt-2" aria-hidden="true"></i> SME owners · working capital</p>
+                <p class="elig-features"><strong>3–6 months</strong> · stock &amp; operations · guarantor or collateral as agreed.</p>
                 <p class="elig-label">Usually need</p>
                 <ul class="elig-list">
-                  <li>Business registration or evidence of trade</li>
-                  <li>~6 months bank statement and/or sales records</li>
-                  <li>Application, recent photo, ID, proof of business location</li>
-                  <li>Guarantor or collateral if applicable</li>
+                  <li>Registration or trade evidence</li>
+                  <li>~6 months bank / sales records</li>
+                  <li>Application, photo, ID, business address</li>
+                  <li>Guarantor or collateral if needed</li>
                 </ul>
-                <p class="elig-pricing"><i class="bx bx-tag" aria-hidden="true"></i> Fees as above + <strong>1% insurance</strong> · Tenor <strong>3–6 months</strong></p>
+                <div class="elig-pricing-block">
+                  <div class="elig-price-row" aria-label="Typical pricing">
+                    <div class="elig-price-cell">
+                      <span class="elig-price-ic" aria-hidden="true"><i class="bx bx-line-chart"></i></span>
+                      <span class="elig-price-val">4–8%</span>
+                      <span class="elig-price-lbl">Monthly · reducing</span>
+                    </div>
+                    <div class="elig-price-cell">
+                      <span class="elig-price-ic" aria-hidden="true"><i class="bx bx-receipt"></i></span>
+                      <span class="elig-price-val">0.5%</span>
+                      <span class="elig-price-lbl">Processing</span>
+                    </div>
+                    <div class="elig-price-cell">
+                      <span class="elig-price-ic" aria-hidden="true"><i class="bx bx-cog"></i></span>
+                      <span class="elig-price-val">0.5%</span>
+                      <span class="elig-price-lbl">Management</span>
+                    </div>
+                    <div class="elig-price-cell">
+                      <span class="elig-price-ic" aria-hidden="true"><i class="bx bx-calendar"></i></span>
+                      <span class="elig-price-val">3–6 mo</span>
+                      <span class="elig-price-lbl">Tenor</span>
+                    </div>
+                  </div>
+                  <p class="elig-pricing-foot">+ <strong>1%</strong> insurance</p>
+                </div>
               </div>
               <div class="elig-card-actions">
                 <a class="btn ghost" href="loans#sme"><i class="bx bx-book-open" aria-hidden="true"></i> Product detail</a>
@@ -192,16 +262,40 @@
                   <span class="title-ic" aria-hidden="true"><i class="bx bx-time-five"></i></span>
                   <div class="title">Salary advance</div>
                 </div>
-                <p class="elig-target"><i class="bx bx-user-check" aria-hidden="true"></i> Salaried workers (before payday)</p>
-                <p class="elig-features">Typically <strong>15–30 days</strong> or to next pay date; often <strong>24–48h</strong> after approval; amount as % of salary; usually unsecured; repayment via salary.</p>
+                <p class="elig-target"><i class="bx bx-user-check" aria-hidden="true"></i> Salaried staff · before payday</p>
+                <p class="elig-features"><strong>15–30 days</strong> (or to next salary) · often disbursed in <strong>24–48h</strong> · % of salary · via payroll.</p>
                 <p class="elig-label">Usually need</p>
                 <ul class="elig-list">
-                  <li>Employment letter or staff ID, last 3 payslips</li>
-                  <li>Bank statement (3–6 months) showing salary inflow</li>
-                  <li>Valid ID, BVN, completed application</li>
-                  <li>Employer confirmation for deduction arrangement</li>
+                  <li>Employment letter or staff ID, 3 payslips</li>
+                  <li>Statement (3–6 mo) with salary inflow</li>
+                  <li>Valid ID, BVN, application</li>
+                  <li>Employer confirmation for deduction</li>
                 </ul>
-                <p class="elig-pricing"><i class="bx bx-tag" aria-hidden="true"></i> <strong>4–8%</strong> / month (reducing); <strong>0.5%</strong> processing &amp; <strong>0.5%</strong> management · Tenor <strong>15–30 days</strong> (or to next salary). Insurance, if any, confirmed on offer.</p>
+                <div class="elig-pricing-block">
+                  <div class="elig-price-row" aria-label="Typical pricing">
+                    <div class="elig-price-cell">
+                      <span class="elig-price-ic" aria-hidden="true"><i class="bx bx-line-chart"></i></span>
+                      <span class="elig-price-val">4–8%</span>
+                      <span class="elig-price-lbl">Monthly · reducing</span>
+                    </div>
+                    <div class="elig-price-cell">
+                      <span class="elig-price-ic" aria-hidden="true"><i class="bx bx-receipt"></i></span>
+                      <span class="elig-price-val">0.5%</span>
+                      <span class="elig-price-lbl">Processing</span>
+                    </div>
+                    <div class="elig-price-cell">
+                      <span class="elig-price-ic" aria-hidden="true"><i class="bx bx-cog"></i></span>
+                      <span class="elig-price-val">0.5%</span>
+                      <span class="elig-price-lbl">Management</span>
+                    </div>
+                    <div class="elig-price-cell">
+                      <span class="elig-price-ic" aria-hidden="true"><i class="bx bx-calendar"></i></span>
+                      <span class="elig-price-val">15–30 d</span>
+                      <span class="elig-price-lbl">Tenor</span>
+                    </div>
+                  </div>
+                  <p class="elig-pricing-foot elig-pricing-foot--muted">No default insurance — only if your offer says so</p>
+                </div>
               </div>
               <div class="elig-card-actions">
                 <a class="btn ghost" href="loans#advance"><i class="bx bx-book-open" aria-hidden="true"></i> Product detail</a>
@@ -212,8 +306,7 @@
 
           <p class="elig-disclaimer">
             <i class="bx bx-info-circle" aria-hidden="true"></i>
-            Rates and fees are indicative; your final offer depends on assessment. Asset financing and other structures may
-            follow the same fee framework where applicable.
+            Figures are indicative; your signed offer prevails. Other products (e.g. asset finance) may use the same fee style.
           </p>
         </div>
       </section>
