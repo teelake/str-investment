@@ -138,7 +138,8 @@
       </section>
 
       <section class="lower map-band" aria-label="Map">
-        <div class="map-embed-full" aria-label="Office location map">
+        <div class="container">
+          <div class="map-embed-full" aria-label="Office location map">
           <iframe
             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d494.6233020332049!2d3.831665299454212!3d7.355418203058441!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x10398d000b02ddc9%3A0x1e6c5e85ece95e70!2sElebu%2C%20Ibadan!5e0!3m2!1sen!2sng!4v1775720775449!5m2!1sen!2sng"
             width="600"
@@ -149,6 +150,7 @@
             referrerpolicy="no-referrer-when-downgrade"
             title="STR Investment Services Limited — Office location"
           ></iframe>
+          </div>
         </div>
       </section>
     </main>

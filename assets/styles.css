@@ -728,6 +728,9 @@ footer{
 .map-embed-full{
   width: 100%;
   overflow: hidden;
+  border-radius: var(--radius2);
+  border: 1px solid var(--line2);
+  box-shadow: var(--shadow2);
 }
 .map-embed-full iframe{
   display:block;
