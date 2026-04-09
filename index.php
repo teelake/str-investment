@@ -337,7 +337,7 @@
         <div class="container lower-grid">
           <div class="lower-card">
             <span class="badge">OUR APPROACH</span>
-            <h2 class="h2" style="margin-top: 14px">Support that feels human—decisions that stay responsible.</h2>
+            <h2 class="h2" style="margin-top: 14px">Bridging the financing gap with accessible microcredit.</h2>
             <p class="sub">
               We’re built to bridge the financing gap with timely, flexible microcredit—guided by risk-aware assessment and
               customer-first support.
