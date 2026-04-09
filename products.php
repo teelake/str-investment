@@ -49,7 +49,10 @@
           </div>
 
           <aside class="hero-side" aria-label="Pricing summary">
-            <div class="frame" aria-hidden="true"></div>
+            <div class="frame" aria-hidden="true">
+              <img 
+              src="assets/images/Bank-loans.jpg" alt="STR Investment Services Limited" loading="lazy" />
+            </div>
             <div class="mini">
               <span class="dot" aria-hidden="true"></span>
               <span><b>Transparent</b> fees explained upfront</span>
