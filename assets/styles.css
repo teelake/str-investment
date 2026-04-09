@@ -237,7 +237,6 @@ i.bx, i.fa, i.fa-solid, i.fa-regular, i.fa-brands{
 .hero-fs-inner{
   position: relative;
   z-index: 2;
-  width: 100%;
   align-self: center;
   padding: clamp(32px, 6vw, 56px) 0 clamp(88px, 12vw, 118px);
 }
