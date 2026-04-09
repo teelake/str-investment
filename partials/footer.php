@@ -4,7 +4,9 @@ $year = (int)date('Y');
 <footer>
   <div class="container foot">
     <div>
-      <div class="brand">STR Investment</div>
+      <a class="brand brand--img" href="./" aria-label="STR Investment home">
+        <img src="assets/images/logo.jpeg" alt="STR Investment Services Limited" loading="lazy" />
+      </a>
       <small>Microcredit solutions in Nigeria. Incorporated February 2026.</small>
       <small>Company Reg. No: RC 9253894</small>
       <div class="foot-meta" aria-label="Office details">
@@ -64,7 +66,7 @@ $year = (int)date('Y');
   </div>
 </footer>
 
-<a class="wa-fab" href="https://wa.me/2340000000000" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
+<a class="wa-fab" href="https://wa.me/2349054984777" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
   <i class="bx bxl-whatsapp" aria-hidden="true"></i>
   <span class="sr-only">WhatsApp</span>
 </a>

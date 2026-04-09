@@ -10,7 +10,9 @@ $active = $active ?? '';
 <header class="topbar">
   <div class="container">
     <div class="nav">
-      <a class="brand" href="./">STR Investment</a>
+      <a class="brand brand--img" href="./" aria-label="STR Investment home">
+        <img src="assets/images/logo.jpeg" alt="STR Investment Services Limited" />
+      </a>
 
       <nav class="navlinks" aria-label="Primary">
         <a href="./" <?= $active === 'home' ? 'aria-current="page"' : '' ?>>Home</a>
