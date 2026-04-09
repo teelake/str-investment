@@ -561,6 +561,26 @@ footer{
 .foot small{color: var(--muted2)}
 .foot ul{list-style:none; padding:0; margin:0; display:grid; gap: 10px}
 
+.foot-meta{
+  margin-top: 12px;
+  display:grid;
+  gap: 10px;
+}
+.meta-row{
+  display:flex;
+  gap: 10px;
+  align-items:flex-start;
+  color: var(--muted);
+  font-size: 13px;
+}
+.meta-row i{
+  margin-top: 2px;
+  font-size: 18px;
+  color: var(--green);
+}
+.meta-row a{color: var(--muted)}
+.meta-row a:hover{color: var(--ink)}
+
 .social-icons{
   display:flex !important;
   flex-wrap:nowrap;
@@ -596,6 +616,16 @@ footer{
 }
 .made-with a{color: var(--ink)}
 .made-with a:hover{text-decoration: underline}
+
+.foot-bottom{
+  margin-top: 20px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap: 8px;
+  text-align:center;
+}
 
 /* Contact template */
 .contact-hero{

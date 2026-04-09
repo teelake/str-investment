@@ -6,8 +6,15 @@ $year = (int)date('Y');
     <div>
       <div class="brand">STR Investment</div>
       <small>Microcredit solutions in Nigeria. Incorporated February 2026.</small>
-      <div style="margin-top: 10px">
-        <a href="mailto:strinvestmentservicesltd@gmail.com">strinvestmentservicesltd@gmail.com</a>
+      <div class="foot-meta" aria-label="Office details">
+        <div class="meta-row">
+          <i class="bx bx-map" aria-hidden="true"></i>
+          <span>Address: (placeholder) Lagos, Nigeria</span>
+        </div>
+        <div class="meta-row">
+          <i class="bx bx-phone-call" aria-hidden="true"></i>
+          <a href="tel:+2340000000000">Phone: +234 000 000 0000</a>
+        </div>
       </div>
     </div>
     <div>
@@ -46,7 +53,7 @@ $year = (int)date('Y');
       </ul>
     </div>
   </div>
-  <div class="container" style="margin-top: 20px">
+  <div class="container foot-bottom" aria-label="Footer credits">
     <small>© <?= $year ?> STR Investment Services Limited.</small>
     <small class="made-with">
       <span>Made with</span>
