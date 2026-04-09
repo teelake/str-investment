@@ -428,6 +428,18 @@ i.bx, i.fa, i.fa-solid, i.fa-regular, i.fa-brands{
 .why-item .ic i{font-size: 20px}
 .why-item strong{display:block; color: var(--ink); margin-bottom: 6px}
 
+.why-grid--3{
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.hero-about-motto{
+  display: block;
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--muted2);
+  font-weight: 500;
+}
+
 /* Testimonials (replaces metrics/social proof strip) */
 .testimonials{
   margin-top: 26px;
