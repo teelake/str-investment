@@ -1,4 +1,10 @@
-<?php $active = 'contact'; ?>
+<?php
+$active = 'contact';
+$product = $_GET['product'] ?? '';
+$product = is_string($product) ? strtolower(trim($product)) : '';
+$allowedProducts = ['general', 'personal', 'advance', 'school', 'sme'];
+if (!in_array($product, $allowedProducts, true)) $product = '';
+?>
 <!doctype html>
 <html lang="en-NG">
   <head>
@@ -56,26 +62,34 @@
           <div class="contact-grid">
             <section class="panel" aria-label="Contact form">
               <form class="formgrid" data-contact-form data-mailto="strinvestmentservicesltd@gmail.com">
+                <input
+                  type="text"
+                  name="website"
+                  tabindex="-1"
+                  autocomplete="off"
+                  aria-hidden="true"
+                  style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden"
+                />
                 <div class="field">
                   <label for="name">Name</label>
-                  <input id="name" name="name" placeholder="Full name" required />
+                  <input id="name" name="name" placeholder="Full name" required maxlength="80" />
                 </div>
                 <div class="field">
                   <label for="email">Email</label>
-                  <input id="email" name="email" placeholder="professional@email.com" required />
+                  <input id="email" name="email" placeholder="professional@email.com" required maxlength="120" />
                 </div>
                 <div class="field">
                   <label for="phone">Phone</label>
-                  <input id="phone" name="phone" placeholder="09054984777" required />
+                  <input id="phone" name="phone" placeholder="09054984777" required maxlength="20" />
                 </div>
                 <div class="field">
                   <label for="subject">Subject</label>
                   <select id="subject" name="product">
-                    <option>Loan enquiry</option>
-                    <option>Personal loan</option>
-                    <option>Salary advance</option>
-                    <option>Back to school</option>
-                    <option>SME term loan</option>
+                    <option value="general" <?= $product === 'general' || $product === '' ? 'selected' : '' ?>>Loan enquiry</option>
+                    <option value="personal" <?= $product === 'personal' ? 'selected' : '' ?>>Personal loan</option>
+                    <option value="advance" <?= $product === 'advance' ? 'selected' : '' ?>>Salary advance</option>
+                    <option value="school" <?= $product === 'school' ? 'selected' : '' ?>>Back to school</option>
+                    <option value="sme" <?= $product === 'sme' ? 'selected' : '' ?>>SME term loan</option>
                   </select>
                 </div>
                 <div class="field" style="grid-column: 1 / -1">
@@ -85,6 +99,7 @@
                     name="message"
                     placeholder="How can our consultants assist you today?"
                     required
+                    maxlength="1200"
                   ></textarea>
                 </div>
                 <div class="form-actions">
