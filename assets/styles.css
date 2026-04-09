@@ -213,15 +213,13 @@ i.bx, i.fa, i.fa-solid, i.fa-regular, i.fa-brands{
 .hero-side{
   position: relative;
   border-radius: var(--radius2);
-  background: #0f1112;
+  background: transparent;
   box-shadow: var(--shadow);
   overflow:hidden;
   min-height: 330px;
 }
 .hero-side::before{
-  content:\"\"; position:absolute; inset:0;
-  background: radial-gradient(520px 260px at 50% 20%, rgba(255,255,255,.18), transparent 55%);
-  opacity: .9;
+  content:none;
 }
 .hero-side .frame{
   position:absolute; inset: 18px 18px 18px 18px;
