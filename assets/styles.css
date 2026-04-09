@@ -106,10 +106,14 @@ i.bx, i.fa, i.fa-solid, i.fa-regular, i.fa-brands{
   gap: 10px;
 }
 .brand--img img{
-  height: 34px;
+  height: 52px;
   width: auto;
   display:block;
-  border-radius: 10px;
+  border-radius: 12px;
+}
+
+@media (max-width: 760px){
+  .brand--img img{height: 44px}
 }
 .navlinks{
   display:flex;
