@@ -461,6 +461,12 @@ i.bx, i.fa, i.fa-solid, i.fa-regular, i.fa-brands{
   font-weight: 900;
 }
 
+.testimonials-band{
+  background: rgba(15,106,74,.06);
+  border-top: 1px solid var(--line2);
+  border-bottom: 1px solid var(--line2);
+}
+
 /* Loans grid */
 .loans-head{
   display:flex;

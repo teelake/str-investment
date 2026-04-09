@@ -218,8 +218,17 @@
               <div>Working capital structured around turnover reality.</div>
             </div>
           </div>
+        </div>
+      </section>
 
-          <div class="testimonials" aria-label="Testimonials">
+      <section class="section testimonials-band" aria-label="Testimonials">
+        <div class="container">
+          <div class="center">
+            <h2 class="h2">Testimonials</h2>
+            <p class="sub">What clients say about clarity, speed, and support.</p>
+          </div>
+
+          <div class="testimonials">
             <article class="t-card">
               <div class="t-quote">“Fast, clear process. I understood the requirements and repayment from day one.”</div>
               <div class="t-meta">
