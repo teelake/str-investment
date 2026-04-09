@@ -252,7 +252,7 @@ i.bx, i.fa, i.fa-solid, i.fa-regular, i.fa-brands{
 .hero-fs-controls-inner{
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   flex-wrap: wrap;
   gap: 12px;
   pointer-events: auto;
@@ -281,16 +281,6 @@ i.bx, i.fa, i.fa-solid, i.fa-regular, i.fa-brands{
   outline: 3px solid rgba(15, 106, 74, 0.35);
   outline-offset: 2px;
 }
-.hero-fs-pause{
-  font-size: 13px;
-  padding: 8px 14px;
-  background: rgba(255, 255, 255, 0.85);
-  border-color: var(--line2);
-}
-.hero-fs-pause[aria-pressed="true"]{
-  background: rgba(255, 255, 255, 0.95);
-}
-
 @media (prefers-reduced-motion: reduce){
   .hero-fs-track{transition: none}
 }
@@ -299,7 +289,6 @@ i.bx, i.fa, i.fa-solid, i.fa-regular, i.fa-brands{
   .hero-fs-viewport{min-height: clamp(480px, 78svh, 600px)}
   .hero-fs-inner{padding-top: 28px; padding-bottom: 96px}
   .hero-fs-controls-inner{justify-content: center}
-  .hero-fs-pause{order: -1; width: 100%; justify-content: center}
 }
 
 .hero-content{

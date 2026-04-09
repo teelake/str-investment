@@ -221,9 +221,6 @@
               <button type="button" class="hero-fs-dot" data-hero-fs-dot role="tab" aria-selected="false" aria-label="Show slide 3"></button>
               <button type="button" class="hero-fs-dot" data-hero-fs-dot role="tab" aria-selected="false" aria-label="Show slide 4"></button>
             </div>
-            <button type="button" class="hero-fs-pause btn ghost" data-hero-fs-pause aria-pressed="false">
-              <span class="hero-fs-pause-label">Pause</span>
-            </button>
           </div>
         </div>
       </section>

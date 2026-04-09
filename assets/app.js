@@ -18,8 +18,6 @@
     var track = root.querySelector("[data-hero-fs-track]");
     var slides = Array.prototype.slice.call(root.querySelectorAll("[data-hero-fs-slide]"));
     var dots = Array.prototype.slice.call(root.querySelectorAll("[data-hero-fs-dot]"));
-    var pauseBtn = root.querySelector("[data-hero-fs-pause]");
-    var pauseLabelEl = pauseBtn ? pauseBtn.querySelector(".hero-fs-pause-label") : null;
 
     if (!viewport || !track || slides.length === 0) return;
     if (dots.length !== slides.length) return;
@@ -27,7 +25,6 @@
     var idx = 0;
     var intervalMs = 6500;
     var timer = null;
-    var userPaused = false;
     var hoverPaused = false;
 
     var prefersReduced =
@@ -63,7 +60,7 @@
     }
 
     function startAuto() {
-      if (prefersReduced || userPaused) return;
+      if (prefersReduced) return;
       if (timer) return;
       timer = setInterval(function () {
         if (hoverPaused) return;
@@ -73,12 +70,6 @@
       }, intervalMs);
     }
 
-    function syncPauseUi() {
-      if (!pauseBtn) return;
-      pauseBtn.setAttribute("aria-pressed", userPaused ? "true" : "false");
-      if (pauseLabelEl) pauseLabelEl.textContent = userPaused ? "Play" : "Pause";
-    }
-
     dots.forEach(function (d, i) {
       d.addEventListener("click", function () {
         setIndex(i);
@@ -86,16 +77,6 @@
         startAuto();
       });
     });
-
-    if (pauseBtn) {
-      pauseBtn.addEventListener("click", function () {
-        userPaused = !userPaused;
-        syncPauseUi();
-        if (userPaused) stopAuto();
-        else startAuto();
-      });
-      syncPauseUi();
-    }
 
     viewport.addEventListener("mouseenter", function () {
       hoverPaused = true;
