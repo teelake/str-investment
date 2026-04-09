@@ -22,7 +22,7 @@
       rel="stylesheet"
     />
     <link rel="icon" href="favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="assets/styles.css?v=20260418" />
+    <link rel="stylesheet" href="assets/styles.css?v=20260419" />
     <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" />
     <link
       rel="stylesheet"
@@ -100,25 +100,6 @@
               <strong>3) Verification &amp; decision</strong>
               <span>Affordability and KYC; you get clear next steps or an offer.</span>
             </article>
-          </div>
-
-          <div class="metrics" style="margin-top: 22px">
-            <div class="metric">
-              <span class="metric-ic" aria-hidden="true"><i class="bx bx-id-card"></i></span>
-              <b>Identity</b><span>KYC &amp; BVN where required</span>
-            </div>
-            <div class="metric">
-              <span class="metric-ic" aria-hidden="true"><i class="bx bx-line-chart"></i></span>
-              <b>Income / turnover</b><span>Salary or business inflow</span>
-            </div>
-            <div class="metric">
-              <span class="metric-ic" aria-hidden="true"><i class="bx bx-wallet"></i></span>
-              <b>Affordability</b><span>Repayment fit vs. cash flow</span>
-            </div>
-            <div class="metric">
-              <span class="metric-ic" aria-hidden="true"><i class="bx bx-chat"></i></span>
-              <b>Support</b><span>Guidance through the process</span>
-            </div>
           </div>
         </div>
       </section>
