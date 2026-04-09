@@ -41,9 +41,16 @@
     var idx = 0;
     var intervalMs = 7000;
     var timer = null;
+    var lastW = 0;
 
     function render() {
-      slidesEl.style.transform = "translate3d(" + idx * -100 + "%, 0, 0)";
+      var rect = slider.getBoundingClientRect();
+      var w = Math.max(0, Math.round(rect.width));
+      if (!w) return;
+      // Ensure a stable transform based on real pixel width (prevents slide peeking)
+      slidesEl.style.transform = "translate3d(" + idx * -w + "px, 0, 0)";
+      if (w !== lastW) lastW = w;
+
       dots.forEach(function (d, i) {
         d.setAttribute("aria-current", i === idx ? "true" : "false");
       });
@@ -74,6 +81,10 @@
     });
 
     render();
+    window.addEventListener("resize", function () {
+      // re-render to snap to new width
+      render();
+    });
     if (!prefersReduced) {
       timer = setInterval(function () {
         go(idx + 1);
