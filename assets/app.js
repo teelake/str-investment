@@ -19,6 +19,20 @@
     var dots = Array.prototype.slice.call(slider.querySelectorAll("[data-hero-dot]"));
     if (!slidesEl || slides.length === 0 || dots.length !== slides.length) return;
 
+    var labelEl = document.querySelector("[data-hero-label]");
+    var titleEl = document.querySelector("[data-hero-title]");
+    var meta = slides.map(function (s) {
+      return {
+        label: s.getAttribute("aria-label") || "",
+        theme: s.getAttribute("data-theme") || "",
+      };
+    });
+    var labelsByTheme = {
+      personal: { label: "Personal Loan", title: "Blue‑chip employee loan" },
+      sme: { label: "SME Term Loan", title: "Working capital built for turnover" },
+      school: { label: "Back to School", title: "Education support for resumption" },
+    };
+
     var prefersReduced =
       typeof window !== "undefined" &&
       window.matchMedia &&
@@ -34,6 +48,14 @@
         d.setAttribute("aria-current", i === idx ? "true" : "false");
       });
       slider.setAttribute("data-index", String(idx));
+
+      if (labelEl && titleEl) {
+        var slide = slides[idx];
+        var theme = (slide && slide.getAttribute("data-theme")) || "";
+        var t = labelsByTheme[theme] || labelsByTheme.personal;
+        labelEl.textContent = t.label;
+        titleEl.textContent = t.title;
+      }
     }
 
     function go(next) {

@@ -101,92 +101,46 @@
     <?php include __DIR__ . '/partials/header.php'; ?>
 
     <main id="main">
-      <section class="hero">
-        <div class="container hero-grid">
-          <div>
-            <span class="pill"><span class="dot" aria-hidden="true"></span> Incorporated February 2026</span>
-            <h1 class="h1">
-              Bridging the <span class="accent">Financing Gap</span> for You
-            </h1>
-            <p class="lead">
-              STR Investment Services Limited provides accessible and innovative microcredit solutions
-              to individuals and small businesses — fast, flexible, and customer-focused.
-            </p>
-            <div class="hero-actions">
-              <a class="btn primary" href="loans">Apply for a Loan</a>
-              <a class="btn ghost" href="loans">Browse Products</a>
-            </div>
+      <section class="hero hero--slider" aria-label="Hero">
+        <div class="hero-slider" data-hero-slider data-index="0" aria-label="Loan highlights slider">
+          <div class="hero-slides" data-hero-slides>
+            <article class="hero-slide" data-hero-slide data-theme="personal" aria-label="Personal Loan slide">
+              <img class="hero-slide-img" src="assets/images/personal-loan.jpg" alt="" aria-hidden="true" loading="lazy" />
+            </article>
+            <article class="hero-slide" data-hero-slide data-theme="sme" aria-label="SME Term Loan slide">
+              <img class="hero-slide-img" src="assets/images/loan-mama.jpg" alt="" aria-hidden="true" loading="lazy" />
+            </article>
+            <article class="hero-slide" data-hero-slide data-theme="school" aria-label="Back to School slide">
+              <img class="hero-slide-img" src="assets/images/hero-placeholder.svg" alt="" aria-hidden="true" loading="lazy" />
+            </article>
           </div>
 
-          <aside class="hero-side" aria-label="Loan highlights">
-            <div class="frame" aria-hidden="true"></div>
+          <div class="hero-dots" role="tablist" aria-label="Select slide">
+            <button type="button" class="hero-dot" data-hero-dot aria-label="Show Personal Loan slide"></button>
+            <button type="button" class="hero-dot" data-hero-dot aria-label="Show SME Term Loan slide"></button>
+            <button type="button" class="hero-dot" data-hero-dot aria-label="Show Back to School slide"></button>
+          </div>
+        </div>
 
-            <div class="hero-slider" data-hero-slider data-index="0" aria-label="Loan highlights slider">
-              <div class="hero-slides" data-hero-slides>
-                <article class="hero-slide" data-hero-slide data-theme="personal" aria-label="Personal Loan slide">
-                  <img
-                    class="hero-slide-img"
-                    src="assets/images/personal-loan.jpg"
-                    alt=""
-                    aria-hidden="true"
-                    loading="lazy"
-                  />
-                  <div class="hero-slide-text">
-                    <div class="hero-slide-badge">
-                      <i class="bx bx-id-card" aria-hidden="true"></i>
-                      <span>Personal Loan</span>
-                    </div>
-                    <div class="hero-slide-title">Blue‑chip employee loan</div>
-                  </div>
-                </article>
+        <div class="container hero-content">
+          <span class="pill"><span class="dot" aria-hidden="true"></span> Incorporated February 2026</span>
+          <h1 class="h1">Bridging the <span class="accent">Financing Gap</span> for You</h1>
+          <p class="lead">
+            STR Investment Services Limited provides accessible and innovative microcredit solutions to individuals and small
+            businesses — fast, flexible, and customer-focused.
+          </p>
+          <div class="hero-actions">
+            <a class="btn primary" href="loans">Apply for a Loan</a>
+            <a class="btn ghost" href="loans">Browse Products</a>
+          </div>
 
-                <article class="hero-slide" data-hero-slide data-theme="sme" aria-label="SME Term Loan slide">
-                  <img
-                    class="hero-slide-img"
-                    src="assets/images/loan-mama.jpg"
-                    alt=""
-                    aria-hidden="true"
-                    loading="lazy"
-                  />
-                  <div class="hero-slide-text">
-                    <div class="hero-slide-badge">
-                      <i class="bx bx-store-alt" aria-hidden="true"></i>
-                      <span>SME Term Loan</span>
-                    </div>
-                    <div class="hero-slide-title">Working capital built for turnover</div>
-                  </div>
-                </article>
-
-                <article class="hero-slide" data-hero-slide data-theme="school" aria-label="Back to School slide">
-                  <img
-                    class="hero-slide-img"
-                    src="assets/images/hero-placeholder.svg"
-                    alt=""
-                    aria-hidden="true"
-                    loading="lazy"
-                  />
-                  <div class="hero-slide-text">
-                    <div class="hero-slide-badge">
-                      <i class="bx bx-book-open" aria-hidden="true"></i>
-                      <span>Back to School</span>
-                    </div>
-                    <div class="hero-slide-title">Education support for resumption</div>
-                  </div>
-                </article>
-              </div>
-
-              <div class="hero-dots" role="tablist" aria-label="Select slide">
-                <button type="button" class="hero-dot" data-hero-dot aria-label="Show Personal Loan slide"></button>
-                <button type="button" class="hero-dot" data-hero-dot aria-label="Show SME Term Loan slide"></button>
-                <button type="button" class="hero-dot" data-hero-dot aria-label="Show Back to School slide"></button>
-              </div>
+          <div class="hero-slide-text" aria-label="Featured product">
+            <div class="hero-slide-badge">
+              <i class="bx bx-id-card" aria-hidden="true"></i>
+              <span data-hero-label>Personal Loan</span>
             </div>
-
-            <div class="mini">
-              <span class="dot" aria-hidden="true"></span>
-           
-            </div>
-          </aside>
+            <div class="hero-slide-title" data-hero-title>Blue‑chip employee loan</div>
+          </div>
         </div>
       </section>
 
