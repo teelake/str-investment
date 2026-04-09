@@ -141,7 +141,7 @@
                 <article class="hero-slide" data-hero-slide data-theme="sme" aria-label="SME Term Loan slide">
                   <img
                     class="hero-slide-img"
-                    src="assets/images/hero-placeholder.svg"
+                    src="assets/images/loan-mama.jpg"
                     alt=""
                     aria-hidden="true"
                     loading="lazy"
