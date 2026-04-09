@@ -111,7 +111,7 @@
               <img class="hero-slide-img" src="assets/images/loan-mama.jpg" alt="" aria-hidden="true" loading="lazy" />
             </article>
             <article class="hero-slide" data-hero-slide data-theme="school" aria-label="Back to School slide">
-              <img class="hero-slide-img" src="assets/images/hero-placeholder.svg" alt="" aria-hidden="true" loading="lazy" />
+              <img class="hero-slide-img" src="assets/images/back-to-school.jpg" alt="" aria-hidden="true" loading="lazy" />
             </article>
           </div>
 
