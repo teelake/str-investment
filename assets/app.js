@@ -14,6 +14,12 @@
     var slider = document.querySelector("[data-hero-slider]");
     if (!slider) return;
 
+    var debug =
+      typeof window !== "undefined" &&
+      window.location &&
+      typeof window.location.search === "string" &&
+      window.location.search.indexOf("debug=1") !== -1;
+
     var slidesEl = slider.querySelector("[data-hero-slides]");
     var slides = Array.prototype.slice.call(slider.querySelectorAll("[data-hero-slide]"));
     var dots = Array.prototype.slice.call(slider.querySelectorAll("[data-hero-dot]"));
@@ -113,6 +119,32 @@
       if (secondaryEl) {
         secondaryEl.setAttribute("href", c.secondaryHref);
         secondaryEl.textContent = c.secondaryText;
+      }
+
+      if (debug && typeof console !== "undefined") {
+        try {
+          var t = slidesEl.style.transform;
+          console.groupCollapsed("[STR slider] render idx=" + idx);
+          console.log("sliderWidthPx:", w);
+          console.log("trackWidthPx:", slidesEl.style.width, "transform:", t);
+          console.log(
+            "slides:",
+            slides.map(function (s) {
+              var img = s.querySelector("img");
+              return {
+                theme: s.getAttribute("data-theme"),
+                width: s.style.width,
+                src: img ? img.getAttribute("src") : null,
+                complete: img ? img.complete : null,
+                naturalW: img ? img.naturalWidth : null,
+                naturalH: img ? img.naturalHeight : null,
+              };
+            })
+          );
+          console.groupEnd();
+        } catch (e) {
+          // ignore
+        }
       }
     }
 
@@ -230,6 +262,21 @@
       },
       { passive: true }
     );
+
+    if (debug) {
+      // Log image load/error to quickly diagnose missing/blocked assets
+      slides.forEach(function (s) {
+        var img = s.querySelector("img");
+        if (!img) return;
+        img.addEventListener("load", function () {
+          console.log("[STR slider] image loaded:", img.getAttribute("src"), img.naturalWidth + "x" + img.naturalHeight);
+        });
+        img.addEventListener("error", function () {
+          console.warn("[STR slider] image failed:", img.getAttribute("src"));
+        });
+      });
+      console.log("[STR slider] debug=1 enabled");
+    }
 
     startAuto();
   })();
