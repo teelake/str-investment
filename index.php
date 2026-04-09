@@ -373,7 +373,7 @@
 
           <figure class="portrait" aria-label="Team photo">
             <img
-              src="images/Bridging-Credit-Gap-Rethinking-SME-Financing.png"
+              src="assets/images/Bridging-Credit-Gap-Rethinking-SME-Financing.png"
               loading="lazy"
               alt="Bridging the Credit Gap - Rethinking SME Financing"
             />
