@@ -333,6 +333,55 @@
         </div>
       </section>
 
+      <section class="section editorial-band" aria-label="How we support you">
+        <div class="container lower-grid">
+          <div class="lower-card">
+            <span class="badge">OUR APPROACH</span>
+            <h2 class="h2" style="margin-top: 14px">Support that feels human—decisions that stay responsible.</h2>
+            <p class="sub">
+              We’re built to bridge the financing gap with timely, flexible microcredit—guided by risk-aware assessment and
+              customer-first support.
+            </p>
+            <div class="editorial-points" aria-label="Highlights">
+              <div class="pt">
+                <i class="bx bx-timer" aria-hidden="true"></i>
+                <div>
+                  <b>Speed</b>
+                  <div class="sub">Streamlined verification and quick turnarounds.</div>
+                </div>
+              </div>
+              <div class="pt">
+                <i class="bx bx-receipt" aria-hidden="true"></i>
+                <div>
+                  <b>Transparency</b>
+                  <div class="sub">Clear requirements, fees, and repayment expectations.</div>
+                </div>
+              </div>
+              <div class="pt">
+                <i class="bx bx-user-check" aria-hidden="true"></i>
+                <div>
+                  <b>Customer‑first</b>
+                  <div class="sub">Guidance from application to repayment.</div>
+                </div>
+              </div>
+            </div>
+            <div class="hero-actions" style="margin-top: 18px">
+              <a class="btn primary" href="contact?product=general">Talk to a Consultant</a>
+              <a class="btn ghost" href="eligibility">See Eligibility</a>
+            </div>
+          </div>
+
+          <figure class="portrait" aria-label="Team photo">
+            <img
+              src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=1600&q=80&auto=format&fit=crop"
+              alt="STR Investment team in a client meeting (license‑free placeholder)."
+              loading="lazy"
+            />
+            <figcaption class="portrait-cap">Guided by experienced bankers and financial professionals.</figcaption>
+          </figure>
+        </div>
+      </section>
+
       <section class="section faq-band">
         <div class="container">
           <div class="center">

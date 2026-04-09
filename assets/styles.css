@@ -479,6 +479,37 @@ i.bx, i.fa, i.fa-solid, i.fa-regular, i.fa-brands{
   border-bottom: 1px solid var(--line2);
 }
 
+.editorial-band{
+  background: rgba(255,255,255,.55);
+  border-top: 1px solid var(--line2);
+  border-bottom: 1px solid var(--line2);
+}
+.editorial-points{
+  margin-top: 14px;
+  display:grid;
+  gap: 12px;
+}
+.editorial-points .pt{
+  display:grid;
+  grid-template-columns: 18px 1fr;
+  gap: 10px;
+  align-items:flex-start;
+  color: var(--muted);
+  font-size: 13px;
+}
+.editorial-points .pt i{
+  margin-top: 2px;
+  font-size: 18px;
+  color: var(--green);
+}
+.portrait-cap{
+  padding: 12px 14px;
+  color: var(--muted);
+  font-size: 13px;
+  border-top: 1px solid var(--line2);
+  background: rgba(255,255,255,.78);
+}
+
 /* Loans grid */
 .loans-head{
   display:flex;
