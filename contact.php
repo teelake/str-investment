@@ -116,26 +116,39 @@
                   <a href="tel:+2349054984777">09054984777</a>
                 </div>
               </div>
-              <div class="map" aria-label="Map placeholder"></div>
+              <div class="office-extra" aria-label="Office details">
+                <div class="row">
+                  <span aria-hidden="true"><i class="bx bx-time-five"></i></span>
+                  <div>
+                    <b>Office hours</b><br />
+                    Mon–Fri, 9:00am–5:00pm
+                  </div>
+                </div>
+                <div class="row">
+                  <span aria-hidden="true"><i class="bx bxl-whatsapp"></i></span>
+                  <div>
+                    <b>WhatsApp</b><br />
+                    <a href="https://wa.me/2349054984777" target="_blank" rel="noopener">Chat with us</a>
+                  </div>
+                </div>
+              </div>
             </aside>
           </div>
         </div>
       </section>
 
-      <section class="section lower" aria-label="Map">
-        <div class="container">
-          <div class="map-embed panel" aria-label="Office location map">
-            <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d494.6233020332049!2d3.831665299454212!3d7.355418203058441!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x10398d000b02ddc9%3A0x1e6c5e85ece95e70!2sElebu%2C%20Ibadan!5e0!3m2!1sen!2sng!4v1775720775449!5m2!1sen!2sng"
-              width="600"
-              height="450"
-              style="border: 0"
-              allowfullscreen=""
-              loading="lazy"
-              referrerpolicy="no-referrer-when-downgrade"
-              title="STR Investment Services Limited — Office location"
-            ></iframe>
-          </div>
+      <section class="lower map-band" aria-label="Map">
+        <div class="map-embed-full" aria-label="Office location map">
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d494.6233020332049!2d3.831665299454212!3d7.355418203058441!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x10398d000b02ddc9%3A0x1e6c5e85ece95e70!2sElebu%2C%20Ibadan!5e0!3m2!1sen!2sng!4v1775720775449!5m2!1sen!2sng"
+            width="600"
+            height="450"
+            style="border: 0"
+            allowfullscreen=""
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            title="STR Investment Services Limited — Office location"
+          ></iframe>
         </div>
       </section>
     </main>

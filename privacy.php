@@ -60,7 +60,10 @@
                 Questions about privacy? Email:
                 <a href="mailto:strinvestmentservicesltd@gmail.com">strinvestmentservicesltd@gmail.com</a>
               </p>
-              <div class="map" aria-label="Placeholder"></div>
+              <div class="placeholder-box" aria-label="Note">
+                <b>Note</b><br />
+                For urgent support, call <a href="tel:+2349054984777">09054984777</a>.
+              </div>
             </aside>
           </div>
         </div>
