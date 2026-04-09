@@ -477,18 +477,6 @@ i.bx, i.fa, i.fa-solid, i.fa-regular, i.fa-brands{
   border-color: rgba(15,106,74,.1);
 }
 
-.metric-ic{
-  width: 38px;
-  height: 38px;
-  border-radius: 12px;
-  display:grid;
-  place-items:center;
-  background: rgba(15,106,74,.1);
-  color: var(--green);
-  margin-bottom: 10px;
-}
-.metric-ic i{font-size: 18px}
-
 .cta-panel-kicker{
   width: 48px;
   height: 48px;

@@ -45,7 +45,7 @@
       rel="stylesheet"
     />
     <link rel="icon" href="favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="assets/styles.css?v=20260416" />
+    <link rel="stylesheet" href="assets/styles.css?v=20260417" />
     <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" />
     <link
       rel="stylesheet"
@@ -73,7 +73,9 @@
           </div>
 
           <aside class="hero-side hero-side--about" aria-label="At a glance">
-            <div class="frame" aria-hidden="true"></div>
+            <div class="frame" aria-hidden="true">
+              <img src="assets/images/smes-1.jpg" alt="STR Investment Services Limited" loading="lazy" />
+            </div>
             <div class="hero-about-highlights">
               <div class="mini">
                 <span class="mini-ic" aria-hidden="true"><i class="bx bx-calendar-check"></i></span>
@@ -120,25 +122,6 @@
               </div>
               <div style="margin-top: 16px"><a class="btn ghost" href="loans"><i class="bx bx-credit-card" aria-hidden="true"></i> Products</a></div>
             </article>
-          </div>
-
-          <div class="metrics" style="margin-top: 22px">
-            <div class="metric">
-              <span class="metric-ic" aria-hidden="true"><i class="bx bx-wallet"></i></span>
-              <b>Salary advance</b><span>For employed applicants</span>
-            </div>
-            <div class="metric">
-              <span class="metric-ic" aria-hidden="true"><i class="bx bx-store-alt"></i></span>
-              <b>Business</b><span>Working capital &amp; growth</span>
-            </div>
-            <div class="metric">
-              <span class="metric-ic" aria-hidden="true"><i class="bx bx-package"></i></span>
-              <b>Asset finance</b><span>Productive purchases</span>
-            </div>
-            <div class="metric">
-              <span class="metric-ic" aria-hidden="true"><i class="bx bx-map"></i></span>
-              <b>Nigeria</b><span>Locally focused service</span>
-            </div>
           </div>
         </div>
       </section>
