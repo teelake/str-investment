@@ -45,7 +45,7 @@
       rel="stylesheet"
     />
     <link rel="icon" href="favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="assets/styles.css?v=20260415" />
+    <link rel="stylesheet" href="assets/styles.css?v=20260416" />
     <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" />
     <link
       rel="stylesheet"
@@ -60,15 +60,15 @@
       <section class="hero">
         <div class="container hero-grid">
           <div>
-            <span class="pill"><span class="dot" aria-hidden="true"></span> About STR Investment</span>
+            <span class="pill"><span class="pill-ic" aria-hidden="true"><i class="bx bx-buildings"></i></span> About STR Investment</span>
             <h1 class="h1">Microcredit for <span class="accent">people &amp; SMEs</span> — with banking discipline.</h1>
             <p class="lead">
               We are a private limited company (2025) focused on accessible microcredit: timely, flexible products for
               individuals, small businesses, and communities underserved by traditional finance.
             </p>
             <div class="hero-actions">
-              <a class="btn primary" href="loans">View loan products</a>
-              <a class="btn ghost" href="contact?product=general">Contact us</a>
+              <a class="btn primary" href="loans"><i class="bx bx-list-ul" aria-hidden="true"></i> View loan products</a>
+              <a class="btn ghost" href="contact?product=general"><i class="bx bx-envelope" aria-hidden="true"></i> Contact us</a>
             </div>
           </div>
 
@@ -76,7 +76,7 @@
             <div class="frame" aria-hidden="true"></div>
             <div class="hero-about-highlights">
               <div class="mini">
-                <span class="dot" aria-hidden="true"></span>
+                <span class="mini-ic" aria-hidden="true"><i class="bx bx-calendar-check"></i></span>
                 <span>
                   <b>Est. 2025</b> · Microcredit<br />
                   <span class="hero-about-motto">Where trust meets opportunity</span>
@@ -90,6 +90,7 @@
       <section class="section why">
         <div class="container">
           <div class="center">
+            <div class="about-kicker" aria-hidden="true"><i class="bx bx-badge-check"></i></div>
             <h2 class="h2">What we stand for</h2>
             <p class="sub">
               Quick, reliable, affordable credit — grounded in governance, clear assessment, and products that fit real
@@ -106,7 +107,7 @@
                 </div>
                 <p>Grow access to credit for households and SMEs, and support financial inclusion without cutting corners on suitability.</p>
               </div>
-              <div style="margin-top: 16px"><a class="btn ghost" href="eligibility">Eligibility</a></div>
+              <div style="margin-top: 16px"><a class="btn ghost" href="eligibility"><i class="bx bx-check-circle" aria-hidden="true"></i> Eligibility</a></div>
             </article>
 
             <article class="loan-big" style="background: rgba(255,255,255,.78)">
@@ -117,15 +118,27 @@
                 </div>
                 <p>Experienced credit practice plus pragmatic product design — so lending stays sustainable for clients and the business.</p>
               </div>
-              <div style="margin-top: 16px"><a class="btn ghost" href="loans">Products</a></div>
+              <div style="margin-top: 16px"><a class="btn ghost" href="loans"><i class="bx bx-credit-card" aria-hidden="true"></i> Products</a></div>
             </article>
           </div>
 
           <div class="metrics" style="margin-top: 22px">
-            <div class="metric"><b>Salary advance</b><span>For employed applicants</span></div>
-            <div class="metric"><b>Business</b><span>Working capital &amp; growth</span></div>
-            <div class="metric"><b>Asset finance</b><span>Productive purchases</span></div>
-            <div class="metric"><b>Nigeria</b><span>Locally focused service</span></div>
+            <div class="metric">
+              <span class="metric-ic" aria-hidden="true"><i class="bx bx-wallet"></i></span>
+              <b>Salary advance</b><span>For employed applicants</span>
+            </div>
+            <div class="metric">
+              <span class="metric-ic" aria-hidden="true"><i class="bx bx-store-alt"></i></span>
+              <b>Business</b><span>Working capital &amp; growth</span>
+            </div>
+            <div class="metric">
+              <span class="metric-ic" aria-hidden="true"><i class="bx bx-package"></i></span>
+              <b>Asset finance</b><span>Productive purchases</span>
+            </div>
+            <div class="metric">
+              <span class="metric-ic" aria-hidden="true"><i class="bx bx-map"></i></span>
+              <b>Nigeria</b><span>Locally focused service</span>
+            </div>
           </div>
         </div>
       </section>
@@ -133,6 +146,7 @@
       <section class="section">
         <div class="container">
           <div class="center">
+            <div class="about-kicker" aria-hidden="true"><i class="bx bx-user-circle"></i></div>
             <h2 class="h2">Leadership</h2>
             <p class="sub">
               Founded and funded by an ex-banker with 20+ years across marketing, credit analysis, and business
@@ -146,6 +160,7 @@
       <section class="section editorial-band">
         <div class="container">
           <div class="center">
+            <div class="about-kicker about-kicker--light" aria-hidden="true"><i class="bx bx-group"></i></div>
             <h2 class="h2">Core values</h2>
             <p class="sub">How we work together — and how we treat every application.</p>
           </div>
@@ -174,11 +189,12 @@
         <div class="container">
           <div class="cta-panel">
             <div class="center" style="margin-bottom: 0; max-width: 760px">
+              <div class="cta-panel-kicker" aria-hidden="true"><i class="bx bx-message-rounded-dots"></i></div>
               <h2 class="h2" style="color: white; margin-bottom: 10px">Apply or ask a question</h2>
               <p>We’ll point you to the right product and documents.</p>
               <div class="actions">
-                <a class="btn" href="loans" style="background:#fff;color:var(--green);">Browse loans</a>
-                <a class="btn primary" href="contact?product=general">Apply now</a>
+                <a class="btn" href="loans" style="background:#fff;color:var(--green);"><i class="bx bx-book-open" aria-hidden="true"></i> Browse loans</a>
+                <a class="btn primary" href="contact?product=general"><i class="bx bx-send" aria-hidden="true"></i> Apply now</a>
               </div>
             </div>
           </div>
