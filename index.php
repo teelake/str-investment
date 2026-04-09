@@ -28,7 +28,7 @@
       rel="stylesheet"
     />
     <link rel="icon" href="favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="assets/styles.css?v=20260411" />
+    <link rel="stylesheet" href="assets/styles.css?v=20260412" />
     <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" />
     <link
       rel="stylesheet"
@@ -411,7 +411,7 @@
 
           <figure class="portrait" aria-label="Team photo">
             <img
-              src="assets/images/Bridging-Credit-Gap-Rethinking-SME-Financing.png"
+              src="assets/images/african-market-woman-smiling-while-counting-money-receive-from-loan-bank_505521-656.avif"
               loading="lazy"
               alt="Bridging the Credit Gap - Rethinking SME Financing"
             />

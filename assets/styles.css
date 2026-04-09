@@ -504,6 +504,8 @@ i.bx, i.fa, i.fa-solid, i.fa-regular, i.fa-brands{
   color: var(--green);
 }
 .portrait-cap{
+  margin: 0;
+  flex-shrink: 0;
   padding: 12px 14px;
   color: var(--muted);
   font-size: 13px;
@@ -837,9 +839,10 @@ footer{
 }
 .lower-grid{
   display:grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 18px;
   align-items: stretch;
+  justify-items: stretch;
 }
 .lower-grid > *{min-width: 0}
 .lower-card{
@@ -851,6 +854,8 @@ footer{
   display:flex;
   flex-direction:column;
   justify-content:center;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .map-band{
@@ -899,6 +904,9 @@ footer{
   width: fit-content;
 }
 .portrait{
+  margin: 0;
+  width: 100%;
+  max-width: 100%;
   border-radius: var(--radius2);
   overflow:hidden;
   box-shadow: var(--shadow2);
@@ -906,8 +914,18 @@ footer{
   min-height: 320px;
   background:
     linear-gradient(180deg, rgba(13,15,18,.06), rgba(13,15,18,.02));
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
 }
-.portrait img{width:100%; height:100%; object-fit: cover}
+.portrait img{
+  display: block;
+  width: 100%;
+  flex: 1 1 auto;
+  min-height: 260px;
+  object-fit: cover;
+  object-position: center;
+}
 
 /* WhatsApp floating */
 .wa-fab{
