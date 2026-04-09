@@ -75,6 +75,7 @@
     var intervalMs = 7000;
     var timer = null;
     var lastW = 0;
+    var isPaused = false;
 
     function render() {
       var rect = slider.getBoundingClientRect();
@@ -120,13 +121,30 @@
       render();
     }
 
+    function stopAuto() {
+      if (timer) {
+        clearInterval(timer);
+        timer = null;
+      }
+    }
+
+    function startAuto() {
+      if (prefersReduced) return;
+      if (timer) return;
+      timer = setInterval(function () {
+        if (isPaused) return;
+        // schedule after paint to avoid jank on some browsers
+        window.requestAnimationFrame(function () {
+          go(idx + 1);
+        });
+      }, intervalMs);
+    }
+
     dots.forEach(function (d, i) {
       d.addEventListener("click", function () {
         go(i);
-        if (timer) {
-          clearInterval(timer);
-          timer = null;
-        }
+        stopAuto();
+        startAuto();
       });
     });
 
@@ -139,14 +157,81 @@
       // ensure widths are correct after images/layout settle
       render();
     });
-    if (!prefersReduced) {
-      timer = setInterval(function () {
-        // schedule after paint to avoid jank on some browsers
-        window.requestAnimationFrame(function () {
-          go(idx + 1);
-        });
-      }, intervalMs);
-    }
+
+    // Pause on hover / focus (accessibility + readability)
+    slider.addEventListener("mouseenter", function () {
+      isPaused = true;
+      stopAuto();
+    });
+    slider.addEventListener("mouseleave", function () {
+      isPaused = false;
+      startAuto();
+    });
+    slider.addEventListener("focusin", function () {
+      isPaused = true;
+      stopAuto();
+    });
+    slider.addEventListener("focusout", function () {
+      isPaused = false;
+      startAuto();
+    });
+    document.addEventListener("visibilitychange", function () {
+      if (document.hidden) stopAuto();
+      else startAuto();
+    });
+
+    // Swipe support (touch devices)
+    var sx = 0,
+      sy = 0,
+      dx = 0,
+      active = false,
+      locked = false;
+
+    slider.addEventListener(
+      "touchstart",
+      function (e) {
+        if (!e.touches || e.touches.length !== 1) return;
+        active = true;
+        locked = false;
+        dx = 0;
+        sx = e.touches[0].clientX;
+        sy = e.touches[0].clientY;
+        stopAuto();
+      },
+      { passive: true }
+    );
+
+    slider.addEventListener(
+      "touchmove",
+      function (e) {
+        if (!active || !e.touches || e.touches.length !== 1) return;
+        var x = e.touches[0].clientX;
+        var y = e.touches[0].clientY;
+        dx = x - sx;
+        var dy = y - sy;
+        if (!locked) {
+          // lock when it's clearly a horizontal swipe
+          locked = Math.abs(dx) > Math.abs(dy) + 8;
+        }
+        if (locked) e.preventDefault();
+      },
+      { passive: false }
+    );
+
+    slider.addEventListener(
+      "touchend",
+      function () {
+        if (!active) return;
+        active = false;
+        if (locked && Math.abs(dx) > 50) {
+          go(dx < 0 ? idx + 1 : idx - 1);
+        }
+        startAuto();
+      },
+      { passive: true }
+    );
+
+    startAuto();
   })();
 
   // FAQ accordion
