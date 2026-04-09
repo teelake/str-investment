@@ -467,6 +467,18 @@ i.bx, i.fa, i.fa-solid, i.fa-regular, i.fa-brands{
   border-bottom: 1px solid var(--line2);
 }
 
+.loans-band{
+  background: rgba(255,255,255,.55);
+  border-top: 1px solid var(--line2);
+  border-bottom: 1px solid var(--line2);
+}
+
+.faq-band{
+  background: rgba(13,15,18,.02);
+  border-top: 1px solid var(--line2);
+  border-bottom: 1px solid var(--line2);
+}
+
 /* Loans grid */
 .loans-head{
   display:flex;

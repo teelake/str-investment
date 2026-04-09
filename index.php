@@ -192,7 +192,7 @@
           <div class="center">
             <h2 class="h2">Why Choose STR Investment?</h2>
             <p class="sub">
-              We balance speed with responsible lending — protecting customers and sustaining long-term value.
+              Fast decisions. Responsible lending.
             </p>
           </div>
 
@@ -263,7 +263,7 @@
         </div>
       </section>
 
-      <section class="section">
+      <section class="section loans-band">
         <div class="container">
           <div class="loans-head">
             <div>
@@ -333,7 +333,7 @@
         </div>
       </section>
 
-      <section class="section">
+      <section class="section faq-band">
         <div class="container">
           <div class="center">
             <h2 class="h2">Frequently Asked Questions</h2>
