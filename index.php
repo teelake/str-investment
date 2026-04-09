@@ -101,30 +101,130 @@
     <?php include __DIR__ . '/partials/header.php'; ?>
 
     <main id="main">
-      <section class="hero" aria-label="Hero">
-        <div class="container hero-grid">
-          <div>
-            <span class="pill"><span class="dot" aria-hidden="true"></span>Incorporated February 2026</span>
-            <h1 class="h1">Bridging the <span class="accent">Financing Gap</span> for You</h1>
-            <p class="lead">
-              STR Investment Services Limited provides accessible and innovative microcredit solutions to individuals and small
-              businesses — fast, flexible, and customer-focused.
-            </p>
-            <div class="hero-actions">
-              <a class="btn primary" href="contact?product=general">Apply for a Loan</a>
-              <a class="btn ghost" href="loans">Browse Products</a>
-            </div>
-          </div>
+      <section
+        class="hero hero--fullslider"
+        aria-roledescription="carousel"
+        aria-label="Featured microcredit solutions"
+        data-hero-fullslider
+      >
+        <h2 class="sr-only">Featured solutions</h2>
+        <div class="hero-fs-viewport" data-hero-fs-viewport>
+          <div class="hero-fs-track" data-hero-fs-track role="group" aria-live="polite" aria-atomic="true">
+            <article class="hero-fs-slide" data-hero-fs-slide aria-label="Slide 1 of 4: Personal loan">
+              <div class="hero-fs-media" aria-hidden="true">
+                <img
+                  src="assets/images/personal-loan.jpg"
+                  alt=""
+                  loading="eager"
+                  fetchpriority="high"
+                  decoding="async"
+                  onerror="this.onerror=null;this.src='assets/images/hero-placeholder.svg';"
+                />
+              </div>
+              <div class="hero-fs-scrim" aria-hidden="true"></div>
+              <div class="container hero-fs-inner">
+                <span class="pill hero-fs-pill"><span class="dot" aria-hidden="true"></span>Personal loan</span>
+                <h1 class="h1 hero-fs-title">
+                  Blue‑chip <span class="accent">employee</span> financing
+                </h1>
+                <p class="lead hero-fs-lead">
+                  Unsecured personal credit for verified staff — flexible tenor up to 12 months, payroll-friendly repayments, and
+                  clear fees.
+                </p>
+                <div class="hero-actions">
+                  <a class="btn primary" href="contact?product=personal">Apply now</a>
+                  <a class="btn ghost" href="loans#personal">View product</a>
+                </div>
+              </div>
+            </article>
 
-          <div class="hero-side" aria-hidden="true">
-            <img
-              src="assets/images/hero-placeholder.svg"
-              alt=""
-              loading="lazy"
-              style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;"
-            />
-            <div class="frame" aria-hidden="true"></div>
-            <div class="mini"><b>Customer-first</b> lending, clear terms.</div>
+            <article class="hero-fs-slide" data-hero-fs-slide aria-label="Slide 2 of 4: SME term loan">
+              <div class="hero-fs-media" aria-hidden="true">
+                <img
+                  src="assets/images/loan-mama.jpg"
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                  onerror="this.onerror=null;this.src='assets/images/hero-placeholder.svg';"
+                />
+              </div>
+              <div class="hero-fs-scrim" aria-hidden="true"></div>
+              <div class="container hero-fs-inner">
+                <span class="pill hero-fs-pill"><span class="dot" aria-hidden="true"></span>SME term loan</span>
+                <p class="h1 hero-fs-title" role="heading" aria-level="1">Working capital for <span class="accent">real growth</span></p>
+                <p class="lead hero-fs-lead">
+                  Short-term working capital for stock and operations — assessed on turnover and cash-flow, with tenors that
+                  match your business rhythm.
+                </p>
+                <div class="hero-actions">
+                  <a class="btn primary" href="contact?product=sme">Talk to us</a>
+                  <a class="btn ghost" href="loans#sme">View product</a>
+                </div>
+              </div>
+            </article>
+
+            <article class="hero-fs-slide" data-hero-fs-slide aria-label="Slide 3 of 4: Back to school">
+              <div class="hero-fs-media" aria-hidden="true">
+                <img
+                  src="assets/images/back-to-school.avif"
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                  onerror="this.onerror=null;this.src='assets/images/hero-placeholder.svg';"
+                />
+              </div>
+              <div class="hero-fs-scrim" aria-hidden="true"></div>
+              <div class="container hero-fs-inner">
+                <span class="pill hero-fs-pill"><span class="dot" aria-hidden="true"></span>Back to school</span>
+                <p class="h1 hero-fs-title" role="heading" aria-level="1">Support when <span class="accent">school resumes</span></p>
+                <p class="lead hero-fs-lead">
+                  Cover fees, books, and essentials with repayment aligned to school terms and your income — quick review when
+                  documents are complete.
+                </p>
+                <div class="hero-actions">
+                  <a class="btn primary" href="contact?product=school">Apply for school loan</a>
+                  <a class="btn ghost" href="loans#school">View product</a>
+                </div>
+              </div>
+            </article>
+
+            <article class="hero-fs-slide" data-hero-fs-slide aria-label="Slide 4 of 4: Salary advance">
+              <div class="hero-fs-media" aria-hidden="true">
+                <img
+                  src="assets/images/hero-placeholder.svg"
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
+              <div class="hero-fs-scrim" aria-hidden="true"></div>
+              <div class="container hero-fs-inner">
+                <span class="pill hero-fs-pill"><span class="dot" aria-hidden="true"></span>Salary advance</span>
+                <p class="h1 hero-fs-title" role="heading" aria-level="1">Cash flow relief <span class="accent">before payday</span></p>
+                <p class="lead hero-fs-lead">
+                  Short tenures (typically 15–30 days), fast disbursement after approval, and repayment structured around your
+                  salary date — minimal paperwork for eligible staff.
+                </p>
+                <div class="hero-actions">
+                  <a class="btn primary" href="contact?product=advance">Request advance</a>
+                  <a class="btn ghost" href="loans#advance">View product</a>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+
+        <div class="hero-fs-controls">
+          <div class="container hero-fs-controls-inner">
+            <div class="hero-fs-dots" role="tablist" aria-label="Choose slide">
+              <button type="button" class="hero-fs-dot" data-hero-fs-dot role="tab" aria-selected="true" aria-label="Show slide 1"></button>
+              <button type="button" class="hero-fs-dot" data-hero-fs-dot role="tab" aria-selected="false" aria-label="Show slide 2"></button>
+              <button type="button" class="hero-fs-dot" data-hero-fs-dot role="tab" aria-selected="false" aria-label="Show slide 3"></button>
+              <button type="button" class="hero-fs-dot" data-hero-fs-dot role="tab" aria-selected="false" aria-label="Show slide 4"></button>
+            </div>
+            <button type="button" class="hero-fs-pause btn ghost" data-hero-fs-pause aria-pressed="false">
+              <span class="hero-fs-pause-label">Pause</span>
+            </button>
           </div>
         </div>
       </section>
