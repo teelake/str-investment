@@ -195,6 +195,13 @@ i.bx, i.fa, i.fa-solid, i.fa-regular, i.fa-brands{
   height: 100%;
 }
 .hero--slider .hero-slide{padding: 0}
+.hero--slider .hero-slides{
+  overflow:hidden;
+}
+.hero--slider .hero-slide{
+  flex: 0 0 100%;
+  width: 100%;
+}
 .hero--slider{min-height: 420px}
 .hero--slider .hero-slider{min-height: 420px}
 .hero--slider .hero-slides{min-height: 420px}

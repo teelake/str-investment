@@ -43,7 +43,7 @@
     var timer = null;
 
     function render() {
-      slidesEl.style.transform = "translateX(" + idx * -100 + "%)";
+      slidesEl.style.transform = "translate3d(" + idx * -100 + "%, 0, 0)";
       dots.forEach(function (d, i) {
         d.setAttribute("aria-current", i === idx ? "true" : "false");
       });
