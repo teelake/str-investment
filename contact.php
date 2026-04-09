@@ -52,7 +52,7 @@ if (!in_array($product, $allowedProducts, true)) $product = '';
       <section class="contact-hero">
         <div class="container">
           <h1 class="contact-title">
-            Connect With <span class="accent">Sovereign Finance</span>
+            Reach <span class="accent">STR Investment</span> about your loan
           </h1>
           <p class="lead" style="max-width: 64ch">
             Whether you’re exploring microcredit options or need guidance on eligibility, our team is ready to
