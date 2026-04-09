@@ -428,15 +428,15 @@ i.bx, i.fa, i.fa-solid, i.fa-regular, i.fa-brands{
   border: 1px solid var(--line2);
   border-radius: 18px;
   box-shadow: var(--shadow2);
-  padding: 16px 16px;
+  padding: 18px 18px;
   display:flex;
   flex-direction:column;
   justify-content:space-between;
-  min-height: 140px;
+  min-height: 156px;
 }
 .t-quote{
   color: var(--ink);
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.55;
 }
 .t-meta{

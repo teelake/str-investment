@@ -165,7 +165,7 @@
 
             <div class="mini">
               <span class="dot" aria-hidden="true"></span>
-              <span><b>3</b> priority products</span>
+              <span><b>4</b> loan products</span>
             </div>
           </aside>
         </div>
