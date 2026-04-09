@@ -373,7 +373,7 @@
 
           <figure class="portrait" aria-label="Team photo">
             <img
-              src="images/Bridging-Credit-Gap-Rethinking-SME-Financing.png"
+              src="images/Bridging-Credit-Gap-Rethinking-SME-Financing.png
               alt="STR Investment team in a client meeting (license‑free placeholder)."
               loading="lazy"
             />
