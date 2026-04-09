@@ -320,6 +320,7 @@ i.bx, i.fa, i.fa-solid, i.fa-regular, i.fa-brands{
   gap: 10px;
   color: rgba(255,255,255,.92);
   background: transparent;
+  overflow: hidden;
 }
 .hero-slide-img{
   position:absolute;
