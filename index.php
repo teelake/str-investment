@@ -203,11 +203,37 @@
             </div>
           </div>
 
-          <div class="metrics" aria-label="Metrics">
-            <div class="metric"><b>₦450M</b><span>Capacity</span></div>
-            <div class="metric"><b>120k+</b><span>Applicants</span></div>
-            <div class="metric"><b>98%</b><span>Satisfaction</span></div>
-            <div class="metric"><b>Instant</b><span>Support</span></div>
+          <div class="testimonials" aria-label="Testimonials">
+            <article class="t-card">
+              <div class="t-quote">“Fast, clear process. I understood the requirements and repayment from day one.”</div>
+              <div class="t-meta">
+                <div class="t-avatar" aria-hidden="true">A</div>
+                <div>
+                  <b>Applicant</b>
+                  <div class="t-sub">Personal loan</div>
+                </div>
+              </div>
+            </article>
+            <article class="t-card">
+              <div class="t-quote">“The team guided me through the documents and disbursement was timely.”</div>
+              <div class="t-meta">
+                <div class="t-avatar" aria-hidden="true">K</div>
+                <div>
+                  <b>Business owner</b>
+                  <div class="t-sub">SME term loan</div>
+                </div>
+              </div>
+            </article>
+            <article class="t-card">
+              <div class="t-quote">“Back‑to‑school support helped us settle fees without stress. Smooth repayment plan.”</div>
+              <div class="t-meta">
+                <div class="t-avatar" aria-hidden="true">M</div>
+                <div>
+                  <b>Parent</b>
+                  <div class="t-sub">School support</div>
+                </div>
+              </div>
+            </article>
           </div>
         </div>
       </section>

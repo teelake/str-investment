@@ -413,17 +413,53 @@ i.bx, i.fa, i.fa-solid, i.fa-regular, i.fa-brands{
 }
 .why-item .ic i{font-size: 20px}
 .why-item strong{display:block; color: var(--ink); margin-bottom: 6px}
-.metrics{
+
+/* Testimonials (replaces metrics/social proof strip) */
+.testimonials{
   margin-top: 26px;
   padding-top: 18px;
   border-top: 1px solid var(--line2);
   display:grid;
-  grid-template-columns: repeat(4, minmax(0,1fr));
+  grid-template-columns: repeat(3, minmax(0,1fr));
   gap: 14px;
-  text-align:center;
 }
-.metric b{display:block; font-size: 18px}
-.metric span{color: var(--muted); font-size: 12px}
+.t-card{
+  background: rgba(255,255,255,.78);
+  border: 1px solid var(--line2);
+  border-radius: 18px;
+  box-shadow: var(--shadow2);
+  padding: 16px 16px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  min-height: 140px;
+}
+.t-quote{
+  color: var(--ink);
+  font-size: 13px;
+  line-height: 1.55;
+}
+.t-meta{
+  margin-top: 12px;
+  display:flex;
+  align-items:center;
+  gap: 10px;
+  color: var(--muted);
+  font-size: 12px;
+}
+.t-meta b{color: var(--ink)}
+.t-sub{color: var(--muted2); font-size: 12px}
+.t-avatar{
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  display:grid;
+  place-items:center;
+  background: rgba(15,106,74,.12);
+  border: 1px solid rgba(15,106,74,.18);
+  color: var(--green);
+  font-weight: 900;
+}
 
 /* Loans grid */
 .loans-head{
@@ -816,7 +852,7 @@ footer{
 @media (max-width: 980px){
   .hero-grid{grid-template-columns: 1fr}
   .why-grid{grid-template-columns: 1fr 1fr}
-  .metrics{grid-template-columns: 1fr 1fr}
+  .testimonials{grid-template-columns: 1fr}
   .loans{grid-template-columns: 1fr}
   .loan-row{grid-template-columns: 1fr}
   .foot{grid-template-columns: 1fr 1fr}
