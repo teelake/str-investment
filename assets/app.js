@@ -80,6 +80,13 @@
       var rect = slider.getBoundingClientRect();
       var w = Math.max(0, Math.round(rect.width));
       if (!w) return;
+      // Lock slide widths to real pixels (prevents peeking/subpixel issues)
+      slidesEl.style.width = String(w * slides.length) + "px";
+      slides.forEach(function (s) {
+        s.style.width = String(w) + "px";
+        s.style.flex = "0 0 " + String(w) + "px";
+      });
+
       // Ensure a stable transform based on real pixel width (prevents slide peeking)
       slidesEl.style.transform = "translate3d(" + idx * -w + "px, 0, 0)";
       if (w !== lastW) lastW = w;
@@ -128,9 +135,16 @@
       // re-render to snap to new width
       render();
     });
+    window.addEventListener("load", function () {
+      // ensure widths are correct after images/layout settle
+      render();
+    });
     if (!prefersReduced) {
       timer = setInterval(function () {
-        go(idx + 1);
+        // schedule after paint to avoid jank on some browsers
+        window.requestAnimationFrame(function () {
+          go(idx + 1);
+        });
       }, intervalMs);
     }
   })();
