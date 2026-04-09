@@ -1092,6 +1092,10 @@ footer{
   justify-content: center;
   gap: 8px;
 }
+/* Author `display` on .btn__busy beats the UA [hidden] rule; keep busy state invisible until JS shows it */
+.btn__busy[hidden]{
+  display: none !important;
+}
 @keyframes str-spin{
   to{ transform: rotate(360deg); }
 }

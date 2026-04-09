@@ -35,7 +35,7 @@ function strip_crlf(string $s): string
     return str_replace(["\r", "\n", "\0"], '', $s);
 }
 
-$companyTo = 'strinvestmentservicesltd@gmail.com';
+$companyTo = 'info@strinvestment.com.ng';
 
 $data = $_POST;
 
