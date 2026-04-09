@@ -311,7 +311,7 @@
             <a class="btn ghost" href="loans">See all →</a>
           </div>
 
-          <div class="loans equal">
+          <div class="loans equal loans--stack">
             <article class="loan-big">
               <div>
                 <div class="title-row">

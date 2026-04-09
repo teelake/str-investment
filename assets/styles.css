@@ -531,6 +531,10 @@ i.bx, i.fa, i.fa-solid, i.fa-regular, i.fa-brands{
 .loans.equal{
   grid-template-columns: 1fr 1fr;
 }
+/* Homepage: one loan card per row (does not affect /loans page) */
+.loans.loans--stack{
+  grid-template-columns: 1fr;
+}
 .loans.featured .loan-big,
 .loans.featured .loan-side{
   min-height: 240px;
