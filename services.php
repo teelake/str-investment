@@ -8,7 +8,7 @@
     <title>Eligibility — STR Investment Services Limited</title>
     <meta
       name="description"
-      content="Learn how STR Investment assesses eligibility for microcredit in Nigeria — clear requirements, transparent pricing, and structured repayments."
+      content="Eligibility for STR Investment microcredit in Nigeria: personal (blue-chip), back-to-school, SME term loans, and salary advance — documents, tenors, and typical pricing."
     />
     <link rel="canonical" href="https://strinvestment.ng/eligibility" />
     <meta property="og:title" content="Eligibility — STR Investment" />
@@ -22,7 +22,7 @@
       rel="stylesheet"
     />
     <link rel="icon" href="favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="assets/styles.css?v=20260411" />
+    <link rel="stylesheet" href="assets/styles.css?v=20260418" />
     <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" />
     <link
       rel="stylesheet"
@@ -37,103 +37,203 @@
       <section class="hero">
         <div class="container hero-grid">
           <div>
-            <span class="pill"><span class="dot" aria-hidden="true"></span> Eligibility</span>
-            <h1 class="h1">Clarity first. <span class="accent">Assessment</span> next.</h1>
+            <span class="pill"><span class="pill-ic" aria-hidden="true"><i class="bx bx-check-shield"></i></span> Eligibility</span>
+            <h1 class="h1">Clear requirements. <span class="accent">Fair assessment.</span></h1>
             <p class="lead">
-              Our goal is quick, reliable access to credit — with responsible checks and documentation that fits the product.
+              STR Investment Services Limited (2025) offers microcredit — including salary advance, personal, school,
+              and business loans — with checks that match each product. Below is what we typically ask for; final lists
+              follow verification.
             </p>
             <div class="hero-actions">
-              <a class="btn primary" href="contact?product=general">Start an enquiry</a>
-              <a class="btn ghost" href="loans">View loan products</a>
+              <a class="btn primary" href="contact?product=general"><i class="bx bx-send" aria-hidden="true"></i> Start an enquiry</a>
+              <a class="btn ghost" href="loans"><i class="bx bx-list-ul" aria-hidden="true"></i> View products</a>
             </div>
           </div>
 
-          <aside class="hero-side" aria-label="Process preview">
+          <aside class="hero-side hero-side--about" aria-label="At a glance">
             <div class="frame" aria-hidden="true"></div>
-            <div class="mini">
-              <span class="dot" aria-hidden="true"></span>
-              <span><b>Step-by-step</b> with clear requirements</span>
+            <div class="hero-about-highlights">
+              <div class="mini">
+                <span class="mini-ic" aria-hidden="true"><i class="bx bx-buildings"></i></span>
+                <span><b>Microcredit</b> · Incorporated 2025<br /><span class="hero-about-motto">Governance-led, customer-focused</span></span>
+              </div>
             </div>
           </aside>
+        </div>
+      </section>
+
+      <section class="section editorial-band">
+        <div class="container">
+          <div class="center">
+            <div class="about-kicker about-kicker--light" aria-hidden="true"><i class="bx bx-group"></i></div>
+            <h2 class="h2">Who we are</h2>
+            <p class="sub">
+              A private limited company bridging financing gaps for individuals, SMEs, and underserved communities. Led by
+              an ex-banker (20+ years) and a team grounded in risk management, excellence, integrity, and customer
+              satisfaction — combining sound practice with practical products.
+            </p>
+          </div>
         </div>
       </section>
 
       <section class="section why">
         <div class="container">
           <div class="center">
+            <div class="about-kicker" aria-hidden="true"><i class="bx bx-git-merge"></i></div>
             <h2 class="h2">How eligibility works</h2>
-            <p class="sub">A simple flow built to be fast — without cutting corners.</p>
+            <p class="sub">Three steps — fast where documents are complete, never sloppy on fit.</p>
           </div>
 
           <div class="loan-row">
-            <article class="loan-tile">
-              <strong>1) Choose a product</strong>
-              <span>Tell us the amount range, tenure, and purpose.</span>
+            <article class="loan-tile elig-step">
+              <span class="elig-step-ic" aria-hidden="true"><i class="bx bx-list-ul"></i></span>
+              <strong>1) Pick a product</strong>
+              <span>Amount range, purpose, and tenor — we match you to the right facility.</span>
             </article>
-            <article class="loan-tile">
-              <strong>2) Provide documents</strong>
-              <span>ID, bank statements, income/employment or trade evidence.</span>
+            <article class="loan-tile elig-step">
+              <span class="elig-step-ic" aria-hidden="true"><i class="bx bx-folder"></i></span>
+              <strong>2) Submit documents</strong>
+              <span>ID, bank statements, income or trade proof — see product cards below.</span>
             </article>
-            <article class="loan-tile">
-              <strong>3) Verification & decision</strong>
-              <span>Affordability checks and clear next steps.</span>
+            <article class="loan-tile elig-step">
+              <span class="elig-step-ic" aria-hidden="true"><i class="bx bx-badge-check"></i></span>
+              <strong>3) Verification &amp; decision</strong>
+              <span>Affordability and KYC; you get clear next steps or an offer.</span>
             </article>
           </div>
 
           <div class="metrics" style="margin-top: 22px">
-            <div class="metric"><b>Identity</b><span>KYC & verification</span></div>
-            <div class="metric"><b>Income</b><span>Salary or turnover evidence</span></div>
-            <div class="metric"><b>Affordability</b><span>Repayment fit</span></div>
-            <div class="metric"><b>Support</b><span>Guidance throughout</span></div>
+            <div class="metric">
+              <span class="metric-ic" aria-hidden="true"><i class="bx bx-id-card"></i></span>
+              <b>Identity</b><span>KYC &amp; BVN where required</span>
+            </div>
+            <div class="metric">
+              <span class="metric-ic" aria-hidden="true"><i class="bx bx-line-chart"></i></span>
+              <b>Income / turnover</b><span>Salary or business inflow</span>
+            </div>
+            <div class="metric">
+              <span class="metric-ic" aria-hidden="true"><i class="bx bx-wallet"></i></span>
+              <b>Affordability</b><span>Repayment fit vs. cash flow</span>
+            </div>
+            <div class="metric">
+              <span class="metric-ic" aria-hidden="true"><i class="bx bx-chat"></i></span>
+              <b>Support</b><span>Guidance through the process</span>
+            </div>
           </div>
         </div>
       </section>
 
-      <section class="section">
+      <section class="section loans-band" id="products">
         <div class="container">
           <div class="loans-head">
             <div>
-              <h2 class="h2">Typical documents (by product)</h2>
-              <p class="sub">Final requirements may vary based on assessment.</p>
+              <h2 class="h2">Product eligibility &amp; pricing</h2>
+              <p class="sub">
+                Typical fees (confirmed before you accept): <strong>4–8% flat per month</strong> on reducing balance;
+                <strong>0.5%</strong> processing and <strong>0.5%</strong> management of approved amount;
+                <strong>1% insurance</strong> where the product includes it. Tenors vary by product.
+              </p>
             </div>
-            <a class="btn ghost" href="contact?product=general">Ask us →</a>
+            <a class="btn ghost" href="contact?product=general"><i class="bx bx-message-rounded" aria-hidden="true"></i> Ask us</a>
           </div>
 
-          <div class="loans equal">
-            <article class="loan-big">
+          <div class="eligibility-grid">
+            <article class="loan-big" id="personal">
               <div>
                 <div class="title-row">
                   <span class="title-ic" aria-hidden="true"><i class="bx bx-id-card"></i></span>
-                  <div class="title">Salaried / personal</div>
+                  <div class="title">Personal loan (blue-chip employee)</div>
                 </div>
-                <p>Employment ID, payslips, bank statement, ID, proof of residence, guarantor (where required).</p>
+                <p class="elig-target"><i class="bx bx-user-check" aria-hidden="true"></i> Salaried staff at established employers</p>
+                <p class="elig-features">Unsecured; up to <strong>12 months</strong>; repayment often via payroll; loan size from salary &amp; tenure.</p>
+                <p class="elig-label">Usually need</p>
+                <ul class="elig-list">
+                  <li>Employment ID, 3 recent payslips, employer introduction/verification</li>
+                  <li>Valid ID, proof of residence, 6-month bank statement</li>
+                  <li>Guarantor, completed application form</li>
+                </ul>
+                <p class="elig-pricing"><i class="bx bx-tag" aria-hidden="true"></i> Fees as above + <strong>1% insurance</strong> · Tenor <strong>3–12 months</strong></p>
+              </div>
+              <div class="elig-card-actions">
+                <a class="btn ghost" href="loans#personal"><i class="bx bx-book-open" aria-hidden="true"></i> Product detail</a>
+                <a class="btn primary" href="contact?product=personal"><i class="bx bx-send" aria-hidden="true"></i> Enquire</a>
               </div>
             </article>
-            <article class="loan-big">
+
+            <article class="loan-big" id="school">
+              <div>
+                <div class="title-row">
+                  <span class="title-ic" aria-hidden="true"><i class="bx bx-book-open"></i></span>
+                  <div class="title">Back to school</div>
+                </div>
+                <p class="elig-target"><i class="bx bx-group" aria-hidden="true"></i> Parents / guardians (primary–tertiary)</p>
+                <p class="elig-features">Short-term; fees, books, uniforms; disbursement to school or customer; repayment around school terms.</p>
+                <p class="elig-label">Usually need</p>
+                <ul class="elig-list">
+                  <li>Proof of enrollment / fee invoice</li>
+                  <li>Parent or guardian ID, 3–6 month bank statement</li>
+                  <li>Evidence of income; guarantor where required; completed form</li>
+                </ul>
+                <p class="elig-pricing"><i class="bx bx-tag" aria-hidden="true"></i> Fees as above + <strong>1% insurance</strong> · Tenor <strong>1–4 months</strong></p>
+              </div>
+              <div class="elig-card-actions">
+                <a class="btn ghost" href="loans#school"><i class="bx bx-book-open" aria-hidden="true"></i> Product detail</a>
+                <a class="btn primary" href="contact?product=school"><i class="bx bx-send" aria-hidden="true"></i> Enquire</a>
+              </div>
+            </article>
+
+            <article class="loan-big" id="sme">
               <div>
                 <div class="title-row">
                   <span class="title-ic" aria-hidden="true"><i class="bx bx-store-alt"></i></span>
-                  <div class="title">SME / business</div>
+                  <div class="title">Term loan (business)</div>
                 </div>
-                <p>Business registration or evidence of trade, sales records/bank statement, business location proof, ID, guarantor/collateral where applicable.</p>
+                <p class="elig-target"><i class="bx bx-briefcase-alt-2" aria-hidden="true"></i> SME owners needing working capital</p>
+                <p class="elig-features">3–6 months; stock/operations; guarantor or collateral as agreed; size from cash flow &amp; turnover.</p>
+                <p class="elig-label">Usually need</p>
+                <ul class="elig-list">
+                  <li>Business registration or evidence of trade</li>
+                  <li>~6 months bank statement and/or sales records</li>
+                  <li>Application, recent photo, ID, proof of business location</li>
+                  <li>Guarantor or collateral if applicable</li>
+                </ul>
+                <p class="elig-pricing"><i class="bx bx-tag" aria-hidden="true"></i> Fees as above + <strong>1% insurance</strong> · Tenor <strong>3–6 months</strong></p>
+              </div>
+              <div class="elig-card-actions">
+                <a class="btn ghost" href="loans#sme"><i class="bx bx-book-open" aria-hidden="true"></i> Product detail</a>
+                <a class="btn primary" href="contact?product=sme"><i class="bx bx-send" aria-hidden="true"></i> Enquire</a>
+              </div>
+            </article>
+
+            <article class="loan-big" id="advance" style="background: rgba(255,255,255,.78)">
+              <div>
+                <div class="title-row">
+                  <span class="title-ic" aria-hidden="true"><i class="bx bx-time-five"></i></span>
+                  <div class="title">Salary advance</div>
+                </div>
+                <p class="elig-target"><i class="bx bx-user-check" aria-hidden="true"></i> Salaried workers (before payday)</p>
+                <p class="elig-features">Typically <strong>15–30 days</strong> or to next pay date; often <strong>24–48h</strong> after approval; amount as % of salary; usually unsecured; repayment via salary.</p>
+                <p class="elig-label">Usually need</p>
+                <ul class="elig-list">
+                  <li>Employment letter or staff ID, last 3 payslips</li>
+                  <li>Bank statement (3–6 months) showing salary inflow</li>
+                  <li>Valid ID, BVN, completed application</li>
+                  <li>Employer confirmation for deduction arrangement</li>
+                </ul>
+                <p class="elig-pricing"><i class="bx bx-tag" aria-hidden="true"></i> <strong>4–8%</strong> / month (reducing); <strong>0.5%</strong> processing &amp; <strong>0.5%</strong> management · Tenor <strong>15–30 days</strong> (or to next salary). Insurance, if any, confirmed on offer.</p>
+              </div>
+              <div class="elig-card-actions">
+                <a class="btn ghost" href="loans#advance"><i class="bx bx-book-open" aria-hidden="true"></i> Product detail</a>
+                <a class="btn primary" href="contact?product=advance"><i class="bx bx-send" aria-hidden="true"></i> Enquire</a>
               </div>
             </article>
           </div>
 
-          <div class="loan-row">
-            <article class="loan-tile">
-              <strong>Education support</strong>
-              <span>Child enrollment/fee invoice + parent/guardian income evidence.</span>
-            </article>
-            <article class="loan-tile">
-              <strong>Salary advance</strong>
-              <span>Short-tenor: employment proof + salary inflow evidence.</span>
-            </article>
-            <article class="loan-tile">
-              <strong>Transparent pricing</strong>
-              <span>Fees and interest are explained before acceptance.</span>
-            </article>
-          </div>
+          <p class="elig-disclaimer">
+            <i class="bx bx-info-circle" aria-hidden="true"></i>
+            Rates and fees are indicative; your final offer depends on assessment. Asset financing and other structures may
+            follow the same fee framework where applicable.
+          </p>
         </div>
       </section>
 
@@ -141,11 +241,12 @@
         <div class="container">
           <div class="cta-panel">
             <div class="center" style="margin-bottom: 0; max-width: 760px">
+              <div class="cta-panel-kicker" aria-hidden="true"><i class="bx bx-edit-alt"></i></div>
               <h2 class="h2" style="color: white; margin-bottom: 10px">Ready to apply?</h2>
-              <p>We’ll recommend the best product fit and the exact documents needed for your case.</p>
+              <p>We’ll confirm product fit and the exact documents for your case.</p>
               <div class="actions">
-                <a class="btn" href="loans" style="background:#fff;color:var(--green);">Browse Loans</a>
-                <a class="btn primary" href="contact?product=general">Apply Now</a>
+                <a class="btn" href="loans" style="background:#fff;color:var(--green);"><i class="bx bx-list-ul" aria-hidden="true"></i> Browse loans</a>
+                <a class="btn primary" href="contact?product=general"><i class="bx bx-send" aria-hidden="true"></i> Apply now</a>
               </div>
             </div>
           </div>
@@ -157,4 +258,3 @@
     <script src="assets/app.js?v=20260409" defer></script>
   </body>
 </html>
-

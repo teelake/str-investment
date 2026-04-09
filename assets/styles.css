@@ -747,6 +747,126 @@ i.bx, i.fa, i.fa-solid, i.fa-regular, i.fa-brands{
 .metric b{display:block; color: var(--ink); font-size: 14px; margin-bottom: 4px}
 .metric span{display:block; color: var(--muted); font-size: 13px; line-height: 1.45}
 
+.metric-ic{
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  display:grid;
+  place-items:center;
+  background: rgba(15,106,74,.1);
+  color: var(--green);
+  margin-bottom: 10px;
+}
+.metric-ic i{font-size: 18px}
+
+.eligibility-grid{
+  display:grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  align-items: stretch;
+}
+.eligibility-grid > *{min-width: 0}
+
+.loan-tile.elig-step{
+  align-items: flex-start;
+}
+.elig-step-ic{
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  display:grid;
+  place-items:center;
+  background: rgba(15,106,74,.1);
+  color: var(--green);
+  margin-bottom: 2px;
+}
+.elig-step-ic i{font-size: 18px}
+
+.elig-target{
+  display:flex;
+  align-items:flex-start;
+  gap: 8px;
+  margin: 8px 0 0;
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.45;
+}
+.elig-target i{
+  color: var(--green);
+  font-size: 17px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.elig-features{
+  margin: 8px 0 0;
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.elig-label{
+  margin: 12px 0 6px;
+  font-size: 11px;
+  font-weight: 750;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted2);
+}
+
+.elig-list{
+  margin: 0;
+  padding-left: 1.2em;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.5;
+  display:grid;
+  gap: 6px;
+}
+
+.elig-pricing{
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line2);
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.5;
+  display:flex;
+  align-items:flex-start;
+  gap: 8px;
+}
+.elig-pricing i{
+  color: var(--green);
+  font-size: 16px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.elig-card-actions{
+  margin-top: 16px;
+  display:flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.elig-disclaimer{
+  margin: 22px auto 0;
+  max-width: 720px;
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.5;
+  display:flex;
+  align-items:flex-start;
+  gap: 10px;
+}
+.elig-disclaimer i{
+  color: var(--green);
+  font-size: 18px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
 /* Footer */
 footer{
   padding: 46px 0 30px;
@@ -1040,6 +1160,7 @@ footer{
   .loans.equal.loans--stack{grid-template-columns: repeat(2, minmax(0, 1fr))}
   .loan-row{grid-template-columns: repeat(2, minmax(0, 1fr))}
   .metrics{grid-template-columns: repeat(2, minmax(0, 1fr))}
+  .eligibility-grid{grid-template-columns: 1fr}
   .foot{grid-template-columns: repeat(2, minmax(0, 1fr))}
   .contact-grid{grid-template-columns: 1fr}
   .lower-grid{grid-template-columns: 1fr}
