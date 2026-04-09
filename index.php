@@ -109,7 +109,7 @@
       >
         <h2 class="sr-only">Featured solutions</h2>
         <div class="hero-fs-viewport" data-hero-fs-viewport>
-          <div class="hero-fs-track" data-hero-fs-track role="group" aria-live="polite" aria-atomic="true">
+          <div class="hero-fs-track" data-hero-fs-track role="group">
             <article class="hero-fs-slide" data-hero-fs-slide aria-label="Slide 1 of 4: Personal loan">
               <div class="hero-fs-media" aria-hidden="true">
                 <img
