@@ -83,7 +83,7 @@
               <div style="margin-top: 16px"><a class="btn ghost" href="contact">Apply</a></div>
             </article>
 
-            <article class="loan-side" id="sme">
+            <article class="loan-big" id="sme">
               <div>
                 <div class="title-row">
                   <span class="title-ic" aria-hidden="true"><i class="bx bx-store-alt"></i></span>
@@ -93,12 +93,12 @@
                   Short‑term working capital for SMEs (3–6 months) with flexible collateral options (movable or
                   guarantor‑backed), assessed on turnover and cash‑flow.
                 </p>
-                <p style="margin-top: 10px; color: rgba(255,255,255,.78); font-size: 13px">
+                <p style="margin-top: 10px; color: var(--muted); font-size: 13px">
                   Typical docs: business registration/evidence of trade, bank statement/sales record, ID, business location proof.
                 </p>
               </div>
               <div style="margin-top: 16px">
-                <a class="btn" href="contact" style="background:#fff;color:var(--green);">Apply</a>
+                <a class="btn ghost" href="contact">Apply</a>
               </div>
             </article>
           </div>
