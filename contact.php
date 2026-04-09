@@ -1,9 +1,16 @@
 <?php
+session_start();
 $active = 'contact';
 $product = $_GET['product'] ?? '';
 $product = is_string($product) ? strtolower(trim($product)) : '';
 $allowedProducts = ['general', 'personal', 'advance', 'school', 'sme'];
 if (!in_array($product, $allowedProducts, true)) $product = '';
+
+if (empty($_SESSION['csrf_contact'])) {
+    $_SESSION['csrf_contact'] = bin2hex(random_bytes(32));
+}
+$csrfContact = $_SESSION['csrf_contact'];
+$formStartedAt = time();
 ?>
 <!doctype html>
 <html lang="en-NG">
@@ -28,7 +35,7 @@ if (!in_array($product, $allowedProducts, true)) $product = '';
       rel="stylesheet"
     />
     <link rel="icon" href="favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="assets/styles.css?v=20260411" />
+    <link rel="stylesheet" href="assets/styles.css?v=20260422" />
     <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" />
     <link
       rel="stylesheet"
@@ -58,15 +65,24 @@ if (!in_array($product, $allowedProducts, true)) $product = '';
 
           <div class="contact-grid">
             <section class="panel" aria-label="Contact form">
-              <form class="formgrid" data-contact-form data-mailto="strinvestmentservicesltd@gmail.com">
+              <form
+                class="formgrid"
+                data-contact-form
+                data-submit-url="contact-submit.php"
+                action="contact-submit.php"
+                method="post"
+                novalidate
+              >
                 <input
                   type="text"
                   name="website"
                   tabindex="-1"
                   autocomplete="off"
                   aria-hidden="true"
-                  style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden"
+                  class="hp-field"
                 />
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfContact, ENT_QUOTES, 'UTF-8') ?>" />
+                <input type="hidden" name="form_started_at" value="<?= (int) $formStartedAt ?>" />
                 <div class="field">
                   <label for="name">Name</label>
                   <input id="name" name="name" placeholder="Full name" required maxlength="80" />
@@ -99,8 +115,21 @@ if (!in_array($product, $allowedProducts, true)) $product = '';
                     maxlength="1200"
                   ></textarea>
                 </div>
+                <div
+                  class="form-status"
+                  id="contact-form-status"
+                  role="status"
+                  aria-live="polite"
+                  hidden
+                ></div>
                 <div class="form-actions">
-                  <button class="btn primary" type="submit" style="width: 100%">Dispatch Inquiry</button>
+                  <button class="btn primary" type="submit" data-contact-submit style="width: 100%">
+                    <span class="btn__text">Send message</span>
+                    <span class="btn__busy" hidden>
+                      <i class="bx bx-loader-alt btn__spinner" aria-hidden="true"></i>
+                      Sending…
+                    </span>
+                  </button>
                 </div>
               </form>
             </section>
@@ -158,8 +187,6 @@ if (!in_array($product, $allowedProducts, true)) $product = '';
           <div class="map-embed-full" aria-label="Office location map">
           <iframe
             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d494.6233020332049!2d3.831665299454212!3d7.355418203058441!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x10398d000b02ddc9%3A0x1e6c5e85ece95e70!2sElebu%2C%20Ibadan!5e0!3m2!1sen!2sng!4v1775720775449!5m2!1sen!2sng"
-            width="600"
-            height="450"
             style="border: 0"
             allowfullscreen=""
             loading="lazy"
@@ -172,7 +199,7 @@ if (!in_array($product, $allowedProducts, true)) $product = '';
     </main>
 
     <?php include __DIR__ . '/partials/footer.php'; ?>
-    <script src="assets/app.js?v=20260409" defer></script>
+    <script src="assets/app.js?v=20260422" defer></script>
   </body>
 </html>
 

@@ -363,6 +363,20 @@ i.bx, i.fa, i.fa-solid, i.fa-regular, i.fa-brands{
 }
 .hero-side .mini b{color: var(--ink)}
 
+.hero-side .frame:has(> img){
+  padding: 0;
+  border: none;
+  background: transparent;
+  overflow: hidden;
+}
+.hero-side .frame > img{
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 18px;
+}
+
 /* About page — stacked hero highlights */
 .hero-side--about .hero-about-highlights{
   position:absolute;
@@ -1011,6 +1025,7 @@ footer{
   border-radius: var(--radius2);
   box-shadow: var(--shadow2);
   padding: 22px;
+  min-width: 0;
 }
 .formgrid{
   display:grid;
@@ -1025,9 +1040,66 @@ footer{
   padding: 12px 12px;
   background: rgba(13,15,18,.05);
   outline:none;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
 }
 .field textarea{grid-column: 1 / -1; min-height: 130px; resize: vertical}
 .form-actions{grid-column: 1 / -1; margin-top: 6px}
+
+.hp-field{
+  position: absolute !important;
+  left: -9999px !important;
+  top: auto !important;
+  width: 1px !important;
+  height: 1px !important;
+  overflow: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+.form-status{
+  grid-column: 1 / -1;
+  margin-top: 4px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.45;
+}
+.form-status[hidden]{
+  display: none !important;
+}
+.form-status--ok{
+  color: var(--green2);
+  background: rgba(15, 106, 74, 0.1);
+  border: 1px solid rgba(15, 106, 74, 0.2);
+}
+.form-status--error{
+  color: #9f1239;
+  background: rgba(225, 29, 72, 0.08);
+  border: 1px solid rgba(225, 29, 72, 0.2);
+}
+.btn[data-contact-submit]{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 48px;
+}
+.btn__busy{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+@keyframes str-spin{
+  to{ transform: rotate(360deg); }
+}
+.btn__spinner{
+  display: inline-block;
+  font-size: 18px;
+  animation: str-spin 0.75s linear infinite;
+}
 .office{
   display:grid;
   gap: 12px;
@@ -1118,6 +1190,7 @@ footer{
 .page-contact .wa-fab{
   left:16px;
   right:auto;
+  bottom: calc(16px + env(safe-area-inset-bottom, 0px));
 }
 .badge{
   display:inline-flex;
@@ -1217,6 +1290,8 @@ footer{
   .hero-actions{gap: 10px}
   .hero-actions .btn{width: 100%}
   .lead{max-width: none}
+  .contact-lead{max-width: none}
+  .hero-side{min-height: 260px}
 
   .why-grid{grid-template-columns: 1fr}
   .foot{grid-template-columns: 1fr}

@@ -28,7 +28,7 @@
       rel="stylesheet"
     />
     <link rel="icon" href="favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="assets/styles.css?v=20260413" />
+    <link rel="stylesheet" href="assets/styles.css?v=20260422" />
     <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" />
     <link
       rel="stylesheet"
@@ -504,7 +504,7 @@
 
     <?php include __DIR__ . '/partials/footer.php'; ?>
 
-    <script src="assets/app.js?v=20260410" defer></script>
+    <script src="assets/app.js?v=20260422" defer></script>
   </body>
 </html>
 

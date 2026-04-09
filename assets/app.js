@@ -211,54 +211,92 @@
 
   var contactForm = document.querySelector("[data-contact-form]");
   if (contactForm) {
-    var contactStartedAt = Date.now();
+    var submitBtn = contactForm.querySelector("[data-contact-submit]");
+    var btnText = submitBtn && submitBtn.querySelector(".btn__text");
+    var btnBusy = submitBtn && submitBtn.querySelector(".btn__busy");
+    var statusEl = contactForm.querySelector(".form-status");
+
+    function setContactLoading(on) {
+      if (!submitBtn) return;
+      submitBtn.disabled = !!on;
+      submitBtn.setAttribute("aria-busy", on ? "true" : "false");
+      if (btnText) btnText.hidden = !!on;
+      if (btnBusy) btnBusy.hidden = !on;
+    }
+
+    function showContactStatus(msg, isError) {
+      if (!statusEl) return;
+      statusEl.hidden = false;
+      statusEl.textContent = msg;
+      statusEl.classList.toggle("form-status--error", !!isError);
+      statusEl.classList.toggle("form-status--ok", !isError);
+    }
+
+    function clearContactStatus() {
+      if (!statusEl) return;
+      statusEl.hidden = true;
+      statusEl.textContent = "";
+      statusEl.classList.remove("form-status--error", "form-status--ok");
+    }
+
     contactForm.addEventListener("submit", function (e) {
       e.preventDefault();
+      if (submitBtn && submitBtn.disabled) return;
 
-      // Bot/spam guards (best-effort on a no-backend mailto form)
       var honeypot = (contactForm.querySelector('[name="website"]') || {}).value || "";
       if (honeypot.trim()) return;
 
-      if (Date.now() - contactStartedAt < 1600) return;
+      clearContactStatus();
 
-      try {
-        var last = Number(window.localStorage.getItem("str_last_contact_submit") || "0");
-        if (last && Date.now() - last < 30000) return;
-        window.localStorage.setItem("str_last_contact_submit", String(Date.now()));
-      } catch (err) {
-        // ignore
+      if (typeof contactForm.checkValidity === "function" && !contactForm.checkValidity()) {
+        contactForm.reportValidity();
+        return;
       }
 
-      var to = contactForm.getAttribute("data-mailto") || "strinvestmentservicesltd@gmail.com";
+      var endpoint = contactForm.getAttribute("data-submit-url") || "contact-submit.php";
+      var url = new URL(endpoint, window.location.href).href;
+      var fd = new FormData(contactForm);
 
-      function cleanText(s, max) {
-        s = String(s || "");
-        if (typeof max === "number") s = s.slice(0, max);
-        // prevent header injection / weird control chars
-        s = s.replace(/[\r\n\t]+/g, " ").trim();
-        // keep it simple; mailto body is encoded anyway
-        return s;
-      }
+      setContactLoading(true);
 
-      var name = cleanText((contactForm.querySelector('[name="name"]') || {}).value, 80);
-      var phone = cleanText((contactForm.querySelector('[name="phone"]') || {}).value, 30);
-      var email = cleanText((contactForm.querySelector('[name="email"]') || {}).value, 120);
-      var product = cleanText((contactForm.querySelector('[name="product"]') || {}).value, 24);
-      var msg = cleanText((contactForm.querySelector('[name="message"]') || {}).value, 1200);
-
-      var productLabel = {
-        general: "Loan enquiry",
-        personal: "Personal loan",
-        advance: "Salary advance",
-        school: "Back to school",
-        sme: "SME term loan",
-      }[product] || "Loan enquiry";
-
-      var sub = encodeURIComponent("Enquiry — STR Investment — " + productLabel);
-      var body = encodeURIComponent(
-        ["Name: " + name, "Phone: " + phone, "Email: " + email, "Subject: " + productLabel, "", msg].join("\n")
-      );
-      window.location.href = "mailto:" + to + "?subject=" + sub + "&body=" + body;
+      fetch(url, {
+        method: "POST",
+        body: fd,
+        credentials: "same-origin",
+        headers: {
+          Accept: "application/json",
+          "X-Requested-With": "XMLHttpRequest",
+        },
+      })
+        .then(function (r) {
+          return r
+            .json()
+            .catch(function () {
+              return { ok: false, error: "Could not read server response." };
+            })
+            .then(function (data) {
+              return { status: r.status, data: data };
+            });
+        })
+        .then(function (res) {
+          var d = res.data || {};
+          if (res.status >= 200 && res.status < 300 && d.ok) {
+            showContactStatus(d.message || "Thank you. We will respond soon.", false);
+            contactForm.reset();
+            var csrfInput = contactForm.querySelector('[name="csrf_token"]');
+            if (d.csrf && csrfInput) csrfInput.value = d.csrf;
+            var fs = contactForm.querySelector('[name="form_started_at"]');
+            if (fs) fs.value = String(Math.floor(Date.now() / 1000));
+          } else {
+            showContactStatus(d.error || "Something went wrong. Please try again.", true);
+          }
+        })
+        .catch(function () {
+          showContactStatus("Network error. Email strinvestmentservicesltd@gmail.com or call 09054984777.", true);
+        })
+        .finally(function () {
+          setContactLoading(false);
+        });
     });
   }
 })();
