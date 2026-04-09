@@ -19,18 +19,51 @@
     var dots = Array.prototype.slice.call(slider.querySelectorAll("[data-hero-dot]"));
     if (!slidesEl || slides.length === 0 || dots.length !== slides.length) return;
 
-    var labelEl = document.querySelector("[data-hero-label]");
-    var titleEl = document.querySelector("[data-hero-title]");
-    var meta = slides.map(function (s) {
-      return {
-        label: s.getAttribute("aria-label") || "",
-        theme: s.getAttribute("data-theme") || "",
-      };
-    });
-    var labelsByTheme = {
-      personal: { label: "Personal Loan", title: "Blue‑chip employee loan" },
-      sme: { label: "SME Term Loan", title: "Working capital built for turnover" },
-      school: { label: "Back to School", title: "Education support for resumption" },
+    var pillEl = document.querySelector("[data-hero-pill]");
+    var h1PreEl = document.querySelector("[data-hero-h1-pre]");
+    var h1AccentEl = document.querySelector("[data-hero-h1-accent]");
+    var h1PostEl = document.querySelector("[data-hero-h1-post]");
+    var leadEl = document.querySelector("[data-hero-lead]");
+    var primaryEl = document.querySelector("[data-hero-primary]");
+    var secondaryEl = document.querySelector("[data-hero-secondary]");
+
+    var copyByTheme = {
+      personal: {
+        pill: "Incorporated February 2026",
+        h1Pre: "Bridging the ",
+        h1Accent: "Financing Gap",
+        h1Post: " for You",
+        lead:
+          "STR Investment Services Limited provides accessible and innovative microcredit solutions to individuals and small businesses — fast, flexible, and customer-focused.",
+        primaryHref: "contact?product=personal",
+        primaryText: "Apply for a Loan",
+        secondaryHref: "loans#personal",
+        secondaryText: "Browse Products",
+      },
+      sme: {
+        pill: "Incorporated February 2026",
+        h1Pre: "Working capital that helps ",
+        h1Accent: "SMEs grow",
+        h1Post: " sustainably",
+        lead:
+          "Short‑term working capital for business owners — assessed on turnover and cash‑flow, with flexible tenor and clear requirements.",
+        primaryHref: "contact?product=sme",
+        primaryText: "Request a Call Back",
+        secondaryHref: "loans#sme",
+        secondaryText: "View SME Term Loan",
+      },
+      school: {
+        pill: "Incorporated February 2026",
+        h1Pre: "Support for ",
+        h1Accent: "Back to School",
+        h1Post: " expenses",
+        lead:
+          "Short‑term education support designed to cover fees and essentials, with repayment structured around school terms and your income cycle.",
+        primaryHref: "contact?product=school",
+        primaryText: "Apply for School Loan",
+        secondaryHref: "loans#school",
+        secondaryText: "View Details",
+      },
     };
 
     var prefersReduced =
@@ -56,12 +89,22 @@
       });
       slider.setAttribute("data-index", String(idx));
 
-      if (labelEl && titleEl) {
-        var slide = slides[idx];
-        var theme = (slide && slide.getAttribute("data-theme")) || "";
-        var t = labelsByTheme[theme] || labelsByTheme.personal;
-        labelEl.textContent = t.label;
-        titleEl.textContent = t.title;
+      var slide = slides[idx];
+      var theme = (slide && slide.getAttribute("data-theme")) || "personal";
+      var c = copyByTheme[theme] || copyByTheme.personal;
+
+      if (pillEl) pillEl.textContent = c.pill;
+      if (h1PreEl) h1PreEl.textContent = c.h1Pre;
+      if (h1AccentEl) h1AccentEl.textContent = c.h1Accent;
+      if (h1PostEl) h1PostEl.textContent = c.h1Post;
+      if (leadEl) leadEl.textContent = c.lead;
+      if (primaryEl) {
+        primaryEl.setAttribute("href", c.primaryHref);
+        primaryEl.textContent = c.primaryText;
+      }
+      if (secondaryEl) {
+        secondaryEl.setAttribute("href", c.secondaryHref);
+        secondaryEl.textContent = c.secondaryText;
       }
     }
 

@@ -123,25 +123,20 @@
         </div>
 
         <div class="container hero-content">
-          <span class="pill"><span class="dot" aria-hidden="true"></span> Incorporated February 2026</span>
-          <h1 class="h1">Bridging the <span class="accent">Financing Gap</span> for You</h1>
-          <p class="lead">
+          <span class="pill" data-hero-pill><span class="dot" aria-hidden="true"></span> Incorporated February 2026</span>
+          <h1 class="h1">
+            <span data-hero-h1-pre>Bridging the </span><span class="accent" data-hero-h1-accent>Financing Gap</span
+            ><span data-hero-h1-post> for You</span>
+          </h1>
+          <p class="lead" data-hero-lead>
             STR Investment Services Limited provides accessible and innovative microcredit solutions to individuals and small
             businesses — fast, flexible, and customer-focused.
           </p>
           <div class="hero-actions">
-            <a class="btn primary" href="loans">Apply for a Loan</a>
-            <a class="btn ghost" href="loans">Browse Products</a>
+            <a class="btn primary" data-hero-primary href="contact?product=personal">Apply for a Loan</a>
+            <a class="btn ghost" data-hero-secondary href="loans#personal">Browse Products</a>
           </div>
-
-          <!--<div class="hero-slide-text" aria-label="Featured product">
-            <div class="hero-slide-badge">
-              <i class="bx bx-id-card" aria-hidden="true"></i>
-              <span data-hero-label>Personal Loan</span>
-            </div>
-            <div class="hero-slide-title" data-hero-title>Blue‑chip employee loan</div>
-          </div>
-        </div>-->
+        </div>
       </section>
 
       <section class="section why">
