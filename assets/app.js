@@ -25,7 +25,7 @@
     var dots = Array.prototype.slice.call(slider.querySelectorAll("[data-hero-dot]"));
     if (!slidesEl || slides.length === 0 || dots.length !== slides.length) return;
 
-    var pillEl = document.querySelector("[data-hero-pill]");
+    var pillTextEl = document.querySelector("[data-hero-pill-text]");
     var h1PreEl = document.querySelector("[data-hero-h1-pre]");
     var h1AccentEl = document.querySelector("[data-hero-h1-accent]");
     var h1PostEl = document.querySelector("[data-hero-h1-post]");
@@ -107,7 +107,7 @@
       var theme = (slide && slide.getAttribute("data-theme")) || "personal";
       var c = copyByTheme[theme] || copyByTheme.personal;
 
-      if (pillEl) pillEl.textContent = c.pill;
+      if (pillTextEl) pillTextEl.textContent = c.pill;
       if (h1PreEl) h1PreEl.textContent = c.h1Pre;
       if (h1AccentEl) h1AccentEl.textContent = c.h1Accent;
       if (h1PostEl) h1PostEl.textContent = c.h1Post;

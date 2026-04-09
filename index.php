@@ -144,7 +144,9 @@
         </div>
 
         <div class="container hero-content">
-          <span class="pill" data-hero-pill><span class="dot" aria-hidden="true"></span> Incorporated February 2026</span>
+          <span class="pill" data-hero-pill
+            ><span class="dot" aria-hidden="true"></span><span data-hero-pill-text>Incorporated February 2026</span></span
+          >
           <h1 class="h1">
             <span data-hero-h1-pre>Bridging the </span><span class="accent" data-hero-h1-accent>Financing Gap</span
             ><span data-hero-h1-post> for You</span>
