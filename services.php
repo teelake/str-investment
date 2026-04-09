@@ -22,7 +22,7 @@
       rel="stylesheet"
     />
     <link rel="icon" href="favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="assets/styles.css?v=20260420" />
+    <link rel="stylesheet" href="assets/styles.css?v=20260421" />
     <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" />
     <link
       rel="stylesheet"
@@ -50,7 +50,12 @@
           </div>
 
           <aside class="hero-side hero-side--about" aria-label="At a glance">
-            <div class="frame" aria-hidden="true"></div>
+            <div class="frame" aria-hidden="true">
+              <img src="assets/images/Bridging-Credit-Gap-Rethinking-SME-Financing.png"
+              
+              
+              " alt="STR Investment Services Limited" loading="lazy" />
+            </div>
             <div class="hero-about-highlights">
               <div class="mini">
                 <span class="mini-ic" aria-hidden="true"><i class="bx bx-buildings"></i></span>
@@ -303,11 +308,6 @@
               </div>
             </article>
           </div>
-
-          <p class="elig-disclaimer">
-            <i class="bx bx-info-circle" aria-hidden="true"></i>
-            Figures are indicative; your signed offer prevails. Other products (e.g. asset finance) may use the same fee style.
-          </p>
         </div>
       </section>
 

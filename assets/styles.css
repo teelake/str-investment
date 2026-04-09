@@ -895,23 +895,6 @@ i.bx, i.fa, i.fa-solid, i.fa-regular, i.fa-brands{
   align-items: center;
 }
 
-.elig-disclaimer{
-  margin: 22px auto 0;
-  max-width: 720px;
-  font-size: 13px;
-  color: var(--muted);
-  line-height: 1.5;
-  display:flex;
-  align-items:flex-start;
-  gap: 10px;
-}
-.elig-disclaimer i{
-  color: var(--green);
-  font-size: 18px;
-  flex-shrink: 0;
-  margin-top: 1px;
-}
-
 /* Footer */
 footer{
   padding: 46px 0 30px;
