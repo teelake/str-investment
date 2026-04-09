@@ -711,6 +711,21 @@ footer{
   flex-direction:column;
   justify-content:center;
 }
+
+.map-embed{
+  padding: 0;
+  overflow:hidden;
+}
+.map-embed iframe{
+  display:block;
+  width: 100%;
+  height: 460px;
+  border: 0;
+}
+
+@media (max-width: 760px){
+  .map-embed iframe{height: 320px}
+}
 .badge{
   display:inline-flex;
   align-items:center;

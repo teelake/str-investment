@@ -122,26 +122,19 @@
         </div>
       </section>
 
-      <section class="section lower">
-        <div class="container lower-grid">
-          <div class="lower-card">
-            <span class="badge">PRIORITY ACCESS</span>
-            <h2 class="h2" style="margin-top: 14px">Direct Guidance for Your Next Move.</h2>
-            <p class="sub">
-              Skip the queue. Connect directly with a Senior Loan Consultant to discuss custom financing structures
-              and exclusive rates.
-            </p>
-            <div class="hero-actions" style="margin-top: 18px">
-              <a class="btn primary" href="contact">Schedule a Call</a>
-              <a class="btn ghost" href="loans">View Products</a>
-            </div>
-          </div>
-          <div class="portrait" aria-label="Portrait placeholder">
-            <img
-              src="https://images.unsplash.com/photo-1556157382-97eda2d62296?w=1200&q=80&auto=format&fit=crop"
-              alt="Professional consultant portrait (placeholder) — replace with your team photo."
+      <section class="section lower" aria-label="Map">
+        <div class="container">
+          <div class="map-embed panel" aria-label="Office location map">
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d494.6233020332049!2d3.831665299454212!3d7.355418203058441!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x10398d000b02ddc9%3A0x1e6c5e85ece95e70!2sElebu%2C%20Ibadan!5e0!3m2!1sen!2sng!4v1775720775449!5m2!1sen!2sng"
+              width="600"
+              height="450"
+              style="border: 0"
+              allowfullscreen=""
               loading="lazy"
-            />
+              referrerpolicy="no-referrer-when-downgrade"
+              title="STR Investment Services Limited — Office location"
+            ></iframe>
           </div>
         </div>
       </section>
