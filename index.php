@@ -127,7 +127,7 @@
             <article class="hero-slide" data-hero-slide data-theme="school" aria-label="Back to School slide">
               <img
                 class="hero-slide-img"
-                src="assets/images/back-to-school.jpg"
+                src="assets/images/back-to-school.avif"
                 alt=""
                 aria-hidden="true"
                 loading="lazy"
