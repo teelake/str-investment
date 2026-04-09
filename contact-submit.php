@@ -116,7 +116,7 @@ if (trim($message) === '') {
     exit;
 }
 
-$subject = 'Website enquiry — STR Investment — ' . $productLabel;
+$subject = 'Enquiry — STR Investment — ' . $productLabel;
 $subjectHeader = '=?UTF-8?B?' . base64_encode($subject) . '?=';
 
 $body = "New enquiry from strinvestment.ng contact form\n";
