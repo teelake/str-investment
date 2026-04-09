@@ -533,10 +533,7 @@ i.bx, i.fa, i.fa-solid, i.fa-regular, i.fa-brands{
 .loans.equal{
   grid-template-columns: 1fr 1fr;
 }
-/* Homepage: one loan card per row (does not affect /loans page) */
-.loans.loans--stack{
-  grid-template-columns: 1fr;
-}
+/* Homepage `loans--stack`: one card per row on mobile only (see media queries) */
 .loans.featured .loan-big,
 .loans.featured .loan-side{
   min-height: 240px;
@@ -955,7 +952,9 @@ footer{
   .why-grid{grid-template-columns: repeat(2, minmax(0, 1fr))}
   .testimonials{grid-template-columns: repeat(2, minmax(0, 1fr))}
   .loans{grid-template-columns: 1fr}
-  .loans.equal{grid-template-columns: 1fr}
+  /* Products page etc.: stack pairs; homepage with .loans--stack stays 2-up on tablet */
+  .loans.equal:not(.loans--stack){grid-template-columns: 1fr}
+  .loans.equal.loans--stack{grid-template-columns: repeat(2, minmax(0, 1fr))}
   .loan-row{grid-template-columns: repeat(2, minmax(0, 1fr))}
   .metrics{grid-template-columns: repeat(2, minmax(0, 1fr))}
   .foot{grid-template-columns: repeat(2, minmax(0, 1fr))}
@@ -968,6 +967,7 @@ footer{
   .drawer[data-open="true"]{display:block}
   .formgrid{grid-template-columns: 1fr}
   .foot{grid-template-columns: 1fr}
+  .loans.equal.loans--stack{grid-template-columns: 1fr}
   .testimonials{grid-template-columns: 1fr}
   .loan-row{grid-template-columns: 1fr}
   .metrics{grid-template-columns: 1fr}

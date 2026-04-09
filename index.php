@@ -28,7 +28,7 @@
       rel="stylesheet"
     />
     <link rel="icon" href="favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="assets/styles.css?v=20260412" />
+    <link rel="stylesheet" href="assets/styles.css?v=20260413" />
     <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" />
     <link
       rel="stylesheet"
@@ -415,7 +415,7 @@
               loading="lazy"
               alt="Bridging the Credit Gap - Rethinking SME Financing"
             />
-            <figcaption class="portrait-cap">Guided by experienced bankers and financial professionals.</figcaption>
+            <figcaption class="portrait-cap"></figcaption>
           </figure>
         </div>
       </section>
