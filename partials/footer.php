@@ -5,7 +5,7 @@ $year = (int)date('Y');
   <div class="container foot">
     <div>
       <a class="brand" href="./" aria-label="STR Investment home">STR Investment Services Ltd</a>
-      <small>Microcredit solutions in Nigeria. Incorporated February 2026.</small>
+      <small>Microcredit solutions in Nigeria. Incorporated 2025.</small>
       <small>Company Reg. No: RC 9253894</small>
       <div class="foot-meta" aria-label="Office details">
         <div class="meta-row">

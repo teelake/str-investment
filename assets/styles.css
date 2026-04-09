@@ -363,6 +363,20 @@ i.bx, i.fa, i.fa-solid, i.fa-regular, i.fa-brands{
 }
 .hero-side .mini b{color: var(--ink)}
 
+/* About page — stacked hero highlights */
+.hero-side--about .hero-about-highlights{
+  position:absolute;
+  left: 18px;
+  right: 18px;
+  bottom: 18px;
+  display:flex;
+  flex-direction:column;
+  gap: 10px;
+}
+.hero-side--about .hero-about-highlights .mini{
+  position: static;
+}
+
 @media (max-width: 760px){
   .hero-content{padding: 28px 0}
 }
