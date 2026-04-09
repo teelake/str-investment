@@ -51,12 +51,9 @@ if (!in_array($product, $allowedProducts, true)) $product = '';
     <main id="main">
       <section class="contact-hero">
         <div class="container">
-          <h1 class="contact-title">
-            Reach <span class="accent">STR Investment</span> about your loan
-          </h1>
-          <p class="lead" style="max-width: 64ch">
-            Whether you’re exploring microcredit options or need guidance on eligibility, our team is ready to
-            provide the precision you require.
+          <h1 class="contact-title">Contact <span class="accent">STR Investment</span></h1>
+          <p class="lead contact-lead">
+            Loan or eligibility questions? We’ll reply with clear next steps.
           </p>
 
           <div class="contact-grid">
