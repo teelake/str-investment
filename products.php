@@ -73,7 +73,8 @@
                   <div class="title">Personal Loan (Blue‑Chip Employee Loan)</div>
                 </div>
                 <p>
-                  Unsecured personal loan for verified staff of reputable employers. Tenor commonly up to 12 months.
+                  Unsecured short‑to‑medium term loan for verified staff of reputable employers, with a fixed monthly repayment
+                  schedule and flexible tenor up to 12 months.
                 </p>
                 <p style="margin-top: 10px; color: var(--muted); font-size: 13px">
                   Typical docs: employment ID, payslips, employer verification, ID, proof of residence, bank statement, guarantor.
@@ -89,7 +90,8 @@
                   <div class="title">Term Loan (Business Loan)</div>
                 </div>
                 <p>
-                  Working capital for SMEs. Tenor commonly 3–6 months. Guarantor/collateral may apply based on assessment.
+                  Short‑term working capital for SMEs (3–6 months) with flexible collateral options (movable or
+                  guarantor‑backed), assessed on turnover and cash‑flow.
                 </p>
                 <p style="margin-top: 10px; color: rgba(255,255,255,.78); font-size: 13px">
                   Typical docs: business registration/evidence of trade, bank statement/sales record, ID, business location proof.
@@ -101,18 +103,39 @@
             </article>
           </div>
 
-          <div class="loan-row">
-            <article class="loan-tile" id="advance">
-              <strong>Salary Advance</strong>
-              <span>Short‑tenor support before payday (15–30 days typical).</span>
+          <div class="loans equal" style="margin-top: 18px">
+            <article class="loan-big" id="school">
+              <div>
+                <div class="title-row">
+                  <span class="title-ic" aria-hidden="true"><i class="bx bx-book-open"></i></span>
+                  <div class="title">Welcome Back to School Loan</div>
+                </div>
+                <p>
+                  Short‑term education support for parents/guardians covering fees and essentials, with repayment structured
+                  around school terms (1–4 months).
+                </p>
+                <p style="margin-top: 10px; color: var(--muted); font-size: 13px">
+                  Typical docs: school admission/fee invoice, valid ID, bank statement (3–6 months), steady income evidence, guarantor.
+                </p>
+              </div>
+              <div style="margin-top: 16px"><a class="btn ghost" href="contact">Apply</a></div>
             </article>
-            <article class="loan-tile" id="school">
-              <strong>Back to School Loan</strong>
-              <span>Support for fees/books/uniforms with term-aligned repayment (1–4 months typical).</span>
-            </article>
-            <article class="loan-tile">
-              <strong>Need guidance?</strong>
-              <span>Tell us your income cycle; we’ll recommend the best fit.</span>
+
+            <article class="loan-big" id="advance" style="background: rgba(255,255,255,.78)">
+              <div>
+                <div class="title-row">
+                  <span class="title-ic" aria-hidden="true"><i class="bx bx-time-five"></i></span>
+                  <div class="title">Salary Advance Loan</div>
+                </div>
+                <p>
+                  Short‑tenor support for salaried workers before payday (15–30 days), typically disbursed within 24–48 hours
+                  after approval with automatic repayment from salary.
+                </p>
+                <p style="margin-top: 10px; color: var(--muted); font-size: 13px">
+                  Typical docs: employment letter/staff ID, payslips, bank statement (3–6 months), valid ID, BVN and employer confirmation.
+                </p>
+              </div>
+              <div style="margin-top: 16px"><a class="btn ghost" href="contact">Apply</a></div>
             </article>
           </div>
         </div>
