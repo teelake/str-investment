@@ -43,7 +43,7 @@
               Choose the product that fits your repayment reality. Requirements vary by product and assessment.
             </p>
             <div class="hero-actions">
-              <a class="btn primary" href="contact">Request a call back</a>
+              <a class="btn primary" href="contact?product=general">Request a call back</a>
               <a class="btn ghost" href="#pricing">Pricing overview</a>
             </div>
           </div>
@@ -80,7 +80,7 @@
                   Typical docs: employment ID, payslips, employer verification, ID, proof of residence, bank statement, guarantor.
                 </p>
               </div>
-              <div style="margin-top: 16px"><a class="btn ghost" href="contact">Apply</a></div>
+              <div style="margin-top: 16px"><a class="btn ghost" href="contact?product=personal">Apply</a></div>
             </article>
 
             <article class="loan-big" id="sme">
@@ -98,7 +98,7 @@
                 </p>
               </div>
               <div style="margin-top: 16px">
-                <a class="btn ghost" href="contact">Apply</a>
+                <a class="btn ghost" href="contact?product=sme">Apply</a>
               </div>
             </article>
           </div>
@@ -118,7 +118,7 @@
                   Typical docs: school admission/fee invoice, valid ID, bank statement (3–6 months), steady income evidence, guarantor.
                 </p>
               </div>
-              <div style="margin-top: 16px"><a class="btn ghost" href="contact">Apply</a></div>
+              <div style="margin-top: 16px"><a class="btn ghost" href="contact?product=school">Apply</a></div>
             </article>
 
             <article class="loan-big" id="advance" style="background: rgba(255,255,255,.78)">
@@ -135,7 +135,7 @@
                   Typical docs: employment letter/staff ID, payslips, bank statement (3–6 months), valid ID, BVN and employer confirmation.
                 </p>
               </div>
-              <div style="margin-top: 16px"><a class="btn ghost" href="contact">Apply</a></div>
+              <div style="margin-top: 16px"><a class="btn ghost" href="contact?product=advance">Apply</a></div>
             </article>
           </div>
         </div>
@@ -170,7 +170,7 @@
           </div>
 
           <div style="margin-top: 18px; text-align:center">
-            <a class="btn primary" href="contact">Ask about eligibility</a>
+            <a class="btn primary" href="contact?product=general">Ask about eligibility</a>
           </div>
         </div>
       </section>
@@ -183,7 +183,7 @@
               <p>Share your needs and we’ll guide you through the right documents and repayment structure.</p>
               <div class="actions">
                 <a class="btn" href="#products" style="background:#fff;color:var(--green);">View loans</a>
-                <a class="btn primary" href="contact">Apply Now</a>
+                <a class="btn primary" href="contact?product=general">Apply Now</a>
               </div>
             </div>
           </div>

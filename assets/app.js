@@ -101,17 +101,52 @@
 
   var contactForm = document.querySelector("[data-contact-form]");
   if (contactForm) {
+    var contactStartedAt = Date.now();
     contactForm.addEventListener("submit", function (e) {
       e.preventDefault();
+
+      // Bot/spam guards (best-effort on a no-backend mailto form)
+      var honeypot = (contactForm.querySelector('[name="website"]') || {}).value || "";
+      if (honeypot.trim()) return;
+
+      if (Date.now() - contactStartedAt < 1600) return;
+
+      try {
+        var last = Number(window.localStorage.getItem("str_last_contact_submit") || "0");
+        if (last && Date.now() - last < 30000) return;
+        window.localStorage.setItem("str_last_contact_submit", String(Date.now()));
+      } catch (err) {
+        // ignore
+      }
+
       var to = contactForm.getAttribute("data-mailto") || "strinvestmentservicesltd@gmail.com";
-      var name = (contactForm.querySelector('[name="name"]') || {}).value || "";
-      var phone = (contactForm.querySelector('[name="phone"]') || {}).value || "";
-      var email = (contactForm.querySelector('[name="email"]') || {}).value || "";
-      var product = (contactForm.querySelector('[name="product"]') || {}).value || "";
-      var msg = (contactForm.querySelector('[name="message"]') || {}).value || "";
-      var sub = encodeURIComponent("Enquiry — STR Investment" + (product ? " — " + product : ""));
+
+      function cleanText(s, max) {
+        s = String(s || "");
+        if (typeof max === "number") s = s.slice(0, max);
+        // prevent header injection / weird control chars
+        s = s.replace(/[\r\n\t]+/g, " ").trim();
+        // keep it simple; mailto body is encoded anyway
+        return s;
+      }
+
+      var name = cleanText((contactForm.querySelector('[name="name"]') || {}).value, 80);
+      var phone = cleanText((contactForm.querySelector('[name="phone"]') || {}).value, 30);
+      var email = cleanText((contactForm.querySelector('[name="email"]') || {}).value, 120);
+      var product = cleanText((contactForm.querySelector('[name="product"]') || {}).value, 24);
+      var msg = cleanText((contactForm.querySelector('[name="message"]') || {}).value, 1200);
+
+      var productLabel = {
+        general: "Loan enquiry",
+        personal: "Personal loan",
+        advance: "Salary advance",
+        school: "Back to school",
+        sme: "SME term loan",
+      }[product] || "Loan enquiry";
+
+      var sub = encodeURIComponent("Enquiry — STR Investment — " + productLabel);
       var body = encodeURIComponent(
-        ["Name: " + name, "Phone: " + phone, "Email: " + email, "Product: " + product, "", msg].join("\n")
+        ["Name: " + name, "Phone: " + phone, "Email: " + email, "Subject: " + productLabel, "", msg].join("\n")
       );
       window.location.href = "mailto:" + to + "?subject=" + sub + "&body=" + body;
     });

@@ -398,7 +398,7 @@
               <p>Tell us what you need and we’ll guide you to the right product and requirements.</p>
               <div class="actions">
                 <a class="btn" href="loans" style="background:#fff;color:var(--green);">Back to Loans</a>
-                <a class="btn primary" href="contact">Talk to a Consultant</a>
+                <a class="btn primary" href="contact?product=general">Talk to a Consultant</a>
               </div>
             </div>
           </div>

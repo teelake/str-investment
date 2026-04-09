@@ -19,11 +19,11 @@ $active = $active ?? '';
         <a href="loans" <?= $active === 'loans' ? 'aria-current="page"' : '' ?>>Loans</a>
         <a href="eligibility" <?= $active === 'eligibility' ? 'aria-current="page"' : '' ?>>Eligibility</a>
         <a href="about" <?= $active === 'about' ? 'aria-current="page"' : '' ?>>About Us</a>
-        <a href="contact" <?= $active === 'contact' ? 'aria-current="page"' : '' ?>>Contact</a>
+        <a href="contact?product=general" <?= $active === 'contact' ? 'aria-current="page"' : '' ?>>Contact</a>
       </nav>
 
       <div class="cta">
-        <a class="btn primary" href="contact">Apply Now</a>
+        <a class="btn primary" href="contact?product=general">Apply Now</a>
         <button
           class="btn ghost mobile-toggle"
           type="button"
@@ -42,7 +42,7 @@ $active = $active ?? '';
       <a href="loans" <?= $active === 'loans' ? 'aria-current="page"' : '' ?>>Loans</a>
       <a href="eligibility" <?= $active === 'eligibility' ? 'aria-current="page"' : '' ?>>Eligibility</a>
       <a href="about" <?= $active === 'about' ? 'aria-current="page"' : '' ?>>About Us</a>
-      <a href="contact" <?= $active === 'contact' ? 'aria-current="page"' : '' ?>>Contact</a>
+      <a href="contact?product=general" <?= $active === 'contact' ? 'aria-current="page"' : '' ?>>Contact</a>
     </div>
   </div>
 </header>
