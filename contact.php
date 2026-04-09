@@ -66,7 +66,7 @@
                 </div>
                 <div class="field">
                   <label for="phone">Phone</label>
-                  <input id="phone" name="phone" placeholder="+234 000 000 0000" required />
+                  <input id="phone" name="phone" placeholder="09054984777" required />
                 </div>
                 <div class="field">
                   <label for="subject">Subject</label>
@@ -99,7 +99,7 @@
                 <span aria-hidden="true"><i class="bx bx-map"></i></span>
                 <div>
                   <b>Headquarters</b><br />
-                  Nigeria (update address later)
+                  6, 2nd Avenue, Olorunkemi Estate, Elebu, Oluyole Extension, Ibadan
                 </div>
               </div>
               <div class="row">
@@ -113,7 +113,7 @@
                 <span aria-hidden="true"><i class="bx bx-phone-call"></i></span>
                 <div>
                   <b>Direct Line</b><br />
-                  <a href="tel:+2340000000000">+234 000 000 0000</a>
+                  <a href="tel:+2349054984777">09054984777</a>
                 </div>
               </div>
               <div class="map" aria-label="Map placeholder"></div>

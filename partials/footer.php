@@ -6,14 +6,15 @@ $year = (int)date('Y');
     <div>
       <div class="brand">STR Investment</div>
       <small>Microcredit solutions in Nigeria. Incorporated February 2026.</small>
+      <small>Company Reg. No: RC 9253894</small>
       <div class="foot-meta" aria-label="Office details">
         <div class="meta-row">
           <i class="bx bx-map" aria-hidden="true"></i>
-          <span>Address: (placeholder) Lagos, Nigeria</span>
+          <span>Address: 6, 2nd Avenue, Olorunkemi Estate, Elebu, Oluyole Extension, Ibadan</span>
         </div>
         <div class="meta-row">
           <i class="bx bx-phone-call" aria-hidden="true"></i>
-          <a href="tel:+2340000000000">Phone: +234 000 000 0000</a>
+          <a href="tel:+2349054984777">Phone: 09054984777</a>
         </div>
       </div>
     </div>
