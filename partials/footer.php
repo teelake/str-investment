@@ -29,7 +29,7 @@ $year = (int)date('Y');
     <div>
       <h4>Support</h4>
       <ul>
-        <li><a href="contact">Contact</a></li>
+        <li><a href="contact?product=general">Contact</a></li>
         <li><a href="privacy">Privacy</a></li>
       </ul>
     </div>

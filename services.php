@@ -43,7 +43,7 @@
               Our goal is quick, reliable access to credit — with responsible checks and documentation that fits the product.
             </p>
             <div class="hero-actions">
-              <a class="btn primary" href="contact">Start an enquiry</a>
+              <a class="btn primary" href="contact?product=general">Start an enquiry</a>
               <a class="btn ghost" href="loans">View loan products</a>
             </div>
           </div>
@@ -96,7 +96,7 @@
               <h2 class="h2">Typical documents (by product)</h2>
               <p class="sub">Final requirements may vary based on assessment.</p>
             </div>
-            <a class="btn ghost" href="contact">Ask us →</a>
+            <a class="btn ghost" href="contact?product=general">Ask us →</a>
           </div>
 
           <div class="loans equal">
@@ -145,7 +145,7 @@
               <p>We’ll recommend the best product fit and the exact documents needed for your case.</p>
               <div class="actions">
                 <a class="btn" href="loans" style="background:#fff;color:var(--green);">Browse Loans</a>
-                <a class="btn primary" href="contact">Apply Now</a>
+                <a class="btn primary" href="contact?product=general">Apply Now</a>
               </div>
             </div>
           </div>

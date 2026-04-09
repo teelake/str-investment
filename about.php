@@ -45,7 +45,7 @@
             </p>
             <div class="hero-actions">
               <a class="btn primary" href="loans">Explore Loan Products</a>
-              <a class="btn ghost" href="contact">Talk to Us</a>
+              <a class="btn ghost" href="contact?product=general">Talk to Us</a>
             </div>
           </div>
 
@@ -135,7 +135,7 @@
               <p>Share your needs and we’ll guide you to the right product and required documents.</p>
               <div class="actions">
                 <a class="btn" href="loans" style="background:#fff;color:var(--green);">Browse Loans</a>
-                <a class="btn primary" href="contact">Apply Now</a>
+                <a class="btn primary" href="contact?product=general">Apply Now</a>
               </div>
             </div>
           </div>
