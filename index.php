@@ -28,7 +28,7 @@
       rel="stylesheet"
     />
     <link rel="icon" href="favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="assets/styles.css?v=20260409" />
+    <link rel="stylesheet" href="assets/styles.css?v=20260410" />
     <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" />
     <link
       rel="stylesheet"
@@ -107,7 +107,6 @@
         aria-label="Featured microcredit solutions"
         data-hero-fullslider
       >
-        <h2 class="sr-only">Featured solutions</h2>
         <div class="hero-fs-viewport" data-hero-fs-viewport>
           <div class="hero-fs-track" data-hero-fs-track role="group">
             <article class="hero-fs-slide" data-hero-fs-slide aria-label="Slide 1 of 4: Personal loan">
@@ -508,7 +507,7 @@
 
     <?php include __DIR__ . '/partials/footer.php'; ?>
 
-    <script src="assets/app.js?v=20260409" defer></script>
+    <script src="assets/app.js?v=20260410" defer></script>
   </body>
 </html>
 

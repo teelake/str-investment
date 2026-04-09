@@ -177,6 +177,131 @@ i.bx, i.fa, i.fa-solid, i.fa-regular, i.fa-brands{
 .hero{
   padding: 34px 0 22px;
 }
+.hero--fullslider{
+  padding: 0;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+.hero-fs-viewport{
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  min-height: clamp(420px, 72vh, 640px);
+  background: var(--bg);
+}
+.hero-fs-track{
+  display: flex;
+  height: 100%;
+  min-height: inherit;
+  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+.hero-fs-slide{
+  position: relative;
+  flex: 0 0 100%;
+  width: 100%;
+  min-height: inherit;
+  display: flex;
+  align-items: stretch;
+  box-sizing: border-box;
+}
+.hero-fs-media{
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+.hero-fs-media img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transform: scale(1.03);
+}
+.hero-fs-scrim{
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(
+    105deg,
+    rgba(244, 246, 245, 0.97) 0%,
+    rgba(244, 246, 245, 0.9) 34%,
+    rgba(244, 246, 245, 0.55) 52%,
+    rgba(244, 246, 245, 0.2) 72%,
+    rgba(244, 246, 245, 0) 100%
+  );
+}
+.hero-fs-inner{
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  align-self: center;
+  padding: clamp(32px, 6vw, 56px) 0 clamp(88px, 12vw, 118px);
+}
+.hero-fs-controls{
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 4;
+  padding-bottom: 18px;
+  pointer-events: none;
+}
+.hero-fs-controls-inner{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  pointer-events: auto;
+}
+.hero-fs-dots{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.hero-fs-dot{
+  width: 10px;
+  height: 10px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(13, 15, 18, 0.22);
+  box-shadow: 0 0 0 1px rgba(13, 15, 18, 0.08);
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+.hero-fs-dot[aria-selected="true"]{
+  background: var(--green);
+  transform: scale(1.2);
+}
+.hero-fs-dot:focus-visible{
+  outline: 3px solid rgba(15, 106, 74, 0.35);
+  outline-offset: 2px;
+}
+.hero-fs-pause{
+  font-size: 13px;
+  padding: 8px 14px;
+  background: rgba(255, 255, 255, 0.85);
+  border-color: var(--line2);
+}
+.hero-fs-pause[aria-pressed="true"]{
+  background: rgba(255, 255, 255, 0.95);
+}
+
+@media (prefers-reduced-motion: reduce){
+  .hero-fs-track{transition: none}
+}
+
+@media (max-width: 760px){
+  .hero-fs-viewport{min-height: clamp(480px, 78svh, 600px)}
+  .hero-fs-inner{padding-top: 28px; padding-bottom: 96px}
+  .hero-fs-controls-inner{justify-content: center}
+  .hero-fs-pause{order: -1; width: 100%; justify-content: center}
+}
+
 .hero-content{
   position: relative;
   z-index: 2;
@@ -248,15 +373,6 @@ i.bx, i.fa, i.fa-solid, i.fa-regular, i.fa-brands{
 }
 .hero-side .mini b{color: var(--ink)}
 
-/* Home hero visual slider */
-.hero-slider{
-  position:absolute;
-  inset: 0;
-  border-radius: var(--radius2);
-  overflow:hidden;
-  z-index: 2;
-  touch-action: pan-y;
-}
 @media (max-width: 760px){
   .hero-content{padding: 28px 0}
 }
