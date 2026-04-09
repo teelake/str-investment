@@ -59,20 +59,30 @@
     }
   })();
 
-  document.querySelectorAll("[data-faq-item]").forEach(function (item) {
-    var btn = item.querySelector("[data-faq-q]");
-    if (!btn) return;
-    btn.addEventListener("click", function () {
-      var isOpen = item.getAttribute("data-open") === "true";
-      document.querySelectorAll("[data-faq-item]").forEach(function (other) {
+  // FAQ accordion
+  (function () {
+    var items = Array.prototype.slice.call(document.querySelectorAll("[data-qa]"));
+    if (!items.length) return;
+
+    function closeAll() {
+      items.forEach(function (other) {
         other.setAttribute("data-open", "false");
-        var b = other.querySelector("[data-faq-q]");
+        var b = other.querySelector("[data-q]");
         if (b) b.setAttribute("aria-expanded", "false");
       });
-      item.setAttribute("data-open", isOpen ? "false" : "true");
-      btn.setAttribute("aria-expanded", isOpen ? "false" : "true");
+    }
+
+    items.forEach(function (item) {
+      var btn = item.querySelector("[data-q]");
+      if (!btn) return;
+      btn.addEventListener("click", function () {
+        var isOpen = item.getAttribute("data-open") === "true";
+        closeAll();
+        item.setAttribute("data-open", isOpen ? "false" : "true");
+        btn.setAttribute("aria-expanded", isOpen ? "false" : "true");
+      });
     });
-  });
+  })();
 
   function mailtoForm(sel, subjectPrefix) {
     var form = document.querySelector(sel);

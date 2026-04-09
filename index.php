@@ -264,42 +264,61 @@
             <a class="btn ghost" href="loans">See all →</a>
           </div>
 
-          <div class="loans featured">
+          <div class="loans equal">
             <article class="loan-big">
               <div>
                 <div class="title-row">
                   <span class="title-ic" aria-hidden="true"><i class="bx bx-id-card"></i></span>
-                  <div class="title">Personal Loan</div>
+                  <div class="title">Personal Loan (Blue‑Chip Employee Loan)</div>
                 </div>
-                <p>Blue‑chip employee loan for verified staff with payroll-friendly repayment.</p>
+                <p>
+                  Unsecured short‑to‑medium term loan for verified staff of reputable employers, with a fixed monthly repayment
+                  schedule and flexible tenor up to 12 months.
+                </p>
               </div>
               <div style="margin-top: 16px"><a class="btn ghost" href="loans#personal">Learn More</a></div>
             </article>
 
-            <article class="loan-side">
+            <article class="loan-big">
               <div>
                 <div class="title-row">
                   <span class="title-ic" aria-hidden="true"><i class="bx bx-store-alt"></i></span>
-                  <div class="title">Term Loan</div>
+                  <div class="title">Term Loan (Business Loan)</div>
                 </div>
-                <p>Working capital for SMEs — assessed on turnover and cash-flow.</p>
+                <p>
+                  Short‑term working capital for SMEs (3–6 months) with flexible collateral options (movable or
+                  guarantor‑backed), assessed on turnover and cash‑flow.
+                </p>
               </div>
-              <div style="margin-top: 16px"><a class="btn" href="loans#sme" style="background:#fff;color:var(--green);">Learn More</a></div>
+              <div style="margin-top: 16px"><a class="btn ghost" href="loans#sme">Learn More</a></div>
             </article>
-          </div>
 
-          <div class="loan-row">
-            <article class="loan-tile">
-              <strong>Salary Advance Loan</strong>
-              <span>Short-term support before payday.</span>
+            <article class="loan-big">
+              <div>
+                <div class="title-row">
+                  <span class="title-ic" aria-hidden="true"><i class="bx bx-book-open"></i></span>
+                  <div class="title">Welcome Back to School Loan</div>
+                </div>
+                <p>
+                  Short‑term education support for parents/guardians covering fees and essentials, with repayment structured
+                  around school terms (1–4 months).
+                </p>
+              </div>
+              <div style="margin-top: 16px"><a class="btn ghost" href="loans#school">Learn More</a></div>
             </article>
-            <article class="loan-tile">
-              <strong>Back to School Loan</strong>
-              <span>Term-aligned support for school expenses.</span>
-            </article>
-            <article class="loan-tile">
-              <strong>More products</strong>
-              <span>Talk to us for the best fit.</span>
+
+            <article class="loan-big">
+              <div>
+                <div class="title-row">
+                  <span class="title-ic" aria-hidden="true"><i class="bx bx-time-five"></i></span>
+                  <div class="title">Salary Advance Loan</div>
+                </div>
+                <p>
+                  Short‑tenor support for salaried workers before payday (15–30 days), typically disbursed within 24–48 hours
+                  after approval with automatic repayment from salary.
+                </p>
+              </div>
+              <div style="margin-top: 16px"><a class="btn ghost" href="loans#advance">Learn More</a></div>
             </article>
           </div>
         </div>
