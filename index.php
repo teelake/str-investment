@@ -101,63 +101,30 @@
     <?php include __DIR__ . '/partials/header.php'; ?>
 
     <main id="main">
-      <section class="hero hero--slider" aria-label="Hero">
-        <div class="hero-slider" data-hero-slider data-index="0" aria-label="Loan highlights slider">
-          <div class="hero-slides" data-hero-slides>
-            <article class="hero-slide" data-hero-slide data-theme="personal" aria-label="Personal Loan slide">
-              <img
-                class="hero-slide-img"
-                src="assets/images/personal-loan.jpg"
-                alt=""
-                aria-hidden="true"
-                loading="lazy"
-                onerror="this.onerror=null;this.src='assets/images/hero-placeholder.svg';"
-              />
-            </article>
-            <article class="hero-slide" data-hero-slide data-theme="sme" aria-label="SME Term Loan slide">
-              <img
-                class="hero-slide-img"
-                src="assets/images/loan-mama.jpg"
-                alt=""
-                aria-hidden="true"
-                loading="lazy"
-                onerror="this.onerror=null;this.src='assets/images/hero-placeholder.svg';"
-              />
-            </article>
-            <article class="hero-slide" data-hero-slide data-theme="school" aria-label="Back to School slide">
-              <img
-                class="hero-slide-img"
-                src="assets/images/back-to-school.avif"
-                alt=""
-                aria-hidden="true"
-                loading="lazy"
-                onerror="this.onerror=null;this.src='assets/images/hero-placeholder.svg';"
-              />
-            </article>
+      <section class="hero" aria-label="Hero">
+        <div class="container hero-grid">
+          <div>
+            <span class="pill"><span class="dot" aria-hidden="true"></span>Incorporated February 2026</span>
+            <h1 class="h1">Bridging the <span class="accent">Financing Gap</span> for You</h1>
+            <p class="lead">
+              STR Investment Services Limited provides accessible and innovative microcredit solutions to individuals and small
+              businesses — fast, flexible, and customer-focused.
+            </p>
+            <div class="hero-actions">
+              <a class="btn primary" href="contact?product=general">Apply for a Loan</a>
+              <a class="btn ghost" href="loans">Browse Products</a>
+            </div>
           </div>
 
-          <div class="hero-dots" role="tablist" aria-label="Select slide">
-            <button type="button" class="hero-dot" data-hero-dot aria-label="Show Personal Loan slide"></button>
-            <button type="button" class="hero-dot" data-hero-dot aria-label="Show SME Term Loan slide"></button>
-            <button type="button" class="hero-dot" data-hero-dot aria-label="Show Back to School slide"></button>
-          </div>
-        </div>
-
-        <div class="container hero-content">
-          <span class="pill" data-hero-pill
-            ><span class="dot" aria-hidden="true"></span><span data-hero-pill-text>Incorporated February 2026</span></span
-          >
-          <h1 class="h1">
-            <span data-hero-h1-pre>Bridging the </span><span class="accent" data-hero-h1-accent>Financing Gap</span
-            ><span data-hero-h1-post> for You</span>
-          </h1>
-          <p class="lead" data-hero-lead>
-            STR Investment Services Limited provides accessible and innovative microcredit solutions to individuals and small
-            businesses — fast, flexible, and customer-focused.
-          </p>
-          <div class="hero-actions">
-            <a class="btn primary" data-hero-primary href="contact?product=personal">Apply for a Loan</a>
-            <a class="btn ghost" data-hero-secondary href="loans#personal">Browse Products</a>
+          <div class="hero-side" aria-hidden="true">
+            <img
+              src="assets/images/hero-placeholder.svg"
+              alt=""
+              loading="lazy"
+              style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;"
+            />
+            <div class="frame" aria-hidden="true"></div>
+            <div class="mini"><b>Customer-first</b> lending, clear terms.</div>
           </div>
         </div>
       </section>

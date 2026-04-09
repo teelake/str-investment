@@ -177,57 +177,10 @@ i.bx, i.fa, i.fa-solid, i.fa-regular, i.fa-brands{
 .hero{
   padding: 34px 0 22px;
 }
-.hero--slider{
-  position: relative;
-  overflow: hidden;
-  border-radius: 0;
-  box-shadow: var(--shadow);
-  background: rgba(255,255,255,.4);
-}
-.hero--slider .hero-slider{
-  position:absolute;
-  inset: 0;
-  border-radius: 0;
-  z-index: 0;
-}
-.hero--slider .hero-slides,
-.hero--slider .hero-slide{
-  height: 100%;
-}
-.hero--slider .hero-slide{padding: 0}
-.hero--slider .hero-slides{
-  overflow:hidden;
-  transform: translate3d(0,0,0);
-}
-.hero--slider .hero-slide{
-  flex: 0 0 100%;
-  width: 100%;
-  position: relative;
-  overflow: hidden;
-}
-.hero--slider{min-height: 420px}
-.hero--slider .hero-slider{min-height: 420px}
-.hero--slider .hero-slides{min-height: 420px}
-.hero--slider .hero-slide{min-height: 420px}
 .hero-content{
   position: relative;
   z-index: 2;
   padding: 34px 0;
-}
-.hero--slider::after{
-  content:"";
-  position:absolute;
-  inset:0;
-  background: radial-gradient(980px 420px at 26% 26%, rgba(244,246,245,.92), rgba(244,246,245,.66) 48%, rgba(244,246,245,.28) 72%, rgba(244,246,245,0) 100%);
-  z-index: 1;
-  pointer-events:none;
-}
-.hero--slider .hero-dots{
-  left: 50%;
-  transform: translateX(-50%);
-  right: auto;
-  bottom: 18px;
-  justify-content:center;
 }
 .hero-grid{
   display:grid;
@@ -304,134 +257,8 @@ i.bx, i.fa, i.fa-solid, i.fa-regular, i.fa-brands{
   z-index: 2;
   touch-action: pan-y;
 }
-.hero-side .frame{display:none}
-.hero-slides{
-  height:100%;
-  width:100%;
-  display:flex;
-  transition: transform .6s cubic-bezier(.2,.9,.2,1);
-  will-change: transform;
-}
-.hero-slide{
-  position: relative;
-  min-width: 100%;
-  height:100%;
-  padding: 18px 18px 54px;
-  display:flex;
-  flex-direction:column;
-  justify-content:flex-end;
-  gap: 10px;
-  color: rgba(255,255,255,.92);
-  background: transparent;
-  overflow: hidden;
-}
-.hero-slide-img{
-  position:absolute;
-  inset:0;
-  width:100%;
-  height:100%;
-  object-fit: cover;
-  object-position: center;
-  opacity: 1;
-  filter: saturate(1.05) contrast(1.05);
-  transform: scale(1.08);
-}
-.hero-slide::after{
-  content:none;
-}
-.hero-slide > *{
-  position:relative;
-  z-index: 1;
-}
-
-.hero-slide-text{
-  width: min(440px, calc(100% - 36px));
-  margin-top: auto;
-  background: rgba(255,255,255,.82);
-  border: 1px solid var(--line2);
-  border-radius: 18px;
-  padding: 12px 12px 14px;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-}
-
-.hero-slide-text .hero-slide-badge{
-  background: rgba(13,15,18,.06);
-  border: 1px solid var(--line2);
-  color: var(--ink);
-}
-.hero-slide-text .hero-slide-badge i{color: var(--green)}
-.hero-slide-text .hero-slide-title{color: var(--ink)}
-.hero-slide[data-theme="personal"]{
-  background: transparent;
-}
-.hero-slide[data-theme="sme"]{
-  background: transparent;
-}
-.hero-slide[data-theme="school"]{
-  background: transparent;
-}
-.hero-slide-badge{
-  width: fit-content;
-  display:inline-flex;
-  align-items:center;
-  gap: 8px;
-  padding: 8px 10px;
-  border-radius: 999px;
-  background: rgba(0,0,0,.18);
-  border: 1px solid rgba(255,255,255,.18);
-  color: rgba(255,255,255,.92);
-  font-size: 12px;
-  font-weight: 700;
-}
-.hero-slide-badge i{font-size: 16px}
-.hero-slide-title{
-  font-size: 20px;
-  font-weight: 900;
-  letter-spacing: -0.02em;
-}
-.hero-slide-sub{
-  font-size: 13px;
-  color: rgba(255,255,255,.80);
-  max-width: 46ch;
-}
-.hero-dots{
-  position:absolute;
-  left: 18px;
-  right: 18px;
-  bottom: 14px;
-  display:flex;
-  gap: 8px;
-  z-index: 5;
-}
-.hero-dot{
-  width: 10px;
-  height: 10px;
-  border-radius: 999px;
-  border: 0;
-  padding: 0;
-  cursor:pointer;
-  background: rgba(255,255,255,.35);
-  box-shadow: 0 0 0 1px rgba(0,0,0,.18);
-}
-.hero-dot[aria-current="true"]{
-  background: rgba(255,255,255,.92);
-}
-.hero-dot:focus-visible{
-  outline: 3px solid rgba(255,255,255,.55);
-  outline-offset: 2px;
-}
-
-@media (prefers-reduced-motion: reduce){
-  .hero-slides{transition:none}
-}
-
 @media (max-width: 760px){
   .hero-content{padding: 28px 0}
-  .hero--slider{min-height: 520px}
-  .hero--slider .hero-slider,
-  .hero--slider .hero-slides,
-  .hero--slider .hero-slide{min-height: 520px}
 }
 
 /* Section */
