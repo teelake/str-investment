@@ -189,6 +189,7 @@ i.bx, i.fa, i.fa-solid, i.fa-regular, i.fa-brands{
   overflow: hidden;
   min-height: clamp(420px, 72vh, 640px);
   background: var(--bg);
+  touch-action: pan-y;
 }
 .hero-fs-track{
   display: flex;

@@ -150,7 +150,7 @@
               <div class="hero-fs-scrim" aria-hidden="true"></div>
               <div class="container hero-fs-inner">
                 <span class="pill hero-fs-pill"><span class="dot" aria-hidden="true"></span>SME term loan</span>
-                <p class="h1 hero-fs-title" role="heading" aria-level="1">Working capital for <span class="accent">real growth</span></p>
+                <p class="h1 hero-fs-title" role="heading" aria-level="2">Working capital for <span class="accent">real growth</span></p>
                 <p class="lead hero-fs-lead">
                   Short-term working capital for stock and operations — assessed on turnover and cash-flow, with tenors that
                   match your business rhythm.
@@ -175,7 +175,7 @@
               <div class="hero-fs-scrim" aria-hidden="true"></div>
               <div class="container hero-fs-inner">
                 <span class="pill hero-fs-pill"><span class="dot" aria-hidden="true"></span>Back to school</span>
-                <p class="h1 hero-fs-title" role="heading" aria-level="1">Support when <span class="accent">school resumes</span></p>
+                <p class="h1 hero-fs-title" role="heading" aria-level="2">Support when <span class="accent">school resumes</span></p>
                 <p class="lead hero-fs-lead">
                   Cover fees, books, and essentials with repayment aligned to school terms and your income — quick review when
                   documents are complete.
@@ -199,7 +199,7 @@
               <div class="hero-fs-scrim" aria-hidden="true"></div>
               <div class="container hero-fs-inner">
                 <span class="pill hero-fs-pill"><span class="dot" aria-hidden="true"></span>Salary advance</span>
-                <p class="h1 hero-fs-title" role="heading" aria-level="1">Cash flow relief <span class="accent">before payday</span></p>
+                <p class="h1 hero-fs-title" role="heading" aria-level="2">Cash flow relief <span class="accent">before payday</span></p>
                 <p class="lead hero-fs-lead">
                   Short tenures (typically 15–30 days), fast disbursement after approval, and repayment structured around your
                   salary date — minimal paperwork for eligible staff.
