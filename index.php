@@ -105,13 +105,34 @@
         <div class="hero-slider" data-hero-slider data-index="0" aria-label="Loan highlights slider">
           <div class="hero-slides" data-hero-slides>
             <article class="hero-slide" data-hero-slide data-theme="personal" aria-label="Personal Loan slide">
-              <img class="hero-slide-img" src="assets/images/personal-loan.jpg" alt="" aria-hidden="true" loading="lazy" />
+              <img
+                class="hero-slide-img"
+                src="assets/images/personal-loan.jpg"
+                alt=""
+                aria-hidden="true"
+                loading="lazy"
+                onerror="this.onerror=null;this.src='assets/images/hero-placeholder.svg';"
+              />
             </article>
             <article class="hero-slide" data-hero-slide data-theme="sme" aria-label="SME Term Loan slide">
-              <img class="hero-slide-img" src="assets/images/loan-mama.jpg" alt="" aria-hidden="true" loading="lazy" />
+              <img
+                class="hero-slide-img"
+                src="assets/images/loan-mama.jpg"
+                alt=""
+                aria-hidden="true"
+                loading="lazy"
+                onerror="this.onerror=null;this.src='assets/images/hero-placeholder.svg';"
+              />
             </article>
             <article class="hero-slide" data-hero-slide data-theme="school" aria-label="Back to School slide">
-              <img class="hero-slide-img" src="assets/images/back-to-school.jpg" alt="" aria-hidden="true" loading="lazy" />
+              <img
+                class="hero-slide-img"
+                src="assets/images/back-to-school.jpg"
+                alt=""
+                aria-hidden="true"
+                loading="lazy"
+                onerror="this.onerror=null;this.src='assets/images/hero-placeholder.svg';"
+              />
             </article>
           </div>
 
