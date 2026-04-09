@@ -180,7 +180,7 @@ i.bx, i.fa, i.fa-solid, i.fa-regular, i.fa-brands{
 .hero--slider{
   position: relative;
   overflow: hidden;
-  border-radius: var(--radius2);
+  border-radius: 0;
   box-shadow: var(--shadow);
   background: rgba(255,255,255,.4);
 }
@@ -415,7 +415,6 @@ i.bx, i.fa, i.fa-solid, i.fa-regular, i.fa-brands{
 }
 
 @media (max-width: 760px){
-  .hero--slider{border-radius: 22px}
   .hero-content{padding: 28px 0}
   .hero--slider{min-height: 520px}
   .hero--slider .hero-slider,

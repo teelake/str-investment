@@ -134,14 +134,14 @@
             <a class="btn ghost" href="loans">Browse Products</a>
           </div>
 
-          <div class="hero-slide-text" aria-label="Featured product">
+          <!--<div class="hero-slide-text" aria-label="Featured product">
             <div class="hero-slide-badge">
               <i class="bx bx-id-card" aria-hidden="true"></i>
               <span data-hero-label>Personal Loan</span>
             </div>
             <div class="hero-slide-title" data-hero-title>Blue‑chip employee loan</div>
           </div>
-        </div>
+        </div>-->
       </section>
 
       <section class="section why">
