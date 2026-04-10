@@ -40,7 +40,7 @@
             <span class="pill"><span class="pill-ic" aria-hidden="true"><i class="bx bx-check-shield"></i></span> Eligibility</span>
             <h1 class="h1">Clear requirements. <span class="accent">Fair assessment.</span></h1>
             <p class="lead">
-              STR Investment (2025) offers salary advance, personal, school, and business loans. Each product has its own
+              STR Investment (February 2026) offers salary advance, personal, school, and business loans. Each product has its own
               checks — below is what we usually ask; your final list follows verification.
             </p>
             <div class="hero-actions">
@@ -59,7 +59,7 @@
             <div class="hero-about-highlights">
               <div class="mini">
                 <span class="mini-ic" aria-hidden="true"><i class="bx bx-buildings"></i></span>
-                <span><b>Microcredit</b> · Incorporated 2025<br /><span class="hero-about-motto">Governance-led, customer-focused</span></span>
+                <span><b>Microcredit</b> · Incorporated February 2026<br /><span class="hero-about-motto">Governance-led, customer-focused</span></span>
               </div>
             </div>
           </aside>

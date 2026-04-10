@@ -43,7 +43,7 @@
         "slogan": "Where trust meets opportunity",
         "url": "https://strinvestment.ng/",
         "areaServed": "NG",
-        "foundingDate": "2025",
+        "foundingDate": "2026-02-01",
         "email": "strinvestmentservicesltd@gmail.com"
       }
     </script>

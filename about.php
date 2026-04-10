@@ -8,7 +8,7 @@
     <title>About Us — STR Investment Services Limited | Microcredit Nigeria</title>
     <meta
       name="description"
-      content="STR Investment Services Limited offers microcredit in Nigeria — salary advances, business loans, and asset financing. Incorporated 2025; founded by an experienced ex-banker."
+      content="STR Investment Services Limited offers microcredit in Nigeria — salary advances, business loans, and asset financing. Incorporated February 2026; founded by an experienced ex-banker."
     />
     <link rel="canonical" href="https://strinvestment.ng/about" />
     <meta property="og:title" content="About STR Investment — Microcredit Nigeria" />
@@ -31,7 +31,7 @@
           "@type": "Organization",
           "name": "STR Investment Services Limited",
           "url": "https://strinvestment.ng/",
-          "foundingDate": "2025",
+          "foundingDate": "2026-02-01",
           "areaServed": "NG",
           "slogan": "Where trust meets opportunity"
         }
@@ -63,7 +63,7 @@
             <span class="pill"><span class="pill-ic" aria-hidden="true"><i class="bx bx-buildings"></i></span> About STR Investment</span>
             <h1 class="h1">Microcredit for <span class="accent">people &amp; SMEs</span> — with banking discipline.</h1>
             <p class="lead">
-              We are a private limited company (2025) focused on accessible microcredit: timely, flexible products for
+              We are a private limited company (February 2026) focused on accessible microcredit: timely, flexible products for
               individuals, small businesses, and communities underserved by traditional finance.
             </p>
             <div class="hero-actions">
@@ -80,7 +80,7 @@
               <div class="mini">
                 <span class="mini-ic" aria-hidden="true"><i class="bx bx-calendar-check"></i></span>
                 <span>
-                  <b>Est. 2025</b> · Microcredit<br />
+                  <b>Est. February 2026</b> · Microcredit<br />
                   <span class="hero-about-motto">Where trust meets opportunity</span>
                 </span>
               </div>
