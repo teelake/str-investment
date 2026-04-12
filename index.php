@@ -109,10 +109,10 @@
       >
         <div class="hero-fs-viewport" data-hero-fs-viewport>
           <div class="hero-fs-track" data-hero-fs-track role="group">
-            <article class="hero-fs-slide" data-hero-fs-slide aria-label="Slide 1 of 4: Personal loan">
+            <article class="hero-fs-slide" data-hero-fs-slide aria-label="Slide 1 of 4: About STR Investment">
               <div class="hero-fs-media" aria-hidden="true">
                 <img
-                  src="assets/images/personal-loan.jpg"
+                  src="assets/images/smes-1.jpg"
                   alt=""
                   loading="eager"
                   fetchpriority="high"
@@ -122,13 +122,38 @@
               </div>
               <div class="hero-fs-scrim" aria-hidden="true"></div>
               <div class="container hero-fs-inner">
-                <span class="pill hero-fs-pill"><span class="dot" aria-hidden="true"></span>Personal loan</span>
+                <span class="pill hero-fs-pill"><span class="dot" aria-hidden="true"></span>About STR Investment</span>
                 <h1 class="h1 hero-fs-title">
-                  Blue‑chip <span class="accent">employee</span> financing
+                  STR Investment Services Limited: <span class="accent">trusted microcredit</span> in Nigeria
                 </h1>
                 <p class="lead hero-fs-lead">
-                  Unsecured personal credit for verified staff — flexible tenor up to 12 months, payroll-friendly repayments, and
-                  clear fees.
+                  We provide responsible microcredit for individuals and SMEs, including personal loans, salary advances,
+                  school support, and business working capital with transparent requirements and structured repayment terms.
+                </p>
+                <div class="hero-actions">
+                  <a class="btn primary" href="about">About Us</a>
+                  <a class="btn ghost" href="contact?product=general">Talk to us</a>
+                </div>
+              </div>
+            </article>
+
+            <article class="hero-fs-slide" data-hero-fs-slide aria-label="Slide 2 of 4: Personal loan">
+              <div class="hero-fs-media" aria-hidden="true">
+                <img
+                  src="assets/images/personal-loan.jpg"
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                  onerror="this.onerror=null;this.src='assets/images/hero-placeholder.svg';"
+                />
+              </div>
+              <div class="hero-fs-scrim" aria-hidden="true"></div>
+              <div class="container hero-fs-inner">
+                <span class="pill hero-fs-pill"><span class="dot" aria-hidden="true"></span>Personal loan</span>
+                <p class="h1 hero-fs-title" role="heading" aria-level="2">Blue-chip <span class="accent">employee</span> financing</p>
+                <p class="lead hero-fs-lead">
+                  Unsecured personal credit for verified staff with flexible tenors up to 12 months, payroll-friendly
+                  repayments, and clear fees.
                 </p>
                 <div class="hero-actions">
                   <a class="btn primary" href="contact?product=personal">Apply now</a>
@@ -137,7 +162,7 @@
               </div>
             </article>
 
-            <article class="hero-fs-slide" data-hero-fs-slide aria-label="Slide 2 of 4: SME term loan">
+            <article class="hero-fs-slide" data-hero-fs-slide aria-label="Slide 3 of 4: SME term loan">
               <div class="hero-fs-media" aria-hidden="true">
                 <img
                   src="assets/images/loan-mama.jpg"
@@ -152,8 +177,8 @@
                 <span class="pill hero-fs-pill"><span class="dot" aria-hidden="true"></span>SME term loan</span>
                 <p class="h1 hero-fs-title" role="heading" aria-level="2">Working capital for <span class="accent">real growth</span></p>
                 <p class="lead hero-fs-lead">
-                  Short-term working capital for stock and operations — assessed on turnover and cash-flow, with tenors that
-                  match your business rhythm.
+                  Short-term business financing for stock and operations, assessed on turnover and cash flow, with repayment
+                  structures built around your business cycle.
                 </p>
                 <div class="hero-actions">
                   <a class="btn primary" href="contact?product=sme">Talk to us</a>
@@ -162,7 +187,7 @@
               </div>
             </article>
 
-            <article class="hero-fs-slide" data-hero-fs-slide aria-label="Slide 3 of 4: Back to school">
+            <article class="hero-fs-slide" data-hero-fs-slide aria-label="Slide 4 of 4: Back to school">
               <div class="hero-fs-media" aria-hidden="true">
                 <img
                   src="assets/images/back-to-school.avif"
@@ -177,36 +202,12 @@
                 <span class="pill hero-fs-pill"><span class="dot" aria-hidden="true"></span>Back to school</span>
                 <p class="h1 hero-fs-title" role="heading" aria-level="2">Support when <span class="accent">school resumes</span></p>
                 <p class="lead hero-fs-lead">
-                  Cover fees, books, and essentials with repayment aligned to school terms and your income — quick review when
-                  documents are complete.
+                  Cover fees, books, and essentials with repayment aligned to school terms and your income, plus quick review
+                  when your documents are complete.
                 </p>
                 <div class="hero-actions">
                   <a class="btn primary" href="contact?product=school">Apply for school loan</a>
                   <a class="btn ghost" href="loans#school">View product</a>
-                </div>
-              </div>
-            </article>
-
-            <article class="hero-fs-slide" data-hero-fs-slide aria-label="Slide 4 of 4: Salary advance">
-              <div class="hero-fs-media" aria-hidden="true">
-                <img
-                  src="assets/images/hero-placeholder.svg"
-                  alt=""
-                  loading="lazy"
-                  decoding="async"
-                />
-              </div>
-              <div class="hero-fs-scrim" aria-hidden="true"></div>
-              <div class="container hero-fs-inner">
-                <span class="pill hero-fs-pill"><span class="dot" aria-hidden="true"></span>Salary advance</span>
-                <p class="h1 hero-fs-title" role="heading" aria-level="2">Cash flow relief <span class="accent">before payday</span></p>
-                <p class="lead hero-fs-lead">
-                  Short tenures (typically 15–30 days), fast disbursement after approval, and repayment structured around your
-                  salary date — minimal paperwork for eligible staff.
-                </p>
-                <div class="hero-actions">
-                  <a class="btn primary" href="contact?product=advance">Request advance</a>
-                  <a class="btn ghost" href="loans#advance">View product</a>
                 </div>
               </div>
             </article>

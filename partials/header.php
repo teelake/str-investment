@@ -12,6 +12,10 @@ $active = $active ?? '';
     <div class="nav">
       <a class="brand brand--img" href="./" aria-label="STR Investment home">
         <img src="assets/images/str-logo.png" alt="STR Investment Services Limited" />
+        <span class="brand-wordmark" aria-hidden="true">
+          <span class="brand-wordmark__main">STR Investment</span>
+          <span class="brand-wordmark__sub">Services Limited</span>
+        </span>
       </a>
 
       <nav class="navlinks" aria-label="Primary">

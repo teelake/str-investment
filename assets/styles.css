@@ -113,9 +113,29 @@ i.bx, i.fa, i.fa-solid, i.fa-regular, i.fa-brands{
   border-radius: 0;
   object-fit: contain;
 }
+.brand-wordmark{
+  display: inline-flex;
+  flex-direction: column;
+  line-height: 1.05;
+}
+.brand-wordmark__main{
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+}
+.brand-wordmark__sub{
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
 
 @media (max-width: 760px){
   .brand--img img{height: 44px}
+  .brand-wordmark__main{font-size: 14px}
+  .brand-wordmark__sub{font-size: 10px}
 }
 .navlinks{
   display:flex;
@@ -1310,5 +1330,6 @@ footer{
 @media (max-width: 420px){
   .nav{gap: 12px}
   .btn{padding: 11px 16px}
+  .brand-wordmark__sub{display: none}
 }
 
