@@ -8,7 +8,7 @@
     <title>About Us — STR Investment Services Limited | Microcredit Nigeria</title>
     <meta
       name="description"
-      content="STR Investment Services Limited offers microcredit in Nigeria — salary advances, business loans, and asset financing. Incorporated February 2026; founded by an experienced ex-banker."
+      content="STR Investment Services Limited offers microcredit in Nigeria — salary advances, business loans, and asset financing. Incorporated February 2026; founded by an experienced former banker."
     />
     <link rel="canonical" href="https://strinvestment.ng/about" />
     <meta property="og:title" content="About STR Investment — Microcredit Nigeria" />
@@ -132,7 +132,7 @@
             <div class="about-kicker" aria-hidden="true"><i class="bx bx-user-circle"></i></div>
             <h2 class="h2">Leadership</h2>
             <p class="sub">
-              Founded and funded by an ex-banker with 20+ years across marketing, credit analysis, and business
+              Founded and funded by an experienced former banker with 20+ years across marketing, credit analysis, and business
               development — backed by banking and finance professionals who prioritise sound risk practice and clear
               client communication.
             </p>

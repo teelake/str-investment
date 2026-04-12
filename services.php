@@ -73,7 +73,7 @@
             <h2 class="h2">Who we are</h2>
             <p class="sub">
               A private limited company bridging financing gaps for individuals, SMEs, and underserved communities. Led by
-              an ex-banker (20+ years) and a team grounded in risk management, excellence, integrity, and customer
+              an experienced former banker (20+ years) and a team grounded in risk management, excellence, integrity, and customer
               satisfaction — combining sound practice with practical products.
             </p>
           </div>
