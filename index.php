@@ -109,7 +109,15 @@
       >
         <div class="hero-fs-viewport" data-hero-fs-viewport>
           <div class="hero-fs-track" data-hero-fs-track role="group">
-            <article class="hero-fs-slide" data-hero-fs-slide aria-label="Slide 1 of 4: About STR Investment">
+            <article class="hero-fs-slide hero-fs-slide--brand" data-hero-fs-slide aria-label="Slide 1 of 4: About STR Investment">
+              <div class="hero-brand-bg" aria-hidden="true">
+                <span class="hero-brand-bg__shape hero-brand-bg__shape--a"></span>
+                <span class="hero-brand-bg__shape hero-brand-bg__shape--b"></span>
+                <span class="hero-brand-bg__shape hero-brand-bg__shape--c"></span>
+                <span class="hero-brand-chip hero-brand-chip--shield"><i class="bx bx-shield-quarter"></i> Trusted lending</span>
+                <span class="hero-brand-chip hero-brand-chip--chart"><i class="bx bx-line-chart"></i> Structured repayment</span>
+                <span class="hero-brand-chip hero-brand-chip--money"><i class="bx bx-wallet"></i> SME and personal credit</span>
+              </div>
               <div class="hero-fs-scrim" aria-hidden="true"></div>
               <div class="container hero-fs-inner">
                 <span class="pill hero-fs-pill"><span class="dot" aria-hidden="true"></span>About STR Investment</span>
