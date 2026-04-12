@@ -122,7 +122,7 @@
               <div class="container hero-fs-inner">
                 <span class="pill hero-fs-pill"><span class="dot" aria-hidden="true"></span>About STR Investment</span>
                 <h1 class="h1 hero-fs-title">
-                  STR Investment: <span class="accent">trusted microcredit</span> in Nigeria
+                  STR Investment:<br /><span class="accent">trusted microcredit</span> in Nigeria
                 </h1>
                 <p class="lead hero-fs-lead">
                   Responsible credit for individuals and SMEs, with clear requirements and flexible repayment options.

@@ -110,7 +110,7 @@ i.bx, i.fa, i.fa-solid, i.fa-regular, i.fa-brands{
   height: 52px;
   width: auto;
   display:block;
-  border-radius: 0;
+  border-radius: 12px;
   object-fit: contain;
 }
 .brand-wordmark{
@@ -123,6 +123,7 @@ i.bx, i.fa, i.fa-solid, i.fa-regular, i.fa-brands{
   font-weight: 800;
   color: var(--ink);
   letter-spacing: -0.01em;
+  text-transform: uppercase;
 }
 .brand-wordmark__sub{
   font-size: 11px;
@@ -135,7 +136,8 @@ i.bx, i.fa, i.fa-solid, i.fa-regular, i.fa-brands{
   font-size: 10px;
   font-weight: 500;
   color: var(--muted);
-  letter-spacing: 0.01em;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
   opacity: 0.92;
 }
 
