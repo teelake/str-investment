@@ -2,6 +2,26 @@ Options -Indexes
 
 RewriteEngine On
 
+# Canonical host/domain redirects
+RewriteCond %{HTTP_HOST} ^(www\.)?strinvestment\.ng$ [NC,OR]
+RewriteCond %{HTTP_HOST} ^www\.strinvestment\.com\.ng$ [NC]
+RewriteRule ^ https://strinvestment.com.ng%{REQUEST_URI} [R=301,L]
+RewriteCond %{HTTP_HOST} ^strinvestment\.com\.ng$ [NC]
+RewriteCond %{HTTPS} !=on
+RewriteRule ^ https://strinvestment.com.ng%{REQUEST_URI} [R=301,L]
+
+# Redirect legacy aliases to canonical clean URLs
+RewriteRule ^products/?$ /loans [R=301,L,NC]
+RewriteRule ^services/?$ /eligibility [R=301,L,NC]
+
+# Redirect .php entry points to clean URLs
+RewriteRule ^index\.php$ / [R=301,L,NC]
+RewriteRule ^about\.php$ /about [R=301,L,NC]
+RewriteRule ^products\.php$ /loans [R=301,L,NC]
+RewriteRule ^services\.php$ /eligibility [R=301,L,NC]
+RewriteRule ^contact\.php$ /contact [R=301,L,NC]
+RewriteRule ^privacy\.php$ /privacy [R=301,L,NC]
+
 # If the requested resource exists, serve it directly
 RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -d
@@ -11,9 +31,7 @@ RewriteRule ^ - [L]
 RewriteRule ^$ index.php [L]
 RewriteRule ^about/?$ about.php [L]
 RewriteRule ^loans/?$ products.php [L]
-RewriteRule ^products/?$ products.php [L]
 RewriteRule ^eligibility/?$ services.php [L]
-RewriteRule ^services/?$ services.php [L]
 RewriteRule ^contact/?$ contact.php [L]
 RewriteRule ^privacy/?$ privacy.php [L]
 

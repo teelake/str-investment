@@ -10,10 +10,10 @@
       name="description"
       content="Eligibility for STR Investment microcredit in Nigeria: personal (blue-chip), back-to-school, SME term loans, and salary advance — documents, tenors, and typical pricing."
     />
-    <link rel="canonical" href="https://strinvestment.ng/eligibility" />
+    <link rel="canonical" href="https://strinvestment.com.ng/eligibility" />
     <meta property="og:title" content="Eligibility — STR Investment" />
-    <meta property="og:url" content="https://strinvestment.ng/eligibility" />
-    <meta property="og:image" content="https://strinvestment.ng/og.svg" />
+    <meta property="og:url" content="https://strinvestment.com.ng/eligibility" />
+    <meta property="og:image" content="https://strinvestment.com.ng/og.svg" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

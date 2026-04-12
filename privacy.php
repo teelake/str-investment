@@ -8,12 +8,12 @@
     <title>Privacy — STR Investment Services Limited</title>
     <meta
       name="description"
-      content="How STR Investment Services Limited handles information when you use strinvestment.ng — contact form, email, and third-party services."
+      content="How STR Investment Services Limited handles information when you use strinvestment.com.ng — contact form, email, and third-party services."
     />
-    <link rel="canonical" href="https://strinvestment.ng/privacy" />
+    <link rel="canonical" href="https://strinvestment.com.ng/privacy" />
     <meta property="og:title" content="Privacy — STR Investment" />
-    <meta property="og:url" content="https://strinvestment.ng/privacy" />
-    <meta property="og:image" content="https://strinvestment.ng/og.svg" />
+    <meta property="og:url" content="https://strinvestment.com.ng/privacy" />
+    <meta property="og:image" content="https://strinvestment.com.ng/og.svg" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -43,7 +43,7 @@
             through.
           </p>
           <p class="sub" style="max-width: 70ch; margin-top: -8px">
-            <strong>Last updated:</strong> 9 April 2026 · Applies to <a href="https://strinvestment.ng/">strinvestment.ng</a>
+            <strong>Last updated:</strong> 9 April 2026 · Applies to <a href="https://strinvestment.com.ng/">strinvestment.com.ng</a>
           </p>
 
           <div class="contact-grid">

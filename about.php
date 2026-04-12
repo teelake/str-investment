@@ -10,27 +10,27 @@
       name="description"
       content="STR Investment Services Limited offers microcredit in Nigeria — salary advances, business loans, and asset financing. Incorporated February 2026; founded by an experienced former banker."
     />
-    <link rel="canonical" href="https://strinvestment.ng/about" />
+    <link rel="canonical" href="https://strinvestment.com.ng/about" />
     <meta property="og:title" content="About STR Investment — Microcredit Nigeria" />
     <meta
       property="og:description"
       content="Accessible microcredit for individuals and SMEs. Governance-led lending, clear products, experienced team."
     />
-    <meta property="og:url" content="https://strinvestment.ng/about" />
-    <meta property="og:image" content="https://strinvestment.ng/og.svg" />
+    <meta property="og:url" content="https://strinvestment.com.ng/about" />
+    <meta property="og:image" content="https://strinvestment.com.ng/og.svg" />
 
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
         "@type": "AboutPage",
         "name": "About STR Investment Services Limited",
-        "url": "https://strinvestment.ng/about",
+        "url": "https://strinvestment.com.ng/about",
         "description": "Microcredit institution in Nigeria offering salary advances, business loans, and asset financing.",
-        "isPartOf": { "@type": "WebSite", "name": "STR Investment Services Limited", "url": "https://strinvestment.ng/" },
+        "isPartOf": { "@type": "WebSite", "name": "STR Investment Services Limited", "url": "https://strinvestment.com.ng/" },
         "mainEntity": {
           "@type": "Organization",
           "name": "STR Investment Services Limited",
-          "url": "https://strinvestment.ng/",
+          "url": "https://strinvestment.com.ng/",
           "foundingDate": "2026-02-01",
           "areaServed": "NG",
           "slogan": "Where trust meets opportunity"

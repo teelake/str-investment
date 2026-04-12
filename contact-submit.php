@@ -13,6 +13,7 @@ session_start();
 header('Content-Type: application/json; charset=utf-8');
 header('X-Content-Type-Options: nosniff');
 header('Referrer-Policy: strict-origin-when-cross-origin');
+header('X-Robots-Tag: noindex, nofollow', true);
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
@@ -119,7 +120,7 @@ if (trim($message) === '') {
 $subject = 'Enquiry — STR Investment — ' . $productLabel;
 $subjectHeader = '=?UTF-8?B?' . base64_encode($subject) . '?=';
 
-$body = "New enquiry from strinvestment.ng contact form\n";
+$body = "New enquiry from strinvestment.com.ng contact form\n";
 $body .= "Submitted: " . gmdate('Y-m-d H:i:s') . " UTC\n\n";
 $body .= "Name: {$name}\n";
 $body .= "Phone: {$phone}\n";

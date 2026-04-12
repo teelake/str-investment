@@ -23,10 +23,10 @@ $formStartedAt = time();
       name="description"
       content="Contact STR Investment Services Limited. Send an enquiry about personal loans, salary advances, school loans, or SME working capital."
     />
-    <link rel="canonical" href="https://strinvestment.ng/contact" />
+    <link rel="canonical" href="https://strinvestment.com.ng/contact" />
     <meta property="og:title" content="Contact — STR Investment" />
-    <meta property="og:url" content="https://strinvestment.ng/contact" />
-    <meta property="og:image" content="https://strinvestment.ng/og.svg" />
+    <meta property="og:url" content="https://strinvestment.com.ng/contact" />
+    <meta property="og:image" content="https://strinvestment.com.ng/og.svg" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -47,7 +47,7 @@ $formStartedAt = time();
         "@context": "https://schema.org",
         "@type": "ContactPage",
         "name": "Contact STR Investment Services Limited",
-        "url": "https://strinvestment.ng/contact"
+        "url": "https://strinvestment.com.ng/contact"
       }
     </script>
   </head>

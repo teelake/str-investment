@@ -10,7 +10,7 @@
       name="description"
       content="STR Investment Services Limited offers accessible microcredit in Nigeria for individuals and SMEs — salary advance, personal loans, school support, and working capital."
     />
-    <link rel="canonical" href="https://strinvestment.ng/" />
+    <link rel="canonical" href="https://strinvestment.com.ng/" />
     <meta name="robots" content="index,follow,max-image-preview:large" />
     <meta property="og:type" content="website" />
     <meta property="og:title" content="STR Investment Services Limited" />
@@ -18,8 +18,8 @@
       property="og:description"
       content="Microcredit for Nigeria — quick, responsible access to credit with clear requirements and structured repayments."
     />
-    <meta property="og:url" content="https://strinvestment.ng/" />
-    <meta property="og:image" content="https://strinvestment.ng/og.svg" />
+    <meta property="og:url" content="https://strinvestment.com.ng/" />
+    <meta property="og:image" content="https://strinvestment.com.ng/og.svg" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -41,7 +41,7 @@
         "@type": "FinancialService",
         "name": "STR Investment Services Limited",
         "slogan": "Where trust meets opportunity",
-        "url": "https://strinvestment.ng/",
+        "url": "https://strinvestment.com.ng/",
         "areaServed": "NG",
         "foundingDate": "2026-02-01",
         "email": "strinvestmentservicesltd@gmail.com"

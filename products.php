@@ -10,10 +10,10 @@
       name="description"
       content="Explore STR Investment loan products: personal loans, salary advances, back-to-school support, and SME term loans — with clear requirements and structured tenors."
     />
-    <link rel="canonical" href="https://strinvestment.ng/loans" />
+    <link rel="canonical" href="https://strinvestment.com.ng/loans" />
     <meta property="og:title" content="Loans — STR Investment" />
-    <meta property="og:url" content="https://strinvestment.ng/loans" />
-    <meta property="og:image" content="https://strinvestment.ng/og.svg" />
+    <meta property="og:url" content="https://strinvestment.com.ng/loans" />
+    <meta property="og:image" content="https://strinvestment.com.ng/og.svg" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
