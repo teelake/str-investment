@@ -15,11 +15,17 @@ RewriteRule ^products/?$ /loans [R=301,L,NC]
 RewriteRule ^services/?$ /eligibility [R=301,L,NC]
 
 # Redirect .php entry points to clean URLs
+RewriteCond %{THE_REQUEST} \s/+index\.php(?:[\s?]|$) [NC]
 RewriteRule ^index\.php$ / [R=301,L,NC]
+RewriteCond %{THE_REQUEST} \s/+about\.php(?:[\s?]|$) [NC]
 RewriteRule ^about\.php$ /about [R=301,L,NC]
+RewriteCond %{THE_REQUEST} \s/+products\.php(?:[\s?]|$) [NC]
 RewriteRule ^products\.php$ /loans [R=301,L,NC]
+RewriteCond %{THE_REQUEST} \s/+services\.php(?:[\s?]|$) [NC]
 RewriteRule ^services\.php$ /eligibility [R=301,L,NC]
+RewriteCond %{THE_REQUEST} \s/+contact\.php(?:[\s?]|$) [NC]
 RewriteRule ^contact\.php$ /contact [R=301,L,NC]
+RewriteCond %{THE_REQUEST} \s/+privacy\.php(?:[\s?]|$) [NC]
 RewriteRule ^privacy\.php$ /privacy [R=301,L,NC]
 
 # If the requested resource exists, serve it directly
