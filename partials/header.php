@@ -15,6 +15,7 @@ $active = $active ?? '';
         <span class="brand-wordmark" aria-hidden="true">
           <span class="brand-wordmark__main">STR Investment</span>
           <span class="brand-wordmark__sub">Services Limited</span>
+          <span class="brand-wordmark__tag">Where trust meets opportunity</span>
         </span>
       </a>
 

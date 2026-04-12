@@ -110,25 +110,14 @@
         <div class="hero-fs-viewport" data-hero-fs-viewport>
           <div class="hero-fs-track" data-hero-fs-track role="group">
             <article class="hero-fs-slide" data-hero-fs-slide aria-label="Slide 1 of 4: About STR Investment">
-              <div class="hero-fs-media" aria-hidden="true">
-                <img
-                  src="assets/images/smes-1.jpg"
-                  alt=""
-                  loading="eager"
-                  fetchpriority="high"
-                  decoding="async"
-                  onerror="this.onerror=null;this.src='assets/images/hero-placeholder.svg';"
-                />
-              </div>
               <div class="hero-fs-scrim" aria-hidden="true"></div>
               <div class="container hero-fs-inner">
                 <span class="pill hero-fs-pill"><span class="dot" aria-hidden="true"></span>About STR Investment</span>
                 <h1 class="h1 hero-fs-title">
-                  STR Investment Services Limited: <span class="accent">trusted microcredit</span> in Nigeria
+                  STR Investment: <span class="accent">trusted microcredit</span> in Nigeria
                 </h1>
                 <p class="lead hero-fs-lead">
-                  We provide responsible microcredit for individuals and SMEs, including personal loans, salary advances,
-                  school support, and business working capital with transparent requirements and structured repayment terms.
+                  Responsible credit for individuals and SMEs, with clear requirements and flexible repayment options.
                 </p>
                 <div class="hero-actions">
                   <a class="btn primary" href="about">About Us</a>
