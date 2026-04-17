@@ -16,13 +16,21 @@ $profileInitial = $fullName !== '' ? strtoupper(mb_substr($fullName, 0, 1)) : st
 if ($profileInitial === '') {
     $profileInitial = '?';
 }
+$authSurface = !$authed && in_array($path, ['/login', '/forgot-password', '/reset-password'], true);
+$docTitle = match (true) {
+    $authSurface && $path === '/forgot-password' => 'Forgot password · STR Console',
+    $authSurface && $path === '/reset-password' => 'New password · STR Console',
+    $authSurface => 'Sign in · STR Console',
+    default => 'STR Console',
+};
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>STR Console</title>
+  <meta name="theme-color" content="#0f6a4a" />
+  <title><?= htmlspecialchars($docTitle, ENT_QUOTES, 'UTF-8') ?></title>
   <link rel="icon" type="image/png" href="<?= htmlspecialchars($logoUrl, ENT_QUOTES, 'UTF-8') ?>" />
   <link rel="apple-touch-icon" href="<?= htmlspecialchars($logoUrl, ENT_QUOTES, 'UTF-8') ?>" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -65,7 +73,8 @@ if ($profileInitial === '') {
     .console-topbar {
       display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
       padding: 12px 20px; border-bottom: 1px solid var(--line2);
-      background: rgba(244,246,245,.97); backdrop-filter: blur(10px);
+      background: rgba(244,246,245,.97); backdrop-filter: blur(12px);
+      box-shadow: 0 1px 0 rgba(255,255,255,.7) inset, 0 8px 32px rgba(13,15,18,.04);
       position: sticky; top: 0; z-index: 50;
     }
     .console-topbar__start { display: flex; align-items: center; gap: 12px; }
@@ -257,6 +266,31 @@ if ($profileInitial === '') {
         });
       })();
     </script>
+  <?php elseif ($authSurface): ?>
+    <div class="auth-layout">
+      <div class="auth-layout__bg" aria-hidden="true"></div>
+      <div class="auth-layout__inner">
+        <header class="auth-masthead">
+          <img class="auth-masthead__logo" src="<?= htmlspecialchars($logoUrl, ENT_QUOTES, 'UTF-8') ?>" alt="STR Investment" width="180" height="52" decoding="async" />
+          <?php if ($path === '/login'): ?>
+            <h1 class="auth-masthead__title">Welcome back</h1>
+            <p class="auth-masthead__sub">Sign in to STR Console — staff access only.</p>
+          <?php elseif ($path === '/forgot-password'): ?>
+            <h1 class="auth-masthead__title">Forgot password</h1>
+            <p class="auth-masthead__sub">We’ll email you a secure link to choose a new password.</p>
+          <?php else: ?>
+            <h1 class="auth-masthead__title">Set a new password</h1>
+            <p class="auth-masthead__sub">Choose a strong password you don’t use elsewhere.</p>
+          <?php endif; ?>
+        </header>
+        <div class="auth-card">
+          <?= $content ?>
+        </div>
+        <?php if ($path === '/login'): ?>
+          <p class="auth-foot" style="margin-top:20px;">Need an account? Contact your <strong>system administrator</strong>.</p>
+        <?php endif; ?>
+      </div>
+    </div>
   <?php else: ?>
     <main class="console-main console-main--guest">
       <?= $content ?>

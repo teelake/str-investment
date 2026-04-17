@@ -60,7 +60,8 @@ final class ConsoleAuth
         string $email,
         string $roleKey,
         array $permissionKeys,
-        ?string $fullName = null
+        ?string $fullName = null,
+        ?string $phone = null
     ): void {
         if (session_status() === PHP_SESSION_ACTIVE) {
             session_regenerate_id(true);
@@ -75,6 +76,9 @@ final class ConsoleAuth
         }
         if ($fullName !== null && $fullName !== '') {
             $row['full_name'] = $fullName;
+        }
+        if ($phone !== null && $phone !== '') {
+            $row['phone'] = $phone;
         }
         $_SESSION[self::SESSION_KEY] = $row;
     }

@@ -70,4 +70,31 @@ final class Request
         }
         return rtrim($parent, '/') . '/' . $relativePath;
     }
+
+    /**
+     * Absolute origin for this console app (no trailing slash). Set STR_CONSOLE_PUBLIC_URL when behind proxies or CLI.
+     */
+    public static function publicBaseUrl(): string
+    {
+        $env = getenv('STR_CONSOLE_PUBLIC_URL');
+        if (is_string($env) && trim($env) !== '') {
+            return rtrim(trim($env), '/');
+        }
+        if (defined('STR_CONSOLE_PUBLIC_URL') && is_string(STR_CONSOLE_PUBLIC_URL) && STR_CONSOLE_PUBLIC_URL !== '') {
+            return rtrim(STR_CONSOLE_PUBLIC_URL, '/');
+        }
+
+        $https = false;
+        if (!empty($_SERVER['HTTPS']) && strtolower((string) $_SERVER['HTTPS']) !== 'off') {
+            $https = true;
+        }
+        if (!empty($_SERVER['HTTP_X_FORWARDED_PROTO'])
+            && strtolower((string) $_SERVER['HTTP_X_FORWARDED_PROTO']) === 'https') {
+            $https = true;
+        }
+        $scheme = $https ? 'https' : 'http';
+        $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+
+        return $scheme . '://' . $host . self::basePath();
+    }
 }

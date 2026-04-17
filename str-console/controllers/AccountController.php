@@ -40,9 +40,15 @@ final class AccountController extends BaseController
 
         $email = trim((string) Request::post('email', ''));
         $fullName = trim((string) Request::post('full_name', ''));
+        $phoneRaw = trim((string) Request::post('phone', ''));
 
         if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $this->redirect('/account/profile?error=' . rawurlencode('Enter a valid email.'));
+            return;
+        }
+        $phoneNorm = UserRepository::normalizeOptionalPhone($phoneRaw);
+        if ($phoneRaw !== '' && $phoneNorm === null) {
+            $this->redirect('/account/profile?error=' . rawurlencode('Enter a valid phone number (at least 8 digits), or leave blank.'));
             return;
         }
         if ($repo->emailTakenByOther($email, $uid)) {
@@ -51,18 +57,20 @@ final class AccountController extends BaseController
         }
 
         try {
-            $repo->updateSelfProfile($uid, $email, $fullName === '' ? null : $fullName);
+            $repo->updateSelfProfile($uid, $email, $fullName === '' ? null : $fullName, $phoneNorm);
             AuditLogger::log($uid, 'console_user.self_profile', 'console_user', $uid, ['email' => $email]);
             $roleKey = (string) ($row['role_key'] ?? '');
             $fresh = $repo->findById($uid);
             if ($fresh !== null) {
                 $fn = $fresh['full_name'] ?? null;
+                $ph = $fresh['phone'] ?? null;
                 ConsoleAuth::login(
                     $uid,
                     $email,
                     $roleKey,
                     str_console_user_login_grants($roleKey, $fresh['extra_grants_json'] ?? null),
-                    is_string($fn) && $fn !== '' ? $fn : null
+                    is_string($fn) && $fn !== '' ? $fn : null,
+                    is_string($ph) && $ph !== '' ? $ph : null
                 );
             }
             $this->redirect('/account/profile?flash=' . rawurlencode('Profile updated.'));
@@ -128,12 +136,14 @@ final class AccountController extends BaseController
             $fresh = $repo->findById($uid);
             if ($fresh !== null) {
                 $fn = $fresh['full_name'] ?? null;
+                $ph = $fresh['phone'] ?? null;
                 ConsoleAuth::login(
                     $uid,
                     $email,
                     $roleKey,
                     str_console_user_login_grants($roleKey, $fresh['extra_grants_json'] ?? null),
-                    is_string($fn) && $fn !== '' ? $fn : null
+                    is_string($fn) && $fn !== '' ? $fn : null,
+                    is_string($ph) && $ph !== '' ? $ph : null
                 );
             }
             $this->redirect('/account/password?flash=' . rawurlencode('Password updated.'));

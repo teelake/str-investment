@@ -98,6 +98,10 @@ function str_console_route_permissions(): array
         // Auth (public login; logout requires session)
         'auth.login' => [],
         'auth.login.submit' => [],
+        'auth.forgot' => [],
+        'auth.forgot.submit' => [],
+        'auth.reset' => [],
+        'auth.reset.submit' => [],
         'auth.logout' => [...$auth],
 
         // Dashboard

@@ -359,9 +359,9 @@ final class LoanLedgerService
             throw new RuntimeException('The last line has no payment to adjust.');
         }
 
-        $due = (float) ($last['amount_due'] ?? 0);
+        $due = self::money((float) ($last['amount_due'] ?? 0));
         $np = self::money($newPaymentAmount);
-        if ($np < 0 || $np > $due) {
+        if ($np < 0 || $np > $due + 0.0000001) {
             throw new InvalidArgumentException('Payment must be between 0 and the line amount due.');
         }
         $closing = self::money($due - $np);

@@ -58,8 +58,8 @@ try {
 
     $hash = password_hash($password, PASSWORD_DEFAULT);
     $stmt = $pdo->prepare(
-        'INSERT INTO console_users (email, password_hash, role_key, full_name, is_active, created_at, updated_at)
-         VALUES (:email, :hash, :role, :fname, 1, NOW(), NOW())'
+        'INSERT INTO console_users (email, password_hash, role_key, full_name, phone, is_active, created_at, updated_at)
+         VALUES (:email, :hash, :role, :fname, NULL, 1, NOW(), NOW())'
     );
     $stmt->execute([
         ':email' => $email,

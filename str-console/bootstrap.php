@@ -48,6 +48,8 @@ require_once STR_CONSOLE_ROOT . '/core/Database.php';
 require_once STR_CONSOLE_ROOT . '/services/AuditLogger.php';
 require_once STR_CONSOLE_ROOT . '/services/CustomerDocumentStorage.php';
 require_once STR_CONSOLE_ROOT . '/repositories/UserRepository.php';
+require_once STR_CONSOLE_ROOT . '/repositories/PasswordResetRepository.php';
+require_once STR_CONSOLE_ROOT . '/services/PasswordResetNotifier.php';
 require_once STR_CONSOLE_ROOT . '/repositories/ConsoleSettingRepository.php';
 require_once STR_CONSOLE_ROOT . '/services/PolicyService.php';
 require_once STR_CONSOLE_ROOT . '/repositories/CustomerRepository.php';

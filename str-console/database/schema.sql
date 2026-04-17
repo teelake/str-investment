@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS console_users (
   role_key VARCHAR(50) NOT NULL,
   extra_grants_json JSON NULL,
   full_name VARCHAR(190) NULL,
+  phone VARCHAR(32) NULL,
   is_active TINYINT(1) NOT NULL DEFAULT 1,
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -126,4 +127,18 @@ CREATE TABLE IF NOT EXISTS console_settings (
   updated_by_user_id BIGINT UNSIGNED NULL,
   updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (setting_key)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS console_password_resets (
+  id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  user_id BIGINT UNSIGNED NOT NULL,
+  token_hash CHAR(64) NOT NULL,
+  expires_at DATETIME NOT NULL,
+  used_at DATETIME NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  KEY idx_pwd_reset_user (user_id),
+  KEY idx_pwd_reset_hash (token_hash),
+  KEY idx_pwd_reset_expires (expires_at),
+  CONSTRAINT fk_pwd_reset_user FOREIGN KEY (user_id) REFERENCES console_users (id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

@@ -274,7 +274,7 @@ final class LoansController extends BaseController
             'canClose' => str_console_authorize($grants, ['loans.close'])
                 && $active
                 && !empty($loan['disbursed_at'])
-                && $outRounded <= 0
+                && $outRounded <= 0.009
                 && count($lines) > 0,
             'canVoidPayment' => str_console_authorize($grants, ['payments.void']) && $active && $lastHasPayment,
             'canAdjustPayment' => str_console_authorize($grants, ['payments.adjust']) && $active && $lastHasPayment,
@@ -400,7 +400,7 @@ final class LoansController extends BaseController
             return;
         }
         $out = round(LoanLedgerService::outstandingForLoan($loanId), 2);
-        if ($out > 0) {
+        if ($out > 0.009) {
             $this->redirect('/loans/' . $loanId . '?error=' . rawurlencode('Outstanding balance must be zero before closing.'));
             return;
         }

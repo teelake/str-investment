@@ -16,6 +16,10 @@ function str_console_routes(): array
         ['GET', '/', DashboardController::class, 'index', 'dashboard.index'],
         ['GET', '/login', AuthController::class, 'showLogin', 'auth.login'],
         ['POST', '/login', AuthController::class, 'login', 'auth.login.submit'],
+        ['GET', '/forgot-password', AuthController::class, 'showForgotPassword', 'auth.forgot'],
+        ['POST', '/forgot-password', AuthController::class, 'submitForgotPassword', 'auth.forgot.submit'],
+        ['GET', '/reset-password', AuthController::class, 'showResetPassword', 'auth.reset'],
+        ['POST', '/reset-password', AuthController::class, 'submitResetPassword', 'auth.reset.submit'],
         ['POST', '/logout', AuthController::class, 'logout', 'auth.logout'],
 
         ['GET', '/customers', CustomersController::class, 'index', 'customers.index'],

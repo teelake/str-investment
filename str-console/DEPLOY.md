@@ -20,6 +20,12 @@ The `console_settings` table stores org policy toggles and the role permission m
 
 Apply migration **`005_console_users_extra_grants.sql`** on existing databases so `console_users.extra_grants_json` exists (per-user additive permissions merged at login).
 
+Apply **`006_password_resets.sql`** for self-service password reset.
+
+**Password reset email:** set `STR_CONSOLE_MAIL_FROM` to a valid `From:` address (and ensure the host can send mail). For local development only, you may set `STR_CONSOLE_DEV_RESET_LINK=1` to show the reset URL in the UI / error log when mail is not sent.
+
+**Public URL for reset links:** if the app is behind a reverse proxy or cron, set `STR_CONSOLE_PUBLIC_URL` (e.g. `https://your-domain.com/str-console`) so emailed links point to the correct origin.
+
 ## Web server
 
 - Point the site **document root** at `str-console/public` (or the directory that contains `index.php` for this app), not the repository root.

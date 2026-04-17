@@ -5,52 +5,50 @@ declare(strict_types=1);
 /** @var list<string> $roles */
 /** @var string $next */
 /** @var mixed $error */
+/** @var mixed $sent */
 $basePath = Request::basePath();
 $err = is_string($error) ? $error : '';
+$sentFlash = is_string($sent) ? $sent : '';
 ?>
-<div style="max-width: 420px; margin: 0 auto;">
-  <h1 style="font-size: var(--h2); margin: 0 0 8px;">Sign in</h1>
-  <p style="color: var(--muted); margin: 0 0 22px;">STR Console — staff access only.</p>
+<?php if ($sentFlash === 'reset'): ?>
+  <div class="auth-alert auth-alert--ok">Your password was updated. Sign in with your new password.</div>
+<?php endif; ?>
 
-  <?php if ($err !== ''): ?>
-    <div style="background: rgba(180, 40, 40, .08); border: 1px solid rgba(180, 40, 40, .2); color: #7f1d1d; padding: 12px 14px; border-radius: 14px; margin-bottom: 16px; font-size: 14px;">
-      <?= htmlspecialchars($err, ENT_QUOTES, 'UTF-8') ?>
+<?php if ($err !== ''): ?>
+  <div class="auth-alert auth-alert--error"><?= htmlspecialchars($err, ENT_QUOTES, 'UTF-8') ?></div>
+<?php endif; ?>
+
+<form method="post" action="<?= htmlspecialchars($basePath . '/login', ENT_QUOTES, 'UTF-8') ?>" class="auth-form">
+  <input type="hidden" name="next" value="<?= htmlspecialchars($next, ENT_QUOTES, 'UTF-8') ?>" />
+
+  <div class="auth-field">
+    <label for="login-email">Work email</label>
+    <input id="login-email" name="email" type="email" required autocomplete="username" inputmode="email" />
+  </div>
+
+  <?php if ($devLogin): ?>
+    <div class="auth-field">
+      <label for="login-role">Role (demo only)</label>
+      <select id="login-role" name="role" required>
+        <?php foreach ($roles as $r): ?>
+          <option value="<?= htmlspecialchars($r, ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($r, ENT_QUOTES, 'UTF-8') ?></option>
+        <?php endforeach; ?>
+      </select>
     </div>
+    <p class="auth-dev-hint">Demo mode: set <code>STR_CONSOLE_DEV_LOGIN=1</code>. Use real authentication and email before production.</p>
+  <?php elseif ($dbReady): ?>
+    <div class="auth-field">
+      <label for="login-password">Password</label>
+      <input id="login-password" name="password" type="password" required autocomplete="current-password" />
+    </div>
+    <div style="text-align:right; margin: -8px 0 8px;">
+      <a href="<?= htmlspecialchars($basePath . '/forgot-password', ENT_QUOTES, 'UTF-8') ?>" style="font-size:13px; font-weight:650; color:var(--green2); text-decoration:underline; text-underline-offset:3px;">Forgot password?</a>
+    </div>
+  <?php else: ?>
+    <p class="auth-dev-hint">Configure the database in <code>config/local.php</code> or enable <code>STR_CONSOLE_DEV_LOGIN=1</code> for demo access.</p>
   <?php endif; ?>
 
-  <div style="background: var(--card); border: 1px solid var(--line2); border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow2);">
-    <form method="post" action="<?= htmlspecialchars($basePath . '/login', ENT_QUOTES, 'UTF-8') ?>" style="display: grid; gap: 14px;">
-      <input type="hidden" name="next" value="<?= htmlspecialchars($next, ENT_QUOTES, 'UTF-8') ?>" />
-
-      <label style="display:grid; gap:6px; font-size: 13px; font-weight: 650; color: var(--muted);">
-        Work email
-        <input name="email" type="email" required autocomplete="username"
-          style="padding: 12px 14px; border-radius: 14px; border: 1px solid var(--line); background: #fff; color: var(--ink);" />
-      </label>
-
-      <?php if ($devLogin): ?>
-        <label style="display:grid; gap:6px; font-size: 13px; font-weight: 650; color: var(--muted);">
-          Role (demo only)
-          <select name="role" required
-            style="padding: 12px 14px; border-radius: 14px; border: 1px solid var(--line); background: #fff; color: var(--ink);">
-            <?php foreach ($roles as $r): ?>
-              <option value="<?= htmlspecialchars($r, ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($r, ENT_QUOTES, 'UTF-8') ?></option>
-            <?php endforeach; ?>
-          </select>
-        </label>
-        <p style="margin:0; font-size: 12px; color: var(--muted2);">Demo login: set environment variable <code style="background: rgba(13,15,18,.06); padding: 2px 6px; border-radius: 8px;">STR_CONSOLE_DEV_LOGIN=1</code>. Replace with real authentication before production.</p>
-      <?php elseif ($dbReady): ?>
-        <label style="display:grid; gap:6px; font-size: 13px; font-weight: 650; color: var(--muted);">
-          Password
-          <input name="password" type="password" required autocomplete="current-password"
-            style="padding: 12px 14px; border-radius: 14px; border: 1px solid var(--line); background: #fff; color: var(--ink);" />
-        </label>
-        <p style="margin:0; font-size: 12px; color: var(--muted2);">Use an account created with <code style="background: rgba(13,15,18,.06); padding: 2px 6px; border-radius: 8px;">php str-console/bin/seed-admin.php</code>.</p>
-      <?php else: ?>
-        <p style="margin:0; font-size: 13px; color: var(--muted);">Configure the database (see <code style="background: rgba(13,15,18,.06); padding: 2px 6px; border-radius: 8px;">str-console/config/database.php</code>) or enable <code style="background: rgba(13,15,18,.06); padding: 2px 6px; border-radius: 8px;">STR_CONSOLE_DEV_LOGIN=1</code> for demo access.</p>
-      <?php endif; ?>
-
-      <button type="submit" class="btn primary" style="justify-content: center; margin-top: 4px;">Continue</button>
-    </form>
+  <div class="auth-actions">
+    <button type="submit" class="btn primary">Continue</button>
   </div>
-</div>
+</form>
