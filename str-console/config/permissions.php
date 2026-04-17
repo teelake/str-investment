@@ -214,6 +214,8 @@ function str_console_default_role_grants(): array
             'loans.approve',
             'loans.reject',
             'loans.disburse',
+            'bulk_upload.customers',
+            'bulk_upload.loans',
             'reports.export',
             'audit.view',
         ])),

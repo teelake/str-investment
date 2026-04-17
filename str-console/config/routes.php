@@ -49,6 +49,14 @@ function str_console_routes(): array
         ['GET', '/search', SearchController::class, 'index', 'search.index'],
         ['GET', '/audit', AuditController::class, 'index', 'audit.index'],
 
+        ['GET', '/reports', ReportsController::class, 'index', 'reports.index'],
+        ['GET', '/reports/export', ReportsController::class, 'export', 'reports.export'],
+
+        ['GET', '/bulk-upload/customers', BulkUploadController::class, 'customersForm', 'bulk_upload.customers'],
+        ['POST', '/bulk-upload/customers', BulkUploadController::class, 'customersImport', 'bulk_upload.customers'],
+        ['GET', '/bulk-upload/loans', BulkUploadController::class, 'loansForm', 'bulk_upload.loans'],
+        ['POST', '/bulk-upload/loans', BulkUploadController::class, 'loansImport', 'bulk_upload.loans'],
+
         ['GET', '#^/customers/(\d+)$#', CustomersController::class, 'show', 'customers.show'],
         ['POST', '#^/customers/(\d+)/documents$#', CustomersController::class, 'documentStore', 'customers.documents.store'],
         ['GET', '#^/customers/(\d+)/documents/(\d+)/file$#', CustomersController::class, 'documentDownload', 'customers.documents.download'],
