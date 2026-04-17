@@ -53,7 +53,7 @@ final class UserRepository
         $stmt = $pdo->prepare(
             'SELECT id, email, role_key, extra_grants_json, full_name, phone, is_active, created_at, updated_at
              FROM console_users WHERE ' . $whereSql . '
-             ORDER BY id ASC
+             ORDER BY id DESC
              LIMIT :lim OFFSET :off'
         );
         foreach ($params as $k => $v) {
@@ -126,7 +126,7 @@ final class UserRepository
         $pdo = Database::pdo();
         $stmt = $pdo->query(
             'SELECT id, email, role_key, extra_grants_json, full_name, phone, is_active, created_at, updated_at
-             FROM console_users ORDER BY id ASC'
+             FROM console_users ORDER BY id DESC'
         );
         /** @var list<array<string, mixed>> */
         return $stmt->fetchAll();

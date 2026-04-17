@@ -30,7 +30,7 @@ final class LoanProductRepository
         $stmt = $pdo->prepare(
             'SELECT id, name, rate_percent, period_months, default_interest_basis, allow_reducing_balance, allow_flat_monthly, is_active, created_at, updated_at
              FROM loan_products WHERE ' . $where . '
-             ORDER BY id ASC
+             ORDER BY id DESC
              LIMIT :lim OFFSET :off'
         );
         $stmt->bindValue(':lim', $perPage, PDO::PARAM_INT);
@@ -50,7 +50,7 @@ final class LoanProductRepository
         $pdo = Database::pdo();
         $stmt = $pdo->query(
             'SELECT id, name, rate_percent, period_months, default_interest_basis, allow_reducing_balance, allow_flat_monthly, is_active, created_at, updated_at
-             FROM loan_products ORDER BY id ASC'
+             FROM loan_products ORDER BY id DESC'
         );
         /** @var list<array<string, mixed>> */
         return $stmt->fetchAll();

@@ -43,7 +43,7 @@ final class CustomerRepository
                  FROM customers c
                  LEFT JOIN console_users cu ON cu.id = c.assigned_user_id
                  WHERE 1=1' . $activeOnly . $searchSql . '
-                 ORDER BY c.id ASC
+                 ORDER BY c.id DESC
                  LIMIT :lim OFFSET :off'
             );
             foreach ($searchParams as $k => $v) {
@@ -67,7 +67,7 @@ final class CustomerRepository
                  FROM customers c
                  LEFT JOIN console_users cu ON cu.id = c.assigned_user_id
                  WHERE c.assigned_user_id <=> :uid' . $activeOnly . $searchSql . '
-                 ORDER BY c.id ASC
+                 ORDER BY c.id DESC
                  LIMIT :lim OFFSET :off'
             );
             foreach ($params as $k => $v) {

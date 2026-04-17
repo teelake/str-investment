@@ -49,7 +49,7 @@ $statusOrder = ['active', 'draft', 'pending_approval', 'approved', 'closed', 're
       <div class="console-dash__kpi-label">Customers</div>
       <div class="console-dash__kpi-value"><?= $customerCount === null ? '—' : (string) (int) $customerCount ?></div>
       <?php if (str_console_authorize_route($g, 'customers.index')): ?>
-        <a class="btn ghost" href="<?= htmlspecialchars($basePath . '/customers', ENT_QUOTES, 'UTF-8') ?>" style="margin-top: 8px; font-size: 13px; padding: 8px 12px; display: inline-flex;">Open list</a>
+        <a class="btn ghost" href="<?= htmlspecialchars($basePath . '/customers', ENT_QUOTES, 'UTF-8') ?>" style="font-size: 13px; padding: 8px 12px; display: inline-flex;">Open list</a>
       <?php endif; ?>
     </div>
     <div class="console-dash__kpi">
@@ -59,7 +59,7 @@ $statusOrder = ['active', 'draft', 'pending_approval', 'approved', 'closed', 're
         <div class="console-dash__kpi-meta"><?= (int) $pipeline ?> in pipeline (draft · pending · approved)</div>
       <?php endif; ?>
       <?php if (str_console_authorize_route($g, 'loans.index')): ?>
-        <a class="btn ghost" href="<?= htmlspecialchars($basePath . '/loans', ENT_QUOTES, 'UTF-8') ?>" style="margin-top: 8px; font-size: 13px; padding: 8px 12px; display: inline-flex;">Open list</a>
+        <a class="btn ghost" href="<?= htmlspecialchars($basePath . '/loans', ENT_QUOTES, 'UTF-8') ?>" style="font-size: 13px; padding: 8px 12px; display: inline-flex;">Open list</a>
       <?php endif; ?>
     </div>
     <div class="console-dash__kpi">

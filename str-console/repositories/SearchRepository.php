@@ -81,7 +81,7 @@ final class SearchRepository
                 $stmt = $pdo->prepare(
                     $selectList . $from . '
                     WHERE ' . $activeCust . '
-                    ORDER BY c.id ASC
+                    ORDER BY c.id DESC
                     LIMIT :lim OFFSET :off'
                 );
                 foreach ($params as $k => $v) {
@@ -101,7 +101,7 @@ final class SearchRepository
                 $stmt = $pdo->prepare(
                     $selectList . $from . '
                     WHERE ' . $where . '
-                    ORDER BY c.id ASC
+                    ORDER BY c.id DESC
                     LIMIT :lim OFFSET :off'
                 );
                 foreach ($p2 as $k => $v) {
@@ -145,7 +145,7 @@ final class SearchRepository
                 $loansPage = Pagination::normalizePage($pageLoans, $loansTotal, $perPage);
                 $off = ($loansPage - 1) * $perPage;
                 $stmt = $pdo->prepare(
-                    $sel . $base . ' WHERE ' . $inner . ' ORDER BY l.id ASC LIMIT :lim OFFSET :off'
+                    $sel . $base . ' WHERE ' . $inner . ' ORDER BY l.id DESC LIMIT :lim OFFSET :off'
                 );
                 foreach ($params as $k => $v) {
                     $stmt->bindValue($k, $v, is_int($v) ? PDO::PARAM_INT : PDO::PARAM_STR);
@@ -165,7 +165,7 @@ final class SearchRepository
                 $loansPage = Pagination::normalizePage($pageLoans, $loansTotal, $perPage);
                 $off = ($loansPage - 1) * $perPage;
                 $stmt = $pdo->prepare(
-                    $sel . $base . ' WHERE ' . $where . ' ORDER BY l.id ASC LIMIT :lim OFFSET :off'
+                    $sel . $base . ' WHERE ' . $where . ' ORDER BY l.id DESC LIMIT :lim OFFSET :off'
                 );
                 foreach ($p2 as $k => $v) {
                     $stmt->bindValue($k, $v, is_int($v) ? PDO::PARAM_INT : PDO::PARAM_STR);
