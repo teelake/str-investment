@@ -2,8 +2,14 @@
 declare(strict_types=1);
 /** @var array<string, mixed> $user */
 /** @var list<string> $assignableRoles */
+/** @var array<string, string> $permissionCatalog */
+/** @var list<string> $extraGrantKeys */
+/** @var bool $canEditExtraGrants */
 /** @var mixed $error */
 $basePath = Request::basePath();
+$permissionCatalog = $permissionCatalog ?? [];
+$extraGrantKeys = $extraGrantKeys ?? [];
+$canEditExtraGrants = !empty($canEditExtraGrants);
 $id = (int) ($user['id'] ?? 0);
 $err = is_string($error) ? $error : '';
 $roleNow = (string) ($user['role_key'] ?? '');
@@ -47,6 +53,20 @@ $active = (int) ($user['is_active'] ?? 0) === 1;
         <input name="password" type="password" minlength="10" autocomplete="new-password" placeholder="Leave blank to keep current"
           style="padding: 12px 14px; border-radius: 14px; border: 1px solid var(--line); background: #fff; color: var(--ink);" />
       </label>
+      <?php if ($canEditExtraGrants): ?>
+        <div style="border-top:1px solid var(--line2); margin-top:4px; padding-top:16px;">
+          <div style="font-size:13px; font-weight:800; margin-bottom:6px;">Extra permissions</div>
+          <p style="margin:0 0 12px; font-size:12px; color:var(--muted2); line-height:1.45;">Merged at sign-in on top of the user’s role (from <strong>Roles</strong>). Use for one-off access without changing their role.</p>
+          <div style="max-height:240px; overflow:auto; border:1px solid var(--line2); border-radius:12px; padding:12px; display:grid; gap:10px; background:rgba(13,15,18,.02);">
+            <?php foreach ($permissionCatalog as $pkey => $plabel): ?>
+              <label style="display:flex; gap:10px; align-items:flex-start; font-size:13px; cursor:pointer;">
+                <input type="checkbox" name="extra_grants[]" value="<?= htmlspecialchars($pkey, ENT_QUOTES, 'UTF-8') ?>"<?= in_array($pkey, $extraGrantKeys, true) ? ' checked' : '' ?> style="margin-top:3px;" />
+                <span><span style="font-family:ui-monospace,monospace; font-size:12px; font-weight:650;"><?= htmlspecialchars($pkey, ENT_QUOTES, 'UTF-8') ?></span><br /><span style="color:var(--muted); font-size:12px;"><?= htmlspecialchars($plabel, ENT_QUOTES, 'UTF-8') ?></span></span>
+              </label>
+            <?php endforeach; ?>
+          </div>
+        </div>
+      <?php endif; ?>
       <div style="display:flex; gap: 10px; flex-wrap: wrap;">
         <button type="submit" class="btn primary">Save changes</button>
         <a class="btn ghost" href="<?= htmlspecialchars($basePath . '/settings/users', ENT_QUOTES, 'UTF-8') ?>">Cancel</a>

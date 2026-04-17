@@ -9,6 +9,11 @@ declare(strict_types=1);
 /** @var bool $canDisburse */
 /** @var bool $canPay */
 /** @var bool $canAccrue */
+/** @var bool $canClose */
+/** @var bool $canVoidPayment */
+/** @var bool $canAdjustPayment */
+/** @var float $lastLineAmountDue */
+/** @var float|null $lastLinePayment */
 /** @var bool $canEditLoan */
 /** @var mixed $flash */
 /** @var mixed $flashError */
@@ -30,6 +35,11 @@ $statusLabel = match ($st) {
 $flashOk = is_string($flash) ? $flash : '';
 $err = is_string($flashError) ? $flashError : '';
 $canAccrue = $canAccrue ?? false;
+$canClose = $canClose ?? false;
+$canVoidPayment = $canVoidPayment ?? false;
+$canAdjustPayment = $canAdjustPayment ?? false;
+$lastLineAmountDue = $lastLineAmountDue ?? 0.0;
+$lastLinePayment = $lastLinePayment ?? null;
 $canEditLoan = $canEditLoan ?? false;
 $today = (new DateTimeImmutable('now'))->format('Y-m-d');
 ?>
@@ -101,6 +111,11 @@ $today = (new DateTimeImmutable('now'))->format('Y-m-d');
         <button type="submit" class="btn primary">Disburse &amp; open ledger</button>
       </form>
     <?php endif; ?>
+    <?php if ($canClose): ?>
+      <form method="post" action="<?= htmlspecialchars($basePath . '/loans/' . $id . '/close', ENT_QUOTES, 'UTF-8') ?>" style="display:inline;" onsubmit="return confirm('Close this loan? It must have zero outstanding balance.');">
+        <button type="submit" class="btn ghost" style="border-color:rgba(15,106,74,.35); color:var(--green2);">Close loan</button>
+      </form>
+    <?php endif; ?>
   </div>
 
   <?php if ($canPay && $st === 'active'): ?>
@@ -118,6 +133,31 @@ $today = (new DateTimeImmutable('now'))->format('Y-m-d');
         <button type="submit" class="btn primary">Apply payment</button>
       </form>
       <p style="margin: 12px 0 0; font-size: 12px; color: var(--muted2);">Adds a ledger line: interest on the previous closing, then applies your payment. Use <strong>Apply monthly accrual</strong> above (or the server cron script) to insert unpaid month lines first when that policy is enabled.</p>
+    </div>
+  <?php endif; ?>
+
+  <?php if ($st === 'active' && ($canVoidPayment || $canAdjustPayment)): ?>
+    <div style="background: var(--card); border: 1px solid var(--line2); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow2); margin-bottom: 28px;">
+      <h2 style="font-size: 15px; margin: 0 0 14px; font-weight: 800;">Ledger corrections</h2>
+      <p style="margin: 0 0 14px; font-size: 13px; color: var(--muted2);">Applies only to the <strong>last</strong> ledger line if it records a payment. Void removes that line; adjust changes the paid amount (closing balance is recalculated).</p>
+      <div style="display:flex; flex-wrap:wrap; gap: 20px; align-items:flex-end;">
+        <?php if ($canVoidPayment): ?>
+          <form method="post" action="<?= htmlspecialchars($basePath . '/loans/' . $id . '/payment-void', ENT_QUOTES, 'UTF-8') ?>" style="display:inline;" onsubmit="return confirm('Remove the last payment line from the ledger?');">
+            <button type="submit" class="btn ghost" style="color:#7f1d1d;">Void last payment line</button>
+          </form>
+        <?php endif; ?>
+        <?php if ($canAdjustPayment): ?>
+          <form method="post" action="<?= htmlspecialchars($basePath . '/loans/' . $id . '/payment-adjust', ENT_QUOTES, 'UTF-8') ?>" style="display:flex; flex-wrap:wrap; gap:10px; align-items:flex-end;">
+            <label style="display:grid; gap:4px; font-size:12px; font-weight:650; color:var(--muted);">
+              Adjusted payment (₦)
+              <input name="adjusted_amount" type="number" step="0.01" min="0" max="<?= htmlspecialchars((string) $lastLineAmountDue, ENT_QUOTES, 'UTF-8') ?>" required
+                value="<?= htmlspecialchars((string) ($lastLinePayment ?? 0), ENT_QUOTES, 'UTF-8') ?>"
+                style="padding:10px 12px; border-radius:12px; border:1px solid var(--line); width:140px;" />
+            </label>
+            <button type="submit" class="btn ghost">Save adjustment</button>
+          </form>
+        <?php endif; ?>
+      </div>
     </div>
   <?php endif; ?>
 

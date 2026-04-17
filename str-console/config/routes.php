@@ -32,6 +32,7 @@ function str_console_routes(): array
         ['GET', '/loan-products', LoanProductsController::class, 'index', 'loan_products.index'],
         ['GET', '/loan-products/create', LoanProductsController::class, 'create', 'loan_products.create'],
         ['POST', '/loan-products', LoanProductsController::class, 'store', 'loan_products.store'],
+        ['GET', '#^/loan-products/(\d+)$#', LoanProductsController::class, 'show', 'loan_products.show'],
         ['GET', '#^/loan-products/(\d+)/edit$#', LoanProductsController::class, 'edit', 'loan_products.edit'],
         ['POST', '#^/loan-products/(\d+)/update$#', LoanProductsController::class, 'update', 'loan_products.update'],
         ['POST', '#^/loan-products/(\d+)/retire$#', LoanProductsController::class, 'retire', 'loan_products.retire'],
@@ -45,6 +46,9 @@ function str_console_routes(): array
         ['POST', '#^/loans/(\d+)/disburse$#', LoansController::class, 'disburse', 'loans.disburse'],
         ['POST', '#^/loans/(\d+)/accrue$#', LoansController::class, 'accrue', 'loans.accrue'],
         ['POST', '#^/loans/(\d+)/payment$#', LoansController::class, 'payment', 'loans.payment'],
+        ['POST', '#^/loans/(\d+)/close$#', LoansController::class, 'close', 'loans.close'],
+        ['POST', '#^/loans/(\d+)/payment-void$#', LoansController::class, 'paymentVoid', 'loans.payment_void'],
+        ['POST', '#^/loans/(\d+)/payment-adjust$#', LoansController::class, 'paymentAdjust', 'loans.payment_adjust'],
 
         ['GET', '/settings/policies', SettingsController::class, 'policies', 'settings.policies'],
         ['POST', '/settings/policies', SettingsController::class, 'savePolicies', 'settings.policies'],
@@ -57,6 +61,14 @@ function str_console_routes(): array
 
         ['GET', '/settings/roles', SettingsRolesController::class, 'index', 'settings.roles'],
         ['POST', '/settings/roles', SettingsRolesController::class, 'save', 'settings.roles'],
+
+        ['GET', '/settings/system', SettingsSystemController::class, 'index', 'settings.system'],
+        ['POST', '/settings/system', SettingsSystemController::class, 'save', 'settings.system'],
+
+        ['GET', '/account/profile', AccountController::class, 'profile', 'account.profile'],
+        ['POST', '/account/profile', AccountController::class, 'saveProfile', 'account.profile.update'],
+        ['GET', '/account/password', AccountController::class, 'password', 'account.password'],
+        ['POST', '/account/password', AccountController::class, 'savePassword', 'account.password.update'],
 
         ['GET', '/search', SearchController::class, 'index', 'search.index'],
         ['GET', '/audit', AuditController::class, 'index', 'audit.index'],

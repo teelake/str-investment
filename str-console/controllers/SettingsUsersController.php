@@ -117,6 +117,9 @@ final class SettingsUsersController extends BaseController
             'user' => $row,
             'assignableRoles' => $allowed,
             'error' => Request::query('error'),
+            'permissionCatalog' => str_console_permission_catalog(),
+            'extraGrantKeys' => str_console_parse_extra_grants_json($row['extra_grants_json'] ?? null),
+            'canEditExtraGrants' => ((string) (ConsoleAuth::user()['role'] ?? '')) === 'system_admin',
         ]);
     }
 
@@ -203,6 +206,24 @@ final class SettingsUsersController extends BaseController
                 $isActive,
                 $newHash
             );
+            if (((string) (ConsoleAuth::user()['role'] ?? '')) === 'system_admin') {
+                $extraPosted = $_POST['extra_grants'] ?? [];
+                if (!is_array($extraPosted)) {
+                    $extraPosted = [];
+                }
+                $extraKeys = [];
+                foreach ($extraPosted as $k) {
+                    if (is_string($k) && $k !== '') {
+                        $extraKeys[] = $k;
+                    }
+                }
+                $extraKeys = array_values(array_unique($extraKeys));
+                if ($extraKeys !== [] && !str_console_validate_permission_keys($extraKeys)) {
+                    $this->redirect('/settings/users/' . $userId . '/edit?error=' . rawurlencode('Invalid extra permission selection.'));
+                    return;
+                }
+                $repo->updateExtraGrants($userId, $extraKeys === [] ? null : json_encode($extraKeys));
+            }
             AuditLogger::log(ConsoleAuth::userId(), 'console_user.update', 'console_user', $userId, [
                 'email' => $email,
                 'role_key' => $roleKey,
@@ -210,7 +231,17 @@ final class SettingsUsersController extends BaseController
                 'password_changed' => $newHash !== null,
             ]);
             if ($actorId !== null && $userId === $actorId) {
-                ConsoleAuth::login($userId, $email, $roleKey, str_console_role_grants_for($roleKey));
+                $fresh = $repo->findById($userId);
+                if ($fresh !== null) {
+                    $fn = $fresh['full_name'] ?? null;
+                    ConsoleAuth::login(
+                        $userId,
+                        $email,
+                        $roleKey,
+                        str_console_user_login_grants($roleKey, $fresh['extra_grants_json'] ?? null),
+                        is_string($fn) && $fn !== '' ? $fn : null
+                    );
+                }
             }
             $this->redirect('/settings/users?flash=' . rawurlencode('User updated.'));
         } catch (Throwable) {

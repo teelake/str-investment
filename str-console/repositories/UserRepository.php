@@ -8,7 +8,7 @@ final class UserRepository
     {
         $pdo = Database::pdo();
         $stmt = $pdo->prepare(
-            'SELECT id, email, password_hash, role_key, full_name, is_active
+            'SELECT id, email, password_hash, role_key, extra_grants_json, full_name, is_active
              FROM console_users
              WHERE email = :email AND is_active = 1
              LIMIT 1'
@@ -48,7 +48,7 @@ final class UserRepository
     {
         $pdo = Database::pdo();
         $stmt = $pdo->query(
-            'SELECT id, email, role_key, full_name, is_active, created_at, updated_at
+            'SELECT id, email, role_key, extra_grants_json, full_name, is_active, created_at, updated_at
              FROM console_users ORDER BY is_active DESC, email ASC'
         );
         /** @var list<array<string, mixed>> */
@@ -62,7 +62,7 @@ final class UserRepository
     {
         $pdo = Database::pdo();
         $stmt = $pdo->prepare(
-            'SELECT id, email, password_hash, role_key, full_name, is_active, created_at, updated_at
+            'SELECT id, email, password_hash, role_key, extra_grants_json, full_name, is_active, created_at, updated_at
              FROM console_users WHERE id = :id LIMIT 1'
         );
         $stmt->execute([':id' => $id]);
@@ -149,5 +149,36 @@ final class UserRepository
             ':act' => $isActive ? 1 : 0,
             ':id' => $id,
         ]);
+    }
+
+    public function updateExtraGrants(int $id, ?string $jsonEncodedArrayOrNull): void
+    {
+        $pdo = Database::pdo();
+        $stmt = $pdo->prepare(
+            'UPDATE console_users SET extra_grants_json = :j, updated_at = NOW() WHERE id = :id'
+        );
+        $stmt->execute([':j' => $jsonEncodedArrayOrNull, ':id' => $id]);
+    }
+
+    public function updateSelfProfile(int $id, string $email, ?string $fullName): void
+    {
+        $pdo = Database::pdo();
+        $stmt = $pdo->prepare(
+            'UPDATE console_users SET email = :email, full_name = :fname, updated_at = NOW() WHERE id = :id'
+        );
+        $stmt->execute([
+            ':email' => mb_strtolower(trim($email)),
+            ':fname' => $fullName === null || $fullName === '' ? null : $fullName,
+            ':id' => $id,
+        ]);
+    }
+
+    public function updatePasswordHashForUser(int $id, string $passwordHash): void
+    {
+        $pdo = Database::pdo();
+        $stmt = $pdo->prepare(
+            'UPDATE console_users SET password_hash = :ph, updated_at = NOW() WHERE id = :id'
+        );
+        $stmt->execute([':ph' => $passwordHash, ':id' => $id]);
     }
 }

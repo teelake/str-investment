@@ -250,6 +250,13 @@ final class LoansController extends BaseController
         $canEditLoan = str_console_authorize($grants, ['loans.edit'])
             && ($st === 'draft' || $st === 'rejected');
 
+        $outRounded = round($outstanding, 2);
+        $lastLine = $lines !== [] ? $lines[array_key_last($lines)] : null;
+        $lastHasPayment = is_array($lastLine)
+            && isset($lastLine['payment_amount'])
+            && $lastLine['payment_amount'] !== null
+            && (float) $lastLine['payment_amount'] > 0;
+
         $this->render('loans/show', [
             'loan' => $loan,
             'ledger' => $lines,
@@ -264,6 +271,17 @@ final class LoansController extends BaseController
                 && $active
                 && !empty($loan['disbursed_at'])
                 && PolicyService::ledgerAutoAccrue(),
+            'canClose' => str_console_authorize($grants, ['loans.close'])
+                && $active
+                && !empty($loan['disbursed_at'])
+                && $outRounded <= 0
+                && count($lines) > 0,
+            'canVoidPayment' => str_console_authorize($grants, ['payments.void']) && $active && $lastHasPayment,
+            'canAdjustPayment' => str_console_authorize($grants, ['payments.adjust']) && $active && $lastHasPayment,
+            'lastLineAmountDue' => is_array($lastLine) ? (float) ($lastLine['amount_due'] ?? 0) : 0.0,
+            'lastLinePayment' => is_array($lastLine) && isset($lastLine['payment_amount']) && $lastLine['payment_amount'] !== null
+                ? (float) $lastLine['payment_amount']
+                : null,
             'flash' => Request::query('flash'),
             'flashError' => Request::query('error'),
         ]);
@@ -360,6 +378,90 @@ final class LoansController extends BaseController
                 return;
             }
             $this->redirect('/loans/' . $loanId . '?flash=' . rawurlencode('No new accrual lines were due (already caught up through that date, or past term).'));
+        } catch (Throwable $e) {
+            $this->redirect('/loans/' . $loanId . '?error=' . rawurlencode($e->getMessage()));
+        }
+    }
+
+    public function close(int $loanId): void
+    {
+        if (!str_console_database_ready()) {
+            $this->redirect('/loans');
+            return;
+        }
+        $loanRepo = new LoanRepository();
+        $loan = $loanRepo->find($loanId);
+        if ($loan === null || !LoanRepository::canAccessRow($loan, ConsoleAuth::userId(), ConsoleAuth::grants())) {
+            $this->redirect('/loans');
+            return;
+        }
+        if (($loan['status'] ?? '') !== 'active' || empty($loan['disbursed_at'])) {
+            $this->redirect('/loans/' . $loanId . '?error=' . rawurlencode('Only active, disbursed loans can be closed.'));
+            return;
+        }
+        $out = round(LoanLedgerService::outstandingForLoan($loanId), 2);
+        if ($out > 0) {
+            $this->redirect('/loans/' . $loanId . '?error=' . rawurlencode('Outstanding balance must be zero before closing.'));
+            return;
+        }
+        try {
+            if ($loanRepo->markClosed($loanId)) {
+                AuditLogger::log(ConsoleAuth::userId(), 'loan.close', 'loan', $loanId, []);
+                $this->redirect('/loans/' . $loanId . '?flash=' . rawurlencode('Loan closed.'));
+                return;
+            }
+        } catch (Throwable) {
+            // fallthrough
+        }
+        $this->redirect('/loans/' . $loanId . '?error=' . rawurlencode('Could not close loan.'));
+    }
+
+    public function paymentVoid(int $loanId): void
+    {
+        if (!str_console_database_ready()) {
+            $this->redirect('/loans');
+            return;
+        }
+        $loanRepo = new LoanRepository();
+        $loan = $loanRepo->find($loanId);
+        if ($loan === null || !LoanRepository::canAccessRow($loan, ConsoleAuth::userId(), ConsoleAuth::grants())) {
+            $this->redirect('/loans');
+            return;
+        }
+        if (($loan['status'] ?? '') !== 'active') {
+            $this->redirect('/loans/' . $loanId . '?error=' . rawurlencode('Void is only available for active loans.'));
+            return;
+        }
+        try {
+            LoanLedgerService::voidLastPaymentLine($loanId);
+            AuditLogger::log(ConsoleAuth::userId(), 'loan.payment_void', 'loan', $loanId, []);
+            $this->redirect('/loans/' . $loanId . '?flash=' . rawurlencode('Last payment line removed from the ledger.'));
+        } catch (Throwable $e) {
+            $this->redirect('/loans/' . $loanId . '?error=' . rawurlencode($e->getMessage()));
+        }
+    }
+
+    public function paymentAdjust(int $loanId): void
+    {
+        if (!str_console_database_ready()) {
+            $this->redirect('/loans');
+            return;
+        }
+        $loanRepo = new LoanRepository();
+        $loan = $loanRepo->find($loanId);
+        if ($loan === null || !LoanRepository::canAccessRow($loan, ConsoleAuth::userId(), ConsoleAuth::grants())) {
+            $this->redirect('/loans');
+            return;
+        }
+        if (($loan['status'] ?? '') !== 'active') {
+            $this->redirect('/loans/' . $loanId . '?error=' . rawurlencode('Adjust is only available for active loans.'));
+            return;
+        }
+        $amount = (float) Request::post('adjusted_amount', 0);
+        try {
+            LoanLedgerService::adjustLastPaymentLine($loanId, $amount);
+            AuditLogger::log(ConsoleAuth::userId(), 'loan.payment_adjust', 'loan', $loanId, ['adjusted_amount' => $amount]);
+            $this->redirect('/loans/' . $loanId . '?flash=' . rawurlencode('Last payment amount updated.'));
         } catch (Throwable $e) {
             $this->redirect('/loans/' . $loanId . '?error=' . rawurlencode($e->getMessage()));
         }

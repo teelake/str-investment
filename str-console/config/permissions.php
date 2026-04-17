@@ -130,6 +130,8 @@ function str_console_route_permissions(): array
         'loans.close' => [...$auth, 'loans.close'],
         'loans.accrue' => [...$auth, 'payments.record'],
         'loans.payment' => [...$auth, 'payments.record'],
+        'loans.payment_void' => [...$auth, 'payments.void'],
+        'loans.payment_adjust' => [...$auth, 'payments.adjust'],
 
         // Loan products
         'loan_products.index' => [...$auth, 'loan_products.list'],
@@ -167,6 +169,11 @@ function str_console_route_permissions(): array
         'settings.users' => [...$auth, 'settings.users'],
         'settings.roles' => [...$auth, 'settings.roles'],
         'settings.system' => [...$auth, 'settings.system'],
+
+        'account.profile' => [...$auth],
+        'account.profile.update' => [...$auth],
+        'account.password' => [...$auth],
+        'account.password.update' => [...$auth],
     ];
 }
 
@@ -244,6 +251,57 @@ function str_console_expand_grants(array $grants): array
  *
  * @return list<string>
  */
+/**
+ * Normalize DB extra_grants_json into a list of permission keys (may be empty).
+ *
+ * @return list<string>
+ */
+function str_console_parse_extra_grants_json(mixed $raw): array
+{
+    if ($raw === null || $raw === '') {
+        return [];
+    }
+    if (is_string($raw)) {
+        $trim = trim($raw);
+        if ($trim === '') {
+            return [];
+        }
+        $decoded = json_decode($trim, true);
+    } elseif (is_array($raw)) {
+        $decoded = $raw;
+    } else {
+        return [];
+    }
+    if (!is_array($decoded)) {
+        return [];
+    }
+    $keys = [];
+    foreach ($decoded as $k) {
+        if (is_string($k) && $k !== '') {
+            $keys[] = $k;
+        }
+    }
+    return array_values(array_unique($keys));
+}
+
+/**
+ * Role grants from code + DB role matrix, merged with per-user extra keys from console_users.extra_grants_json.
+ *
+ * @return list<string>
+ */
+function str_console_user_login_grants(string $roleKey, mixed $extraGrantsJson): array
+{
+    $base = str_console_role_grants_for($roleKey);
+    $extra = str_console_parse_extra_grants_json($extraGrantsJson);
+    if ($extra === []) {
+        return $base;
+    }
+    if (!str_console_validate_permission_keys($extra)) {
+        return $base;
+    }
+    return array_values(array_unique([...$base, ...$extra]));
+}
+
 function str_console_role_grants_for(string $roleKey): array
 {
     $defaults = str_console_default_role_grants();

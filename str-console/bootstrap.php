@@ -68,6 +68,8 @@ require_once STR_CONSOLE_ROOT . '/controllers/LoansController.php';
 require_once STR_CONSOLE_ROOT . '/controllers/SettingsController.php';
 require_once STR_CONSOLE_ROOT . '/controllers/SettingsUsersController.php';
 require_once STR_CONSOLE_ROOT . '/controllers/SettingsRolesController.php';
+require_once STR_CONSOLE_ROOT . '/controllers/SettingsSystemController.php';
+require_once STR_CONSOLE_ROOT . '/controllers/AccountController.php';
 require_once STR_CONSOLE_ROOT . '/controllers/SearchController.php';
 require_once STR_CONSOLE_ROOT . '/controllers/AuditController.php';
 require_once STR_CONSOLE_ROOT . '/controllers/ReportsController.php';

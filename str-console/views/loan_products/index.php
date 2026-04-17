@@ -42,6 +42,9 @@ $dbError = $dbError ?? null;
               <td style="padding:12px 14px;"><?= (int) ($p['period_months'] ?? 0) ?></td>
               <td style="padding:12px 14px;"><?= (int) ($p['is_active'] ?? 0) ? 'Active' : 'Retired' ?></td>
               <td style="padding:12px 14px; text-align:right;">
+                <?php if (str_console_authorize_route(ConsoleAuth::grants(), 'loan_products.show')): ?>
+                  <a class="btn ghost" style="font-size:13px; padding:8px 12px;" href="<?= htmlspecialchars($basePath . '/loan-products/' . (int) $p['id'], ENT_QUOTES, 'UTF-8') ?>">View</a>
+                <?php endif; ?>
                 <?php if (str_console_authorize_route(ConsoleAuth::grants(), 'loan_products.edit')): ?>
                   <a class="btn ghost" style="font-size:13px; padding:8px 12px;" href="<?= htmlspecialchars($basePath . '/loan-products/' . (int) $p['id'] . '/edit', ENT_QUOTES, 'UTF-8') ?>">Edit</a>
                 <?php endif; ?>

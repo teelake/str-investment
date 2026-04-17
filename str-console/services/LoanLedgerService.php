@@ -286,4 +286,97 @@ final class LoanLedgerService
         }
         return (float) $last['closing_balance'];
     }
+
+    private static function syncLoanClosedState(int $loanId): void
+    {
+        $pdo = Database::pdo();
+        $stmt = $pdo->prepare('SELECT status FROM loans WHERE id = :id LIMIT 1');
+        $stmt->execute([':id' => $loanId]);
+        $row = $stmt->fetch();
+        if (!is_array($row)) {
+            return;
+        }
+        $st = (string) ($row['status'] ?? '');
+        $out = round(self::outstandingForLoan($loanId), 2);
+        $loans = new LoanRepository();
+        if ($out <= 0 && $st === 'active') {
+            $loans->markClosed($loanId);
+            return;
+        }
+        if ($out > 0 && $st === 'closed') {
+            $loans->reopenFromClosed($loanId);
+        }
+    }
+
+    /**
+     * Remove the last ledger line if it records a payment (ops correction). Re-opens the loan if needed.
+     */
+    public static function voidLastPaymentLine(int $loanId): void
+    {
+        $ledger = new LoanLedgerRepository();
+        $last = $ledger->lastLine($loanId);
+        if ($last === null) {
+            throw new RuntimeException('No ledger lines to void.');
+        }
+        $lineNo = (int) ($last['line_no'] ?? 0);
+        if ($ledger->maxLineNo($loanId) !== $lineNo) {
+            throw new RuntimeException('Only the most recent ledger line can be voided.');
+        }
+        $pay = $last['payment_amount'] ?? null;
+        if ($pay === null || (float) $pay <= 0) {
+            throw new RuntimeException('The last line is not a payment entry.');
+        }
+
+        $pdo = Database::pdo();
+        $pdo->beginTransaction();
+        try {
+            $ledger->deleteLine($loanId, $lineNo);
+            self::syncLoanClosedState($loanId);
+            $pdo->commit();
+        } catch (Throwable $e) {
+            if ($pdo->inTransaction()) {
+                $pdo->rollBack();
+            }
+            throw $e;
+        }
+    }
+
+    /**
+     * Correct the payment amount on the last line (same period); recalculates closing and loan status.
+     */
+    public static function adjustLastPaymentLine(int $loanId, float $newPaymentAmount): void
+    {
+        $ledger = new LoanLedgerRepository();
+        $last = $ledger->lastLine($loanId);
+        if ($last === null) {
+            throw new RuntimeException('No ledger lines.');
+        }
+        $lineNo = (int) ($last['line_no'] ?? 0);
+        if ($ledger->maxLineNo($loanId) !== $lineNo) {
+            throw new RuntimeException('Only the last ledger line can be adjusted.');
+        }
+        if (($last['payment_amount'] ?? null) === null) {
+            throw new RuntimeException('The last line has no payment to adjust.');
+        }
+
+        $due = (float) ($last['amount_due'] ?? 0);
+        $np = self::money($newPaymentAmount);
+        if ($np < 0 || $np > $due) {
+            throw new InvalidArgumentException('Payment must be between 0 and the line amount due.');
+        }
+        $closing = self::money($due - $np);
+
+        $pdo = Database::pdo();
+        $pdo->beginTransaction();
+        try {
+            $ledger->updateLinePaymentAndClosing($loanId, $lineNo, $np, $closing);
+            self::syncLoanClosedState($loanId);
+            $pdo->commit();
+        } catch (Throwable $e) {
+            if ($pdo->inTransaction()) {
+                $pdo->rollBack();
+            }
+            throw $e;
+        }
+    }
 }

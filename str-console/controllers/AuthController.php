@@ -38,7 +38,7 @@ final class AuthController extends BaseController
                 $this->redirect('/login?error=' . rawurlencode('Invalid role.'));
                 return;
             }
-            ConsoleAuth::login(null, $email, $role, str_console_role_grants_for($role));
+            ConsoleAuth::login(null, $email, $role, str_console_user_login_grants($role, null), null);
             $this->redirect($next);
             return;
         }
@@ -69,7 +69,14 @@ final class AuthController extends BaseController
                 return;
             }
 
-            ConsoleAuth::login((int) $row['id'], (string) $row['email'], $roleKey, str_console_role_grants_for($roleKey));
+            $fname = $row['full_name'] ?? null;
+            ConsoleAuth::login(
+                (int) $row['id'],
+                (string) $row['email'],
+                $roleKey,
+                str_console_user_login_grants($roleKey, $row['extra_grants_json'] ?? null),
+                is_string($fname) && $fname !== '' ? $fname : null
+            );
             $this->redirect($next);
         } catch (Throwable) {
             $this->redirect('/login?error=' . rawurlencode('Could not reach the database. Try again shortly.'));

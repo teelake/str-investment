@@ -40,6 +40,39 @@ final class LoanLedgerRepository
         return is_array($row) ? $row : null;
     }
 
+    public function maxLineNo(int $loanId): int
+    {
+        $pdo = Database::pdo();
+        $stmt = $pdo->prepare('SELECT COALESCE(MAX(line_no), 0) AS m FROM loan_ledger_lines WHERE loan_id = :lid');
+        $stmt->execute([':lid' => $loanId]);
+        return (int) ($stmt->fetch()['m'] ?? 0);
+    }
+
+    public function deleteLine(int $loanId, int $lineNo): void
+    {
+        $pdo = Database::pdo();
+        $stmt = $pdo->prepare('DELETE FROM loan_ledger_lines WHERE loan_id = :lid AND line_no = :ln');
+        $stmt->execute([':lid' => $loanId, ':ln' => $lineNo]);
+    }
+
+    public function updateLinePaymentAndClosing(
+        int $loanId,
+        int $lineNo,
+        float $paymentAmount,
+        float $closingBalance
+    ): void {
+        $pdo = Database::pdo();
+        $stmt = $pdo->prepare(
+            'UPDATE loan_ledger_lines SET payment_amount = :pa, closing_balance = :cb WHERE loan_id = :lid AND line_no = :ln'
+        );
+        $stmt->execute([
+            ':pa' => $paymentAmount,
+            ':cb' => $closingBalance,
+            ':lid' => $loanId,
+            ':ln' => $lineNo,
+        ]);
+    }
+
     public function insertLine(
         int $loanId,
         int $lineNo,

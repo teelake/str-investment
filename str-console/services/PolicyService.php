@@ -63,4 +63,16 @@ final class PolicyService
     {
         return self::bool('ledger.auto_accrue', true);
     }
+
+    /**
+     * Plain-text banner for all signed-in users (set under Settings → System).
+     */
+    public static function maintenanceNotice(): string
+    {
+        $raw = ConsoleSettingRepository::get('system.maintenance_notice');
+        if ($raw === null) {
+            return '';
+        }
+        return trim($raw);
+    }
 }

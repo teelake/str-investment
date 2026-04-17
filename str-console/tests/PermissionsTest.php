@@ -37,4 +37,20 @@ final class PermissionsTest extends TestCase
         $this->assertTrue(str_console_authorize_route(['*'], 'dashboard.index'));
         $this->assertFalse(str_console_authorize_route(['auth.session'], 'dashboard.index'));
     }
+
+    public function testUserLoginGrantsMergesValidExtras(): void
+    {
+        $g = str_console_user_login_grants('credit_officer', '["reports.export"]');
+        $this->assertContains('reports.export', $g);
+        $this->assertContains('auth.session', $g);
+    }
+
+    public function testUserLoginGrantsIgnoresInvalidExtras(): void
+    {
+        $base = str_console_role_grants_for('credit_officer');
+        $merged = str_console_user_login_grants('credit_officer', '["not.a.permission"]');
+        sort($base);
+        sort($merged);
+        $this->assertSame($base, $merged);
+    }
 }

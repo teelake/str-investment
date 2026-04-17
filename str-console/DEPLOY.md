@@ -16,7 +16,9 @@
 
 Run SQL migrations in `database/migrations/` in filename order (e.g. `001_…sql`, `002_…sql`, …) against the target database. New installs must include all files through the latest migration.
 
-The `console_settings` table stores org policy toggles and the role permission matrix (`roles.grants.{role_key}` JSON arrays) edited under **Settings → Roles**.
+The `console_settings` table stores org policy toggles and the role permission matrix (`roles.grants.{role_key}` JSON arrays) edited under **Settings → Roles**, plus optional **`system.maintenance_notice`** (plain-text banner) from **Settings → System**.
+
+Apply migration **`005_console_users_extra_grants.sql`** on existing databases so `console_users.extra_grants_json` exists (per-user additive permissions merged at login).
 
 ## Web server
 

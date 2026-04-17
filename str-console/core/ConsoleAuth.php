@@ -55,8 +55,13 @@ final class ConsoleAuth
     /**
      * @param list<string> $permissionKeys
      */
-    public static function login(?int $userId, string $email, string $roleKey, array $permissionKeys): void
-    {
+    public static function login(
+        ?int $userId,
+        string $email,
+        string $roleKey,
+        array $permissionKeys,
+        ?string $fullName = null
+    ): void {
         if (session_status() === PHP_SESSION_ACTIVE) {
             session_regenerate_id(true);
         }
@@ -67,6 +72,9 @@ final class ConsoleAuth
         ];
         if ($userId !== null) {
             $row['user_id'] = $userId;
+        }
+        if ($fullName !== null && $fullName !== '') {
+            $row['full_name'] = $fullName;
         }
         $_SESSION[self::SESSION_KEY] = $row;
     }

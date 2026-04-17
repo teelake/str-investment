@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS console_users (
   email VARCHAR(190) NOT NULL,
   password_hash VARCHAR(255) NOT NULL,
   role_key VARCHAR(50) NOT NULL,
+  extra_grants_json JSON NULL,
   full_name VARCHAR(190) NULL,
   is_active TINYINT(1) NOT NULL DEFAULT 1,
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,

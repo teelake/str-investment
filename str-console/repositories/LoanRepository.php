@@ -211,6 +211,28 @@ final class LoanRepository
      *
      * @return list<int>
      */
+    public function markClosed(int $loanId): bool
+    {
+        $pdo = Database::pdo();
+        $stmt = $pdo->prepare(
+            "UPDATE loans SET status = 'closed', closed_at = NOW(), updated_at = NOW()
+             WHERE id = :id AND status = 'active'"
+        );
+        $stmt->execute([':id' => $loanId]);
+        return $stmt->rowCount() > 0;
+    }
+
+    public function reopenFromClosed(int $loanId): bool
+    {
+        $pdo = Database::pdo();
+        $stmt = $pdo->prepare(
+            "UPDATE loans SET status = 'active', closed_at = NULL, updated_at = NOW()
+             WHERE id = :id AND status = 'closed'"
+        );
+        $stmt->execute([':id' => $loanId]);
+        return $stmt->rowCount() > 0;
+    }
+
     public function listActiveDisbursedLoanIds(): array
     {
         $pdo = Database::pdo();

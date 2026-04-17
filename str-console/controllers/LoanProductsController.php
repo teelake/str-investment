@@ -18,6 +18,21 @@ final class LoanProductsController extends BaseController
         }
     }
 
+    public function show(int $id): void
+    {
+        if (!str_console_database_ready()) {
+            $this->redirect('/loan-products');
+            return;
+        }
+        $repo = new LoanProductRepository();
+        $p = $repo->find($id);
+        if ($p === null) {
+            ErrorPage::respond(404, 'Product not found', 'This loan product does not exist.');
+            return;
+        }
+        $this->render('loan_products/show', ['product' => $p]);
+    }
+
     public function create(): void
     {
         $this->render('loan_products/form', [
@@ -58,8 +73,7 @@ final class LoanProductsController extends BaseController
         $repo = new LoanProductRepository();
         $p = $repo->find($id);
         if ($p === null) {
-            http_response_code(404);
-            echo 'Not found';
+            ErrorPage::respond(404, 'Product not found', 'This loan product does not exist.');
             return;
         }
         $this->render('loan_products/form', [
