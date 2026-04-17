@@ -104,6 +104,7 @@ function str_console_route_permissions(): array
         'dashboard.index' => [...$auth, 'dashboard.view'],
 
         // Global search (customers/loans unified)
+        'search.index' => [...$auth, 'customers.list', 'loans.list'],
         'search.query' => [...$auth, 'customers.list', 'loans.list'],
 
         // Customers

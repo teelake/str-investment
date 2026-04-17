@@ -43,6 +43,9 @@ function str_console_routes(): array
         ['GET', '/settings/policies', SettingsController::class, 'policies', 'settings.policies'],
         ['POST', '/settings/policies', SettingsController::class, 'savePolicies', 'settings.policies'],
 
+        ['GET', '/search', SearchController::class, 'index', 'search.index'],
+        ['GET', '/audit', AuditController::class, 'index', 'audit.index'],
+
         ['GET', '#^/customers/(\d+)$#', CustomersController::class, 'show', 'customers.show'],
         ['POST', '#^/customers/(\d+)/documents$#', CustomersController::class, 'documentStore', 'customers.documents.store'],
         ['GET', '#^/customers/(\d+)/documents/(\d+)/file$#', CustomersController::class, 'documentDownload', 'customers.documents.download'],
