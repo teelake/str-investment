@@ -128,6 +128,24 @@ final class LoansController extends BaseController
         $outstanding = LoanLedgerService::outstandingForLoan($loanId);
         $grants = ConsoleAuth::grants();
 
+        $accrualAdded = 0;
+        if (($loan['status'] ?? '') === 'active' && !empty($loan['disbursed_at']) && PolicyService::ledgerAutoAccrue()) {
+            try {
+                $today = (new DateTimeImmutable('now'))->format('Y-m-d');
+                $accrualAdded = LoanLedgerService::runPeriodicAccrualThrough($loanId, $today);
+                if ($accrualAdded > 0) {
+                    AuditLogger::log(ConsoleAuth::userId(), 'loan.ledger.accrual', 'loan', $loanId, [
+                        'lines_added' => $accrualAdded,
+                        'through' => $today,
+                    ]);
+                    $lines = (new LoanLedgerRepository())->listByLoan($loanId);
+                    $outstanding = LoanLedgerService::outstandingForLoan($loanId);
+                }
+            } catch (Throwable) {
+                // leave ledger as-is; page still loads
+            }
+        }
+
         $this->render('loans/show', [
             'loan' => $loan,
             'ledger' => $lines,
@@ -139,6 +157,7 @@ final class LoansController extends BaseController
             'canPay' => str_console_authorize($grants, ['payments.record']) && ($loan['status'] ?? '') === 'active',
             'flash' => Request::query('flash'),
             'flashError' => Request::query('error'),
+            'accrualAdded' => $accrualAdded,
         ]);
     }
 

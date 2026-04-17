@@ -2,6 +2,7 @@
 declare(strict_types=1);
 /** @var bool $scopeCustomers */
 /** @var bool $scopeLoans */
+/** @var bool $ledgerAutoAccrue */
 /** @var mixed $flash */
 /** @var mixed $error */
 $basePath = Request::basePath();
@@ -33,6 +34,13 @@ $err = is_string($error) ? $error : '';
         <span>
           <strong>Scope loans by assignment</strong><br />
           <span style="color: var(--muted); font-size: 13px;">When checked, officers only see loans assigned to them or tied to customers assigned to them. Uncheck for institution-wide loan lists (for roles without view-all).</span>
+        </span>
+      </label>
+      <label style="display:flex; gap: 12px; align-items: flex-start; font-size: 14px; cursor: pointer;">
+        <input type="checkbox" name="ledger_auto_accrue" value="1" <?= $ledgerAutoAccrue ? 'checked' : '' ?> style="margin-top: 3px;" />
+        <span>
+          <strong>Automatic monthly ledger accrual</strong><br />
+          <span style="color: var(--muted); font-size: 13px;">When checked, opening an active loan runs interest accrual through today: new ledger lines with no payment (same interest-on-closing formula as payments), one per month after the last line, until the loan’s booked <code style="background: rgba(13,15,18,.06); padding: 2px 6px; border-radius: 8px;">period_months</code> from disbursement. Turn off to accrue only when recording payments.</span>
         </span>
       </label>
       <button type="submit" class="btn primary" style="justify-self: start;">Save policies</button>

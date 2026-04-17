@@ -10,6 +10,7 @@ declare(strict_types=1);
 /** @var bool $canPay */
 /** @var mixed $flash */
 /** @var mixed $flashError */
+/** @var int $accrualAdded */
 $basePath = Request::basePath();
 $id = (int) ($loan['id'] ?? 0);
 $st = (string) ($loan['status'] ?? '');
@@ -27,6 +28,7 @@ $statusLabel = match ($st) {
 };
 $flashOk = is_string($flash) ? $flash : '';
 $err = is_string($flashError) ? $flashError : '';
+$accrualAdded = isset($accrualAdded) ? (int) $accrualAdded : 0;
 $today = (new DateTimeImmutable('now'))->format('Y-m-d');
 ?>
 <div class="container" style="padding:0">
@@ -45,6 +47,11 @@ $today = (new DateTimeImmutable('now'))->format('Y-m-d');
 
   <?php if ($flashOk !== ''): ?>
     <div style="background: var(--green-soft); border: 1px solid rgba(15,106,74,.2); color: var(--green2); padding: 12px 14px; border-radius: 14px; margin-bottom: 16px; font-size: 14px;"><?= htmlspecialchars($flashOk, ENT_QUOTES, 'UTF-8') ?></div>
+  <?php endif; ?>
+  <?php if ($accrualAdded > 0): ?>
+    <div style="background: var(--green-soft); border: 1px solid rgba(15,106,74,.2); color: var(--green2); padding: 12px 14px; border-radius: 14px; margin-bottom: 16px; font-size: 14px;">
+      Applied <?= (int) $accrualAdded ?> automatic monthly accrual line(s) through today (policy: automatic ledger accrual).
+    </div>
   <?php endif; ?>
   <?php if ($err !== ''): ?>
     <div style="background: rgba(180, 40, 40, .08); border: 1px solid rgba(180, 40, 40, .2); color: #7f1d1d; padding: 12px 14px; border-radius: 14px; margin-bottom: 16px; font-size: 14px;"><?= htmlspecialchars($err, ENT_QUOTES, 'UTF-8') ?></div>
@@ -110,7 +117,7 @@ $today = (new DateTimeImmutable('now'))->format('Y-m-d');
         </label>
         <button type="submit" class="btn primary">Apply payment</button>
       </form>
-      <p style="margin: 12px 0 0; font-size: 12px; color: var(--muted2);">Adds a ledger line: interest on the previous closing, then applies your payment (same logic as your spreadsheet).</p>
+      <p style="margin: 12px 0 0; font-size: 12px; color: var(--muted2);">Adds a ledger line: interest on the previous closing, then applies your payment (same logic as your spreadsheet). If <strong>Policies → Automatic monthly ledger accrual</strong> is on, unpaid months may already appear as separate lines when you open this page.</p>
     </div>
   <?php endif; ?>
 

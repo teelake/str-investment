@@ -54,4 +54,13 @@ final class PolicyService
         }
         return !self::scopeLoansByAssignment();
     }
+
+    /**
+     * When true, active loans accrue interest into new ledger lines each month (no payment) until the booked term
+     * (period_months from disbursement) or the as-of date, whichever comes first.
+     */
+    public static function ledgerAutoAccrue(): bool
+    {
+        return self::bool('ledger.auto_accrue', true);
+    }
 }
