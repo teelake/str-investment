@@ -16,14 +16,15 @@ $err = is_string($error) ? $error : '';
 
   <div style="background: var(--card); border: 1px solid var(--line2); border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow2);">
     <form method="post" action="<?= htmlspecialchars($basePath . '/settings/users', ENT_QUOTES, 'UTF-8') ?>" style="display:grid; gap: 14px;">
+      <?php require STR_CONSOLE_ROOT . '/views/partials/csrf.php'; ?>
       <label style="display:grid; gap:6px; font-size: 13px; font-weight: 650; color: var(--muted);">
         Email
-        <input name="email" type="email" required maxlength="190" autocomplete="off"
+        <input name="email" type="email" required maxlength="<?= (int) InputValidate::EMAIL_MAX ?>" autocomplete="off"
           style="padding: 12px 14px; border-radius: 14px; border: 1px solid var(--line); background: #fff; color: var(--ink);" />
       </label>
       <label style="display:grid; gap:6px; font-size: 13px; font-weight: 650; color: var(--muted);">
         Full name (optional)
-        <input name="full_name" maxlength="190"
+        <input name="full_name" maxlength="<?= (int) InputValidate::PERSON_NAME_MAX ?>"
           style="padding: 12px 14px; border-radius: 14px; border: 1px solid var(--line); background: #fff; color: var(--ink);" />
       </label>
       <label style="display:grid; gap:6px; font-size: 13px; font-weight: 650; color: var(--muted);">
@@ -35,6 +36,7 @@ $err = is_string($error) ? $error : '';
       <label style="display:grid; gap:6px; font-size: 13px; font-weight: 650; color: var(--muted);">
         Role
         <select name="role_key" required style="padding: 12px 14px; border-radius: 14px; border: 1px solid var(--line); background: #fff; font-size: 14px;">
+          <option value="" selected disabled>Select a role…</option>
           <?php foreach ($assignableRoles as $rk): ?>
             <option value="<?= htmlspecialchars($rk, ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($rk, ENT_QUOTES, 'UTF-8') ?></option>
           <?php endforeach; ?>
@@ -42,7 +44,7 @@ $err = is_string($error) ? $error : '';
       </label>
       <label style="display:grid; gap:6px; font-size: 13px; font-weight: 650; color: var(--muted);">
         Password (min 10 characters)
-        <input name="password" type="password" required minlength="10" autocomplete="new-password"
+        <input name="password" type="password" required minlength="10" maxlength="<?= (int) InputValidate::PASSWORD_MAX_BYTES ?>" autocomplete="new-password"
           style="padding: 12px 14px; border-radius: 14px; border: 1px solid var(--line); background: #fff; color: var(--ink);" />
       </label>
       <div style="display:flex; gap: 10px; flex-wrap: wrap;">

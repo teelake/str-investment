@@ -20,19 +20,20 @@ $ok = is_string($flash) ? $flash : '';
 
   <div style="background: var(--card); border: 1px solid var(--line2); border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow2);">
     <form method="post" action="<?= htmlspecialchars($basePath . '/account/password', ENT_QUOTES, 'UTF-8') ?>" style="display:grid; gap: 14px;">
+      <?php require STR_CONSOLE_ROOT . '/views/partials/csrf.php'; ?>
       <label style="display:grid; gap:6px; font-size: 13px; font-weight: 650; color: var(--muted);">
         Current password
-        <input name="current_password" type="password" required autocomplete="current-password"
+        <input name="current_password" type="password" required maxlength="<?= (int) InputValidate::PASSWORD_MAX_BYTES ?>" autocomplete="current-password"
           style="padding: 12px 14px; border-radius: 14px; border: 1px solid var(--line); background: #fff; color: var(--ink);" />
       </label>
       <label style="display:grid; gap:6px; font-size: 13px; font-weight: 650; color: var(--muted);">
         New password
-        <input name="new_password" type="password" required minlength="10" autocomplete="new-password"
+        <input name="new_password" type="password" required minlength="10" maxlength="<?= (int) InputValidate::PASSWORD_MAX_BYTES ?>" autocomplete="new-password"
           style="padding: 12px 14px; border-radius: 14px; border: 1px solid var(--line); background: #fff; color: var(--ink);" />
       </label>
       <label style="display:grid; gap:6px; font-size: 13px; font-weight: 650; color: var(--muted);">
         Confirm new password
-        <input name="confirm_password" type="password" required minlength="10" autocomplete="new-password"
+        <input name="confirm_password" type="password" required minlength="10" maxlength="<?= (int) InputValidate::PASSWORD_MAX_BYTES ?>" autocomplete="new-password"
           style="padding: 12px 14px; border-radius: 14px; border: 1px solid var(--line); background: #fff; color: var(--ink);" />
       </label>
       <button type="submit" class="btn primary">Update password</button>

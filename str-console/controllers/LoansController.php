@@ -510,7 +510,6 @@ final class LoansController extends BaseController
      */
     private function transitionLoan(int $loanId, callable $fn, string $auditAction, string $okMsg, string $failMsg): void
     {
-        $this->requirePostedCsrf('/loans/' . $loanId);
         if (!str_console_database_ready()) {
             $this->redirect('/loans');
             return;

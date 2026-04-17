@@ -33,6 +33,7 @@ $err = is_string($error) ? $error : '';
     <h2 style="font-size: 14px; margin: 0 0 8px; font-weight: 800;">Maintenance notice</h2>
     <p style="margin: 0 0 16px; font-size: 13px; color: var(--muted2);">Optional banner shown to all signed-in users (plain text).</p>
     <form method="post" action="<?= htmlspecialchars($basePath . '/settings/system', ENT_QUOTES, 'UTF-8') ?>" style="display:grid; gap: 14px;">
+      <?php require STR_CONSOLE_ROOT . '/views/partials/csrf.php'; ?>
       <label style="display:grid; gap:6px; font-size: 13px; font-weight: 650; color: var(--muted);">
         Message
         <textarea name="maintenance_notice" rows="4" maxlength="2000" placeholder="e.g. Scheduled maintenance tonight 10pm–11pm."

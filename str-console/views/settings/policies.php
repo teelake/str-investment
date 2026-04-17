@@ -22,6 +22,7 @@ $err = is_string($error) ? $error : '';
 
   <div style="background: var(--card); border: 1px solid var(--line2); border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow2);">
     <form method="post" action="<?= htmlspecialchars($basePath . '/settings/policies', ENT_QUOTES, 'UTF-8') ?>" style="display:grid; gap: 18px;">
+      <?php require STR_CONSOLE_ROOT . '/views/partials/csrf.php'; ?>
       <label style="display:flex; gap: 12px; align-items: flex-start; font-size: 14px; cursor: pointer;">
         <input type="checkbox" name="scope_customers" value="1" <?= $scopeCustomers ? 'checked' : '' ?> style="margin-top: 3px;" />
         <span>

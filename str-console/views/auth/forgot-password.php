@@ -32,6 +32,8 @@ $devUrl = (isset($devResetUrl) && is_string($devResetUrl) && $devResetUrl !== ''
   <p class="auth-dev-hint">Database is not configured. Password reset requires a working database.</p>
 <?php elseif (!$sentOk): ?>
   <form method="post" action="<?= htmlspecialchars($basePath . '/forgot-password', ENT_QUOTES, 'UTF-8') ?>">
+    <?php require STR_CONSOLE_ROOT . '/views/partials/csrf.php'; ?>
+    <?php require STR_CONSOLE_ROOT . '/views/partials/honeypot.php'; ?>
     <div class="auth-field">
       <label for="forgot-email">Work email</label>
       <input id="forgot-email" name="email" type="email" required autocomplete="email" inputmode="email" />

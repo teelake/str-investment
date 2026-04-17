@@ -41,6 +41,7 @@ foreach ($catalog as $key => $desc) {
   </div>
 
   <form method="post" action="<?= htmlspecialchars($basePath . '/settings/roles', ENT_QUOTES, 'UTF-8') ?>" style="margin-bottom: 24px;">
+    <?php require STR_CONSOLE_ROOT . '/views/partials/csrf.php'; ?>
     <div style="overflow:auto; border: 1px solid var(--line2); border-radius: var(--radius); background: var(--card); box-shadow: var(--shadow2); margin-bottom: 16px;">
       <table style="width:100%; border-collapse: collapse; font-size: 13px; min-width: 720px;">
         <thead>
@@ -76,6 +77,7 @@ foreach ($catalog as $key => $desc) {
   </form>
 
   <form method="post" action="<?= htmlspecialchars($basePath . '/settings/roles', ENT_QUOTES, 'UTF-8') ?>" onsubmit="return confirm('Remove all custom role bundles and restore code defaults?');">
+    <?php require STR_CONSOLE_ROOT . '/views/partials/csrf.php'; ?>
     <input type="hidden" name="reset_defaults" value="1" />
     <button type="submit" class="btn ghost" style="color: #7f1d1d;">Reset admin, manager &amp; credit officer to code defaults</button>
   </form>

@@ -20,6 +20,8 @@ $sentFlash = is_string($sent) ? $sent : '';
 
 <form method="post" action="<?= htmlspecialchars($basePath . '/login', ENT_QUOTES, 'UTF-8') ?>" class="auth-form">
   <input type="hidden" name="next" value="<?= htmlspecialchars($next, ENT_QUOTES, 'UTF-8') ?>" />
+  <?php require STR_CONSOLE_ROOT . '/views/partials/csrf.php'; ?>
+  <?php require STR_CONSOLE_ROOT . '/views/partials/honeypot.php'; ?>
 
   <div class="auth-field">
     <label for="login-email">Work email</label>
@@ -30,6 +32,7 @@ $sentFlash = is_string($sent) ? $sent : '';
     <div class="auth-field">
       <label for="login-role">Role (demo only)</label>
       <select id="login-role" name="role" required>
+        <option value="" selected disabled>Select a role…</option>
         <?php foreach ($roles as $r): ?>
           <option value="<?= htmlspecialchars($r, ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($r, ENT_QUOTES, 'UTF-8') ?></option>
         <?php endforeach; ?>
@@ -39,7 +42,7 @@ $sentFlash = is_string($sent) ? $sent : '';
   <?php elseif ($dbReady): ?>
     <div class="auth-field">
       <label for="login-password">Password</label>
-      <input id="login-password" name="password" type="password" required autocomplete="current-password" />
+      <input id="login-password" name="password" type="password" required minlength="1" maxlength="<?= (int) InputValidate::PASSWORD_MAX_BYTES ?>" autocomplete="current-password" />
     </div>
     <div style="text-align:right; margin: -8px 0 8px;">
       <a href="<?= htmlspecialchars($basePath . '/forgot-password', ENT_QUOTES, 'UTF-8') ?>" style="font-size:13px; font-weight:650; color:var(--green2); text-decoration:underline; text-underline-offset:3px;">Forgot password?</a>

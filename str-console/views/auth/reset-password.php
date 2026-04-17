@@ -24,14 +24,16 @@ $invalid = !empty($invalid);
   <form method="post" action="<?= htmlspecialchars($basePath . '/reset-password', ENT_QUOTES, 'UTF-8') ?>">
     <input type="hidden" name="token" value="<?= htmlspecialchars($token, ENT_QUOTES, 'UTF-8') ?>" />
     <input type="hidden" name="csrf" value="<?= htmlspecialchars($csrf, ENT_QUOTES, 'UTF-8') ?>" />
+    <?php require STR_CONSOLE_ROOT . '/views/partials/csrf.php'; ?>
+    <?php require STR_CONSOLE_ROOT . '/views/partials/honeypot.php'; ?>
 
     <div class="auth-field">
       <label for="reset-pw">New password</label>
-      <input id="reset-pw" name="new_password" type="password" required minlength="10" autocomplete="new-password" />
+      <input id="reset-pw" name="new_password" type="password" required minlength="10" maxlength="<?= (int) InputValidate::PASSWORD_MAX_BYTES ?>" autocomplete="new-password" />
     </div>
     <div class="auth-field">
       <label for="reset-pw2">Confirm password</label>
-      <input id="reset-pw2" name="confirm_password" type="password" required minlength="10" autocomplete="new-password" />
+      <input id="reset-pw2" name="confirm_password" type="password" required minlength="10" maxlength="<?= (int) InputValidate::PASSWORD_MAX_BYTES ?>" autocomplete="new-password" />
     </div>
     <div class="auth-actions">
       <button type="submit" class="btn primary">Save new password</button>

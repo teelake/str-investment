@@ -85,6 +85,7 @@ $editDone = $editOk === '1' || $editOk === 1;
       <h2 style="font-size: 15px; margin: 0 0 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted);">Documents</h2>
       <?php if ($canUpload): ?>
         <form method="post" action="<?= htmlspecialchars($basePath . '/customers/' . $id . '/documents', ENT_QUOTES, 'UTF-8') ?>" enctype="multipart/form-data" style="display:grid; gap: 10px; margin-bottom: 18px; padding-bottom: 18px; border-bottom: 1px solid var(--line2);">
+          <?php require STR_CONSOLE_ROOT . '/views/partials/csrf.php'; ?>
           <label style="font-size: 13px; font-weight: 650; color: var(--muted);">
             Upload ID or supporting file
             <input type="file" name="document" accept=".pdf,.jpg,.jpeg,.png,.webp" required style="margin-top: 6px; width: 100%; font-size: 14px;" />
@@ -117,6 +118,7 @@ $editDone = $editOk === '1' || $editOk === 1;
                 <a class="btn ghost" style="font-size: 13px; padding: 8px 12px;" href="<?= htmlspecialchars($basePath . '/customers/' . $id . '/documents/' . $did . '/file', ENT_QUOTES, 'UTF-8') ?>">Download</a>
                 <?php if ($canDeleteDocs): ?>
                   <form method="post" action="<?= htmlspecialchars($basePath . '/customers/' . $id . '/documents/' . $did . '/delete', ENT_QUOTES, 'UTF-8') ?>" onsubmit="return confirm('Delete this file?');">
+                    <?php require STR_CONSOLE_ROOT . '/views/partials/csrf.php'; ?>
                     <button type="submit" class="btn ghost" style="font-size: 13px; padding: 8px 12px; color: #7f1d1d;">Delete</button>
                   </form>
                 <?php endif; ?>
