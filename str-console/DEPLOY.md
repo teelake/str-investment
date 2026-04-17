@@ -14,13 +14,24 @@
 
 ## Database
 
-Run SQL migrations in `database/migrations/` in filename order (e.g. `001_…sql`, `002_…sql`, …) against the target database. New installs must include all files through the latest migration.
+Run SQL migrations in `database/migrations/` in **numeric filename order** against the target database. New installs should apply **`database/schema.sql`** first (or equivalent), then every migration through the latest.
+
+**Ordered checklist (current set):**
+
+| File | Purpose |
+|------|---------|
+| `002_customer_documents.sql` | Customer document storage |
+| `003_loans.sql` | Loans / ledger (if not already in base schema) |
+| `004_console_settings.sql` | Settings key/value store |
+| `005_console_users_extra_grants.sql` | **`console_users.extra_grants_json`** — required for current code; login and profile queries fail without it |
+| `006_password_resets.sql` | Password reset tokens table |
+| `007_console_users_phone.sql` | **`console_users.phone`** |
+
+If you see **Unknown column 'extra_grants_json'** in PHP logs, **`005` was not applied** on that database. Run it (and any later migrations you have not run) via phpMyAdmin, MySQL client, or your host’s SQL tool.
 
 The `console_settings` table stores org policy toggles and the role permission matrix (`roles.grants.{role_key}` JSON arrays) edited under **Settings → Roles**, plus optional **`system.maintenance_notice`** (plain-text banner) from **Settings → System**.
 
-Apply migration **`005_console_users_extra_grants.sql`** on existing databases so `console_users.extra_grants_json` exists (per-user additive permissions merged at login).
-
-Apply **`006_password_resets.sql`** for self-service password reset.
+Apply **`006_password_resets.sql`** for self-service password reset (forgot-password flow).
 
 **Password reset email:** set `STR_CONSOLE_MAIL_FROM` to a valid `From:` address (and ensure the host can send mail). For local development only, you may set `STR_CONSOLE_DEV_RESET_LINK=1` to show the reset URL in the UI / error log when mail is not sent.
 

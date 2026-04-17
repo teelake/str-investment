@@ -83,9 +83,9 @@ final class AuthController extends BaseController
                 is_string($ph) && $ph !== '' ? $ph : null
             );
             $this->redirect($next);
-        } catch (Throwable) {
+        } catch (Throwable $e) {
             self::loginFailureDelay();
-            $this->redirect('/login?error=' . rawurlencode('Could not reach the database. Try again shortly.'));
+            $this->redirect('/login?error=' . rawurlencode(self::friendlyDbFailureMessage($e, 'Could not reach the database. Try again shortly.')));
         }
     }
 
@@ -167,8 +167,8 @@ final class AuthController extends BaseController
             ]);
 
             $this->redirect($genericSent);
-        } catch (Throwable) {
-            $this->redirect('/forgot-password?error=' . rawurlencode('Could not process the request. Ensure database migrations are up to date.'));
+        } catch (Throwable $e) {
+            $this->redirect('/forgot-password?error=' . rawurlencode(self::friendlyDbFailureMessage($e, 'Could not process the request. Ensure database migrations are up to date.')));
         }
     }
 
@@ -296,6 +296,25 @@ final class AuthController extends BaseController
             return '/';
         }
         return $next;
+    }
+
+    private static function friendlyDbFailureMessage(Throwable $e, string $generic): string
+    {
+        if ($e instanceof PDOException) {
+            $sqlState = (string) ($e->errorInfo[0] ?? '');
+            $msg = $e->getMessage();
+            if ($sqlState === '42S22' || str_contains($msg, 'Unknown column')) {
+                return 'The database is missing columns the app expects (for example console_users.extra_grants_json). '
+                    . 'Run SQL migrations from str-console/database/migrations/ on the server database, in order: '
+                    . '005_console_users_extra_grants.sql, then 006_password_resets.sql, then 007_console_users_phone.sql. '
+                    . 'Then try signing in again.';
+            }
+            if ($sqlState === '42S02' || str_contains($msg, "doesn't exist")) {
+                return 'The database is missing tables the app expects. Run all SQL files in str-console/database/migrations/ '
+                    . 'in numeric order (through the latest), then try again.';
+            }
+        }
+        return $generic;
     }
 
     private static function loginFailureDelay(): void
