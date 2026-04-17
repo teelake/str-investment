@@ -45,6 +45,8 @@ vendor/bin/phpunit
 
 Tests do not require a database; they cover permission helpers and pure ledger rounding.
 
+On Windows, enable `extension=zip` in the CLI `php.ini` Composer uses so packages can install from **dist** archives. Without zip (and without `unzip`/`7z` on `PATH`), Composer may fall back to cloning from GitHub, which is slower and can fail if Git or SSH is not set up. If a previous attempt left a broken clone, remove the matching folder under `%LOCALAPPDATA%\Composer\vcs\` (or run `composer clear-cache`) and try again.
+
 ## Demo / development login
 
 When `STR_CONSOLE_DEV_LOGIN=1` (environment or constant), the login form allows picking a role without a password. **Disable in production.**

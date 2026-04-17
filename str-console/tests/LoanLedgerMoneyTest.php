@@ -6,7 +6,7 @@ use PHPUnit\Framework\TestCase;
 
 final class LoanLedgerMoneyTest extends TestCase
 {
-    public function testMoneyRoundsHalfUpToTwoDecimals(): void
+    public function testMoneyRoundsToTwoDecimals(): void
     {
         $this->assertSame(1.23, LoanLedgerService::money(1.234));
         $this->assertSame(1.24, LoanLedgerService::money(1.235));
