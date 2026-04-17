@@ -127,6 +127,7 @@ function str_console_route_permissions(): array
         'loans.reject' => [...$auth, 'loans.reject'],
         'loans.disburse' => [...$auth, 'loans.disburse'],
         'loans.close' => [...$auth, 'loans.close'],
+        'loans.payment' => [...$auth, 'payments.record'],
 
         // Loan products
         'loan_products.index' => [...$auth, 'loan_products.list'],

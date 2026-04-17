@@ -49,10 +49,16 @@ require_once STR_CONSOLE_ROOT . '/services/CustomerDocumentStorage.php';
 require_once STR_CONSOLE_ROOT . '/repositories/UserRepository.php';
 require_once STR_CONSOLE_ROOT . '/repositories/CustomerRepository.php';
 require_once STR_CONSOLE_ROOT . '/repositories/CustomerDocumentRepository.php';
+require_once STR_CONSOLE_ROOT . '/repositories/LoanProductRepository.php';
+require_once STR_CONSOLE_ROOT . '/repositories/LoanLedgerRepository.php';
+require_once STR_CONSOLE_ROOT . '/services/LoanLedgerService.php';
+require_once STR_CONSOLE_ROOT . '/repositories/LoanRepository.php';
 
 require_once STR_CONSOLE_ROOT . '/controllers/AuthController.php';
 require_once STR_CONSOLE_ROOT . '/controllers/DashboardController.php';
 require_once STR_CONSOLE_ROOT . '/controllers/CustomersController.php';
+require_once STR_CONSOLE_ROOT . '/controllers/LoanProductsController.php';
+require_once STR_CONSOLE_ROOT . '/controllers/LoansController.php';
 
 require_once STR_CONSOLE_ROOT . '/config/routes.php';
 

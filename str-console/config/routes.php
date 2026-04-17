@@ -22,6 +22,24 @@ function str_console_routes(): array
         ['GET', '/customers/create', CustomersController::class, 'create', 'customers.create'],
         ['POST', '/customers', CustomersController::class, 'store', 'customers.store'],
 
+        ['GET', '/loans', LoansController::class, 'index', 'loans.index'],
+        ['GET', '/loans/create', LoansController::class, 'create', 'loans.create'],
+        ['POST', '/loans', LoansController::class, 'store', 'loans.store'],
+
+        ['GET', '/loan-products', LoanProductsController::class, 'index', 'loan_products.index'],
+        ['GET', '/loan-products/create', LoanProductsController::class, 'create', 'loan_products.create'],
+        ['POST', '/loan-products', LoanProductsController::class, 'store', 'loan_products.store'],
+        ['GET', '#^/loan-products/(\d+)/edit$#', LoanProductsController::class, 'edit', 'loan_products.edit'],
+        ['POST', '#^/loan-products/(\d+)/update$#', LoanProductsController::class, 'update', 'loan_products.update'],
+        ['POST', '#^/loan-products/(\d+)/retire$#', LoanProductsController::class, 'retire', 'loan_products.retire'],
+
+        ['GET', '#^/loans/(\d+)$#', LoansController::class, 'show', 'loans.show'],
+        ['POST', '#^/loans/(\d+)/submit$#', LoansController::class, 'submit', 'loans.submit'],
+        ['POST', '#^/loans/(\d+)/approve$#', LoansController::class, 'approve', 'loans.approve'],
+        ['POST', '#^/loans/(\d+)/reject$#', LoansController::class, 'reject', 'loans.reject'],
+        ['POST', '#^/loans/(\d+)/disburse$#', LoansController::class, 'disburse', 'loans.disburse'],
+        ['POST', '#^/loans/(\d+)/payment$#', LoansController::class, 'payment', 'loans.payment'],
+
         ['GET', '#^/customers/(\d+)$#', CustomersController::class, 'show', 'customers.show'],
         ['POST', '#^/customers/(\d+)/documents$#', CustomersController::class, 'documentStore', 'customers.documents.store'],
         ['GET', '#^/customers/(\d+)/documents/(\d+)/file$#', CustomersController::class, 'documentDownload', 'customers.documents.download'],

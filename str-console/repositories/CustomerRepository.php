@@ -117,6 +117,32 @@ final class CustomerRepository
     /**
      * @return int new customer id
      */
+    /**
+     * @return list<array{id: int, full_name: string}>
+     */
+    public function listNamesForConsoleUser(?int $consoleUserId, array $grants, int $limit = 500): array
+    {
+        $viewAll = str_console_authorize($grants, ['data.view_all_customers']);
+        if (!$viewAll && $consoleUserId === null) {
+            return [];
+        }
+        $pdo = Database::pdo();
+        if ($viewAll) {
+            $stmt = $pdo->prepare('SELECT id, full_name FROM customers ORDER BY full_name ASC LIMIT :lim');
+            $stmt->bindValue(':lim', $limit, PDO::PARAM_INT);
+            $stmt->execute();
+        } else {
+            $stmt = $pdo->prepare(
+                'SELECT id, full_name FROM customers WHERE assigned_user_id <=> :uid ORDER BY full_name ASC LIMIT :lim'
+            );
+            $stmt->bindValue(':uid', $consoleUserId, PDO::PARAM_INT);
+            $stmt->bindValue(':lim', $limit, PDO::PARAM_INT);
+            $stmt->execute();
+        }
+        /** @var list<array{id: int, full_name: string}> */
+        return $stmt->fetchAll();
+    }
+
     public function create(
         string $fullName,
         string $phone,

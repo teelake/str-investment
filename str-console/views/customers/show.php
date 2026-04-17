@@ -38,6 +38,11 @@ $ok = $docOk === '1' || $docOk === 1;
     <a href="<?= htmlspecialchars($basePath . '/customers', ENT_QUOTES, 'UTF-8') ?>" style="font-size: 13px; font-weight: 650; color: var(--muted); text-decoration: none;">← Customers</a>
     <h1 style="font-size: var(--h2); margin: 12px 0 6px;"><?= htmlspecialchars($name, ENT_QUOTES, 'UTF-8') ?></h1>
     <p style="color: var(--muted); margin: 0; font-size: 14px;">Customer #<?= (int) $id ?></p>
+    <?php if (str_console_authorize_route(ConsoleAuth::grants(), 'loans.create')): ?>
+      <p style="margin: 12px 0 0;">
+        <a class="btn primary" style="font-size: 14px;" href="<?= htmlspecialchars($basePath . '/loans/create?customer_id=' . $id, ENT_QUOTES, 'UTF-8') ?>">New loan</a>
+      </p>
+    <?php endif; ?>
   </div>
 
   <?php if ($ok): ?>

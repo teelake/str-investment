@@ -9,11 +9,16 @@ final class DashboardController extends BaseController
         $customerCount = null;
         $dbError = null;
 
+        $loanStats = null;
         if (str_console_database_ready()) {
             try {
                 $repo = new CustomerRepository();
                 $customerCount = $repo->countScoped(ConsoleAuth::userId(), ConsoleAuth::grants());
+                $loanRepo = new LoanRepository();
+                $loanStats = $loanRepo->dashboardTotals(ConsoleAuth::userId(), ConsoleAuth::grants());
             } catch (Throwable) {
+                $customerCount = null;
+                $loanStats = null;
                 $dbError = 'Database unreachable. Check credentials and that schema is installed.';
             }
         } else {
@@ -23,6 +28,7 @@ final class DashboardController extends BaseController
         $this->render('dashboard/index', [
             'user' => ConsoleAuth::user(),
             'customerCount' => $customerCount,
+            'loanStats' => $loanStats,
             'dbError' => $dbError,
         ]);
     }
