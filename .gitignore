@@ -18,3 +18,4 @@ Thumbs.db
 *.log
 vendor/
 str-console/.phpunit.cache/
+str-console/phpunit.phar
