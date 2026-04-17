@@ -34,11 +34,10 @@ $allowF = !$isEdit || (int) ($product['allow_flat_monthly'] ?? 1) === 1;
           style="padding:12px 14px; border-radius:14px; border:1px solid var(--line); background:#fff;" />
       </label>
       <label style="display:grid; gap:6px; font-size:13px; font-weight:650; color:var(--muted);">
-        Suggested monthly rate (%)
+        Monthly rate (%)
         <input name="rate_percent" type="number" step="0.0001" min="0.0001" required value="<?= htmlspecialchars($rate, ENT_QUOTES, 'UTF-8') ?>"
           style="padding:12px 14px; border-radius:14px; border:1px solid var(--line); background:#fff;" />
       </label>
-      <p style="margin:-6px 0 0; font-size:12px; color:var(--muted2);">Staff negotiate the actual rate on each loan. This value pre-fills new loans. Charges apply at most once per <strong>30-day period</strong> from disbursement when a period advances.</p>
       <fieldset style="border:1px solid var(--line2); border-radius:14px; padding:14px 16px; margin:0;">
         <legend style="font-size:13px; font-weight:650; color:var(--muted); padding:0 6px;">Interest types offered</legend>
         <label style="display:flex; align-items:center; gap:10px; font-size:14px; margin-bottom:10px;">
@@ -58,7 +57,7 @@ $allowF = !$isEdit || (int) ($product['allow_flat_monthly'] ?? 1) === 1;
         </label>
       </fieldset>
       <label style="display:grid; gap:6px; font-size:13px; font-weight:650; color:var(--muted);">
-        Period (months, informational)
+        Period (months)
         <input name="period_months" type="number" min="1" required value="<?= (int) $pm ?>"
           style="padding:12px 14px; border-radius:14px; border:1px solid var(--line); background:#fff;" />
       </label>
