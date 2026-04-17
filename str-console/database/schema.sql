@@ -28,6 +28,7 @@ CREATE TABLE IF NOT EXISTS customers (
   nin VARCHAR(32) NULL,
   bvn VARCHAR(32) NULL,
   assigned_user_id BIGINT UNSIGNED NULL,
+  is_active TINYINT(1) NOT NULL DEFAULT 1,
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (id),
@@ -36,6 +37,7 @@ CREATE TABLE IF NOT EXISTS customers (
   UNIQUE KEY uq_customers_bvn (bvn),
   KEY idx_customers_phone (phone),
   KEY idx_customers_assigned (assigned_user_id),
+  KEY idx_customers_active (is_active),
   KEY idx_customers_created (created_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
