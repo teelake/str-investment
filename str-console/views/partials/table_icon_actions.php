@@ -11,9 +11,9 @@ $editHref = $editHref ?? null;
 $dangerPost = $dangerPost ?? null;
 $dangerTitle = is_array($dangerPost) ? (string) ($dangerPost['title'] ?? 'Deactivate') : '';
 $dangerConfirm = is_array($dangerPost) ? (string) ($dangerPost['confirm'] ?? 'Continue?') : '';
-$btnStyle = 'padding:6px 8px; min-width:0; line-height:0;';
+$btnStyle = 'padding:6px 8px; min-width:0; line-height:0; flex-shrink:0;';
 ?>
-<div style="display:flex; flex-wrap:wrap; gap:6px; align-items:center;">
+<div class="console-table-actions">
   <a class="btn ghost" style="<?= htmlspecialchars($btnStyle, ENT_QUOTES, 'UTF-8') ?>" href="<?= htmlspecialchars($viewHref, ENT_QUOTES, 'UTF-8') ?>" title="View" aria-label="View">
     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
       <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
@@ -28,7 +28,7 @@ $btnStyle = 'padding:6px 8px; min-width:0; line-height:0;';
     </a>
   <?php endif; ?>
   <?php if (is_array($dangerPost) && ($dangerPost['action'] ?? '') !== ''): ?>
-    <form method="post" action="<?= htmlspecialchars((string) $dangerPost['action'], ENT_QUOTES, 'UTF-8') ?>" style="display:inline; margin:0;" onsubmit="return confirm(<?= htmlspecialchars(json_encode($dangerConfirm, JSON_THROW_ON_ERROR | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT), ENT_QUOTES, 'UTF-8') ?>);">
+    <form method="post" action="<?= htmlspecialchars((string) $dangerPost['action'], ENT_QUOTES, 'UTF-8') ?>" onsubmit="return confirm(<?= htmlspecialchars(json_encode($dangerConfirm, JSON_THROW_ON_ERROR | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT), ENT_QUOTES, 'UTF-8') ?>);">
       <?php require STR_CONSOLE_ROOT . '/views/partials/csrf.php'; ?>
       <button type="submit" class="btn ghost" style="<?= htmlspecialchars($btnStyle, ENT_QUOTES, 'UTF-8') ?>" title="<?= htmlspecialchars($dangerTitle, ENT_QUOTES, 'UTF-8') ?>" aria-label="<?= htmlspecialchars($dangerTitle, ENT_QUOTES, 'UTF-8') ?>">
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75" aria-hidden="true">

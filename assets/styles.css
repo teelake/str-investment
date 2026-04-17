@@ -1731,3 +1731,18 @@ footer{
   font-weight: 500;
 }
 
+/* List/table row: view · edit · danger icons on one horizontal line */
+.console-table-actions{
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+}
+.console-table-actions form{
+  display: flex;
+  margin: 0;
+  align-items: center;
+  flex-shrink: 0;
+}
+
