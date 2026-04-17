@@ -5,25 +5,99 @@ declare(strict_types=1);
 /**
  * Rolling-balance loan ledger (booked rate on the loan row).
  *
+ * Booked rate_percent is the **monthly** rate (client MVP): each interest **charge** applies that full rate once per 30-day step (when due).
+ * **Reducing balance** (`interest_basis`): charge = rate × **current opening** (rolled balance).
+ * **Flat monthly** (`flat_monthly`): charge = rate × **original booked principal** (`loans.principal_amount`), regardless of how much has been paid down.
+ * Interest **timing**: **30-day periods** from **disbursement** (day 0–29 = period 0, day 30–59 = period 1, …).
+ * No interest on the initial disbursement line—only principal moves into the balance until the first event in a later period.
+ *
  * Model (contract wording may differ — align product/legal before go-live):
- * - Interest each step = booked rate_percent × opening balance for that line, rounded to 2 decimals.
- * - “Opening” on the first line after disburse = principal. Every later line uses opening = previous line’s closing.
- * - Payment lines: interest is charged on opening, total due = opening + interest, payment caps at that due, closing = due − payment.
- * - Periodic accrual (optional, when PolicyService::ledgerAutoAccrue()): inserts lines with no payment so closing = amount due
- *   (interest rolls into balance). Next line’s period_date is previous period_date + 1 calendar month (PHP DateTimeImmutable).
+ * - First line after disburse: opening = principal, **zero** interest, closing = principal (interest starts from period 1 onward).
+ * - Payment lines: opening = previous closing. Compare period index of payment date vs last line’s period_date (same disburse anchor).
+ *   Same period → no new interest. Later period → add one monthly-rate charge on opening, then apply payment.
+ *   Payment date must be on or after the last line’s period_date.
+ * - Periodic accrual (optional): each line adds one charge; next line’s period_date = previous + 30 days.
  * - Accrual stops at disbursed_at + period_months (term) or the as-of date, whichever is earlier.
  *
  * Triggers: disburse creates line 1; payments and periodic accrual must not run on GET — use POST or CLI/cron only.
  */
 final class LoanLedgerService
 {
+    /** Interest periods are counted in whole days from disbursement; each period is this many days (MVP / client rule). */
+    public const INTEREST_PERIOD_DAYS = 30;
+
     public static function money(float $n): float
     {
         return round($n, 2);
     }
 
     /**
-     * Atomically mark loan active, set disbursed_at, and create the first ledger line (principal + interest).
+     * One interest charge for a ledger step (after the first 30-day period boundary), before payment is applied.
+     */
+    public static function periodInterestCharge(
+        float $opening,
+        float $originalPrincipal,
+        float $ratePercent,
+        string $interestBasis
+    ): float {
+        if ($interestBasis === LoanInterestBasis::FLAT_MONTHLY) {
+            return self::money($originalPrincipal * ($ratePercent / 100.0));
+        }
+
+        return self::money($opening * ($ratePercent / 100.0));
+    }
+
+    /**
+     * 0-based period index from disbursement date (inclusive day 0). Returns -1 if event is before disburse.
+     */
+    public static function interestPeriodIndex(string $disburseYmd, string $eventYmd): int
+    {
+        $d0 = DateTimeImmutable::createFromFormat('Y-m-d', substr($disburseYmd, 0, 10));
+        $d1 = DateTimeImmutable::createFromFormat('Y-m-d', substr($eventYmd, 0, 10));
+        if ($d0 === false || $d1 === false || $d0->format('Y-m-d') !== substr($disburseYmd, 0, 10) || $d1->format('Y-m-d') !== substr($eventYmd, 0, 10)) {
+            return 0;
+        }
+        if ($d1 < $d0) {
+            return -1;
+        }
+
+        return intdiv((int) $d0->diff($d1)->days, self::INTEREST_PERIOD_DAYS);
+    }
+
+    /**
+     * Upper bound for a new payment line (payment date and disbursement anchor).
+     */
+    public static function maxPaymentForNextLine(
+        float $opening,
+        float $ratePercent,
+        string $paymentDateYmd,
+        string $lastLinePeriodYmd,
+        string $disburseYmd,
+        string $interestBasis,
+        float $originalPrincipal
+    ): float {
+        $lastPd = substr(trim($lastLinePeriodYmd), 0, 10);
+        $disb = substr(trim($disburseYmd), 0, 10);
+        if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $lastPd) || !preg_match('/^\d{4}-\d{2}-\d{2}$/', $disb)) {
+            $interest = self::periodInterestCharge($opening, $originalPrincipal, $ratePercent, $interestBasis);
+
+            return self::money($opening + $interest);
+        }
+        $lastIdx = self::interestPeriodIndex($disb, $lastPd);
+        $payIdx = self::interestPeriodIndex($disb, $paymentDateYmd);
+        if ($payIdx < $lastIdx) {
+            return self::money($opening);
+        }
+        if ($payIdx === $lastIdx) {
+            return self::money($opening);
+        }
+        $interest = self::periodInterestCharge($opening, $originalPrincipal, $ratePercent, $interestBasis);
+
+        return self::money($opening + $interest);
+    }
+
+    /**
+     * Atomically mark loan active, set disbursed_at, and create the first ledger line (principal; no interest until first 30-day period).
      */
     public static function completeDisbursement(int $loanId, string $periodDateYmd): void
     {
@@ -64,8 +138,8 @@ final class LoanLedgerService
 
             $principal = (float) $loan['principal_amount'];
             $rate = (float) $loan['rate_percent'];
-            $interest = self::money($principal * ($rate / 100.0));
-            $due = self::money($principal + $interest);
+            $interest = 0.0;
+            $due = self::money($principal);
             $closing = $due;
 
             $ins = $pdo->prepare(
@@ -92,7 +166,7 @@ final class LoanLedgerService
     }
 
     /**
-     * Append month-end-style accrual lines: interest on the last closing, no payment, closing = amount due.
+     * Append accrual lines every 30 days from the last line: interest on the last closing, no payment, closing = amount due.
      * Stops when the next period date is after $asOfDateYmd, after the loan term (disbursed_at + period_months), or when outstanding <= 0.
      *
      * @return int Number of new ledger lines inserted
@@ -112,7 +186,7 @@ final class LoanLedgerService
         $pdo->beginTransaction();
         try {
             $stmt = $pdo->prepare(
-                'SELECT id, status, rate_percent, period_months, disbursed_at, created_at
+                'SELECT id, status, rate_percent, principal_amount, interest_basis, period_months, disbursed_at, created_at
                  FROM loans WHERE id = :id FOR UPDATE'
             );
             $stmt->execute([':id' => $loanId]);
@@ -140,6 +214,11 @@ final class LoanLedgerService
             $periodMonths = max(1, (int) ($loan['period_months'] ?? 1));
             $termEnd = $disbursed->modify('+' . $periodMonths . ' months');
             $rateLoan = (float) $loan['rate_percent'];
+            $originalPrincipal = (float) ($loan['principal_amount'] ?? 0);
+            $basis = (string) ($loan['interest_basis'] ?? LoanInterestBasis::REDUCING_BALANCE);
+            if (!in_array($basis, LoanInterestBasis::all(), true)) {
+                $basis = LoanInterestBasis::REDUCING_BALANCE;
+            }
 
             $ledger = new LoanLedgerRepository();
             $added = 0;
@@ -160,7 +239,7 @@ final class LoanLedgerService
                     break;
                 }
 
-                $nextPd = $lastPd->modify('+1 month');
+                $nextPd = $lastPd->modify('+' . self::INTEREST_PERIOD_DAYS . ' days');
                 if ($nextPd->format('Y-m-d') > $asOf->format('Y-m-d')) {
                     break;
                 }
@@ -170,7 +249,7 @@ final class LoanLedgerService
 
                 $lineNo = $ledger->nextLineNo($loanId);
                 $rate = $rateLoan;
-                $interest = self::money($opening * ($rate / 100.0));
+                $interest = self::periodInterestCharge($opening, $originalPrincipal, $rate, $basis);
                 $due = self::money($opening + $interest);
                 $closing = $due;
 
@@ -233,19 +312,26 @@ final class LoanLedgerService
         $pdo = Database::pdo();
         $pdo->beginTransaction();
         try {
-            $stmt = $pdo->prepare('SELECT id, status, rate_percent, disbursed_at FROM loans WHERE id = :id FOR UPDATE');
+            $stmt = $pdo->prepare(
+                'SELECT id, status, rate_percent, principal_amount, interest_basis, disbursed_at, created_at FROM loans WHERE id = :id FOR UPDATE'
+            );
             $stmt->execute([':id' => $loanId]);
             $loan = $stmt->fetch();
             if (!is_array($loan) || ($loan['status'] ?? '') !== 'active') {
                 $pdo->rollBack();
                 throw new RuntimeException('Loan is not active.');
             }
-            if (!InputValidate::loanPostDisburseDateOk($paymentDateYmd, (string) ($loan['disbursed_at'] ?? ''))) {
+            if (!InputValidate::loanPostDisburseDateOk($paymentDateYmd, (string) ($loan['disbursed_at'] ?? ''), (string) ($loan['created_at'] ?? ''))) {
                 $pdo->rollBack();
-                throw new RuntimeException('Payment date must be from disbursement through today.');
+                throw new RuntimeException('Payment date must be on or after the loan booking and disbursement dates, and not after today.');
             }
 
             $rate = (float) $loan['rate_percent'];
+            $originalPrincipal = (float) ($loan['principal_amount'] ?? 0);
+            $basis = (string) ($loan['interest_basis'] ?? LoanInterestBasis::REDUCING_BALANCE);
+            if (!in_array($basis, LoanInterestBasis::all(), true)) {
+                $basis = LoanInterestBasis::REDUCING_BALANCE;
+            }
             $ledger = new LoanLedgerRepository();
             $last = $ledger->lastLine($loanId);
             if ($last === null) {
@@ -259,14 +345,46 @@ final class LoanLedgerService
                 throw new RuntimeException('Loan is already fully paid.');
             }
 
+            $lastPd = substr((string) ($last['period_date'] ?? ''), 0, 10);
+            if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $lastPd)) {
+                $pdo->rollBack();
+                throw new RuntimeException('Last ledger line has an invalid period date.');
+            }
+            if ($paymentDateYmd < $lastPd) {
+                $pdo->rollBack();
+                throw new RuntimeException(
+                    'Payment date cannot be before the last ledger line date (' . $lastPd . ').'
+                );
+            }
+
+            $disbStr = substr((string) ($loan['disbursed_at'] ?? ''), 0, 10);
+            if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $disbStr)) {
+                $pdo->rollBack();
+                throw new RuntimeException('Loan has no valid disbursement date.');
+            }
+            $lastIdx = self::interestPeriodIndex($disbStr, $lastPd);
+            $payIdx = self::interestPeriodIndex($disbStr, $paymentDateYmd);
+            if ($payIdx < $lastIdx) {
+                $pdo->rollBack();
+                throw new RuntimeException(
+                    'Payment falls in a 30-day interest period before the last ledger line (' . $lastPd . ').'
+                );
+            }
+
             $lineNo = $ledger->nextLineNo($loanId);
-            $interest = self::money($opening * ($rate / 100.0));
+            if ($payIdx === $lastIdx) {
+                $interest = 0.0;
+            } else {
+                $interest = self::periodInterestCharge($opening, $originalPrincipal, $rate, $basis);
+            }
             $amountDue = self::money($opening + $interest);
             $payIn = self::money($amount);
             if ($payIn > $amountDue) {
                 $pdo->rollBack();
                 throw new RuntimeException(
-                    'Payment cannot exceed the amount due for this period (opening balance plus interest): '
+                    'Payment cannot exceed the amount due for this step (balance'
+                    . ($interest > 0 ? ' plus one month of interest' : '')
+                    . '): '
                     . number_format($amountDue, 2, '.', '')
                     . '.'
                 );

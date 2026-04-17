@@ -56,8 +56,9 @@ final class PolicyService
     }
 
     /**
-     * When true, active loans accrue interest into new ledger lines each month (no payment) until the booked term
-     * (period_months from disbursement) or the as-of date, whichever comes first.
+     * When true, active loans accrue one charge (booked monthly rate on the balance) into new ledger lines every
+     * 30 days from the previous line (no payment) until the booked term (period_months from disbursement) or the
+     * as-of date, whichever comes first.
      */
     public static function ledgerAutoAccrue(): bool
     {

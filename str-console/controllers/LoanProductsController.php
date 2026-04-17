@@ -65,8 +65,25 @@ final class LoanProductsController extends BaseController
         $name = trim(str_replace(["\0", "\r"], '', (string) Request::post('name', '')));
         $rate = (float) Request::post('rate_percent', 0);
         $pm = max(1, (int) Request::post('period_months', 1));
+        $allowR = (string) Request::post('allow_reducing_balance', '') === '1';
+        $allowF = (string) Request::post('allow_flat_monthly', '') === '1';
+        $defBasis = LoanInterestBasis::normalize((string) Request::post('default_interest_basis', ''));
+        if ($defBasis === null) {
+            $defBasis = LoanInterestBasis::REDUCING_BALANCE;
+        }
         if ($name === '' || $rate <= 0) {
             $this->redirect('/loan-products/create?error=' . rawurlencode('Name and a positive rate are required.'));
+            return;
+        }
+        if (!$allowR && !$allowF) {
+            $this->redirect('/loan-products/create?error=' . rawurlencode('Allow at least one interest type (reducing or flat).'));
+            return;
+        }
+        if (!LoanInterestBasis::isBasisAllowed($defBasis, [
+            'allow_reducing_balance' => $allowR ? 1 : 0,
+            'allow_flat_monthly' => $allowF ? 1 : 0,
+        ])) {
+            $this->redirect('/loan-products/create?error=' . rawurlencode('Default interest type must be allowed for this product.'));
             return;
         }
         if (mb_strlen($name) > InputValidate::PERSON_NAME_MAX) {
@@ -75,7 +92,7 @@ final class LoanProductsController extends BaseController
         }
         try {
             $repo = new LoanProductRepository();
-            $repo->create($name, $rate, $pm);
+            $repo->create($name, $rate, $pm, $defBasis, $allowR, $allowF);
             AuditLogger::log(ConsoleAuth::userId(), 'loan_product.create', 'loan_product', null, ['name' => $name]);
             $this->redirect('/loan-products');
         } catch (Throwable) {
@@ -112,8 +129,25 @@ final class LoanProductsController extends BaseController
         $rate = (float) Request::post('rate_percent', 0);
         $pm = max(1, (int) Request::post('period_months', 1));
         $active = (string) Request::post('is_active', '') === '1';
+        $allowR = (string) Request::post('allow_reducing_balance', '') === '1';
+        $allowF = (string) Request::post('allow_flat_monthly', '') === '1';
+        $defBasis = LoanInterestBasis::normalize((string) Request::post('default_interest_basis', ''));
+        if ($defBasis === null) {
+            $defBasis = LoanInterestBasis::REDUCING_BALANCE;
+        }
         if ($name === '' || $rate <= 0) {
             $this->redirect('/loan-products/' . $id . '/edit?error=' . rawurlencode('Invalid fields.'));
+            return;
+        }
+        if (!$allowR && !$allowF) {
+            $this->redirect('/loan-products/' . $id . '/edit?error=' . rawurlencode('Allow at least one interest type.'));
+            return;
+        }
+        if (!LoanInterestBasis::isBasisAllowed($defBasis, [
+            'allow_reducing_balance' => $allowR ? 1 : 0,
+            'allow_flat_monthly' => $allowF ? 1 : 0,
+        ])) {
+            $this->redirect('/loan-products/' . $id . '/edit?error=' . rawurlencode('Default interest type must be allowed.'));
             return;
         }
         if (mb_strlen($name) > InputValidate::PERSON_NAME_MAX) {
@@ -126,7 +160,7 @@ final class LoanProductsController extends BaseController
                 $this->redirect('/loan-products');
                 return;
             }
-            $repo->update($id, $name, $rate, $pm, $active);
+            $repo->update($id, $name, $rate, $pm, $defBasis, $allowR, $allowF, $active);
             AuditLogger::log(ConsoleAuth::userId(), 'loan_product.update', 'loan_product', $id, ['name' => $name]);
             $this->redirect('/loan-products');
         } catch (Throwable) {

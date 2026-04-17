@@ -28,7 +28,7 @@ final class LoanProductRepository
         $offset = ($page - 1) * $perPage;
 
         $stmt = $pdo->prepare(
-            'SELECT id, name, rate_percent, period_months, is_active, created_at, updated_at
+            'SELECT id, name, rate_percent, period_months, default_interest_basis, allow_reducing_balance, allow_flat_monthly, is_active, created_at, updated_at
              FROM loan_products WHERE ' . $where . '
              ORDER BY id DESC
              LIMIT :lim OFFSET :off'
@@ -49,7 +49,7 @@ final class LoanProductRepository
     {
         $pdo = Database::pdo();
         $stmt = $pdo->query(
-            'SELECT id, name, rate_percent, period_months, is_active, created_at, updated_at
+            'SELECT id, name, rate_percent, period_months, default_interest_basis, allow_reducing_balance, allow_flat_monthly, is_active, created_at, updated_at
              FROM loan_products ORDER BY id DESC'
         );
         /** @var list<array<string, mixed>> */
@@ -63,7 +63,7 @@ final class LoanProductRepository
     {
         $pdo = Database::pdo();
         $stmt = $pdo->query(
-            'SELECT id, name, rate_percent, period_months, is_active
+            'SELECT id, name, rate_percent, period_months, default_interest_basis, allow_reducing_balance, allow_flat_monthly, is_active
              FROM loan_products WHERE is_active = 1 ORDER BY name ASC'
         );
         /** @var list<array<string, mixed>> */
@@ -82,32 +82,54 @@ final class LoanProductRepository
         return is_array($row) ? $row : null;
     }
 
-    public function create(string $name, float $ratePercent, int $periodMonths): int
-    {
+    public function create(
+        string $name,
+        float $ratePercent,
+        int $periodMonths,
+        string $defaultInterestBasis,
+        bool $allowReducing,
+        bool $allowFlat
+    ): int {
         $pdo = Database::pdo();
         $stmt = $pdo->prepare(
-            'INSERT INTO loan_products (name, rate_percent, period_months, is_active, created_at, updated_at)
-             VALUES (:n, :r, :pm, 1, NOW(), NOW())'
+            'INSERT INTO loan_products (name, rate_percent, period_months, default_interest_basis, allow_reducing_balance, allow_flat_monthly, is_active, created_at, updated_at)
+             VALUES (:n, :r, :pm, :dib, :ar, :af, 1, NOW(), NOW())'
         );
         $stmt->execute([
             ':n' => $name,
             ':r' => $ratePercent,
             ':pm' => $periodMonths,
+            ':dib' => $defaultInterestBasis,
+            ':ar' => $allowReducing ? 1 : 0,
+            ':af' => $allowFlat ? 1 : 0,
         ]);
         return (int) $pdo->lastInsertId();
     }
 
-    public function update(int $id, string $name, float $ratePercent, int $periodMonths, bool $isActive): void
-    {
+    public function update(
+        int $id,
+        string $name,
+        float $ratePercent,
+        int $periodMonths,
+        string $defaultInterestBasis,
+        bool $allowReducing,
+        bool $allowFlat,
+        bool $isActive
+    ): void {
         $pdo = Database::pdo();
         $stmt = $pdo->prepare(
-            'UPDATE loan_products SET name = :n, rate_percent = :r, period_months = :pm, is_active = :a, updated_at = NOW()
+            'UPDATE loan_products SET name = :n, rate_percent = :r, period_months = :pm,
+                default_interest_basis = :dib, allow_reducing_balance = :ar, allow_flat_monthly = :af,
+                is_active = :a, updated_at = NOW()
              WHERE id = :id'
         );
         $stmt->execute([
             ':n' => $name,
             ':r' => $ratePercent,
             ':pm' => $periodMonths,
+            ':dib' => $defaultInterestBasis,
+            ':ar' => $allowReducing ? 1 : 0,
+            ':af' => $allowFlat ? 1 : 0,
             ':a' => $isActive ? 1 : 0,
             ':id' => $id,
         ]);

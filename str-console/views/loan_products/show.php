@@ -18,7 +18,7 @@ $active = (int) ($product['is_active'] ?? 0) === 1;
   <div style="margin-top:24px; background: var(--card); border: 1px solid var(--line2); border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow2); display:grid; gap:14px;">
     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
       <div>
-        <div style="font-size:11px; font-weight:650; color:var(--muted); text-transform:uppercase;">Rate (booked %)</div>
+        <div style="font-size:11px; font-weight:650; color:var(--muted); text-transform:uppercase;">Rate (monthly %)</div>
         <div style="font-size:20px; font-weight:800; margin-top:6px;"><?= htmlspecialchars((string) ($product['rate_percent'] ?? ''), ENT_QUOTES, 'UTF-8') ?>%</div>
       </div>
       <div>

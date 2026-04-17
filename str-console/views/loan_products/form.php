@@ -28,10 +28,11 @@ $active = !$isEdit || (int) ($product['is_active'] ?? 1);
           style="padding:12px 14px; border-radius:14px; border:1px solid var(--line); background:#fff;" />
       </label>
       <label style="display:grid; gap:6px; font-size:13px; font-weight:650; color:var(--muted);">
-        Rate (% per accrual line on outstanding balance)
+        Rate (% per month on outstanding balance)
         <input name="rate_percent" type="number" step="0.0001" min="0.0001" required value="<?= htmlspecialchars($rate, ENT_QUOTES, 'UTF-8') ?>"
           style="padding:12px 14px; border-radius:14px; border:1px solid var(--line); background:#fff;" />
       </label>
+      <p style="margin:-6px 0 0; font-size:12px; color:var(--muted2);">Interest is charged at most once per <strong>30-day period</strong> from loan disbursement (same period as the last ledger line: payments reduce balance only; next period: one full rate charge on the balance).</p>
       <label style="display:grid; gap:6px; font-size:13px; font-weight:650; color:var(--muted);">
         Period (months, informational)
         <input name="period_months" type="number" min="1" required value="<?= (int) $pm ?>"

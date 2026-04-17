@@ -120,20 +120,22 @@ final class LoanRepository
         int $loanProductId,
         float $principal,
         float $ratePercent,
+        string $interestBasis,
         int $periodMonths,
         ?int $assignedUserId,
         ?int $createdByUserId
     ): int {
         $pdo = Database::pdo();
         $stmt = $pdo->prepare(
-            'INSERT INTO loans (customer_id, loan_product_id, status, principal_amount, rate_percent, period_months, assigned_user_id, created_by_user_id, created_at, updated_at)
-             VALUES (:cid, :pid, \'draft\', :principal, :rate, :pm, :aid, :cby, NOW(), NOW())'
+            'INSERT INTO loans (customer_id, loan_product_id, status, principal_amount, rate_percent, interest_basis, period_months, assigned_user_id, created_by_user_id, created_at, updated_at)
+             VALUES (:cid, :pid, \'draft\', :principal, :rate, :ib, :pm, :aid, :cby, NOW(), NOW())'
         );
         $stmt->execute([
             ':cid' => $customerId,
             ':pid' => $loanProductId,
             ':principal' => $principal,
             ':rate' => $ratePercent,
+            ':ib' => $interestBasis,
             ':pm' => $periodMonths,
             ':aid' => $assignedUserId,
             ':cby' => $createdByUserId,
@@ -150,6 +152,7 @@ final class LoanRepository
         int $loanProductId,
         float $principal,
         float $ratePercent,
+        string $interestBasis,
         int $periodMonths
     ): bool {
         $pdo = Database::pdo();
@@ -159,6 +162,7 @@ final class LoanRepository
                 loan_product_id = :pid,
                 principal_amount = :principal,
                 rate_percent = :rate,
+                interest_basis = :ib,
                 period_months = :pm,
                 status = IF(status = \'rejected\', \'draft\', status),
                 rejected_reason = NULL,
@@ -171,6 +175,7 @@ final class LoanRepository
             ':pid' => $loanProductId,
             ':principal' => $principal,
             ':rate' => $ratePercent,
+            ':ib' => $interestBasis,
             ':pm' => $periodMonths,
             ':id' => $loanId,
         ]);

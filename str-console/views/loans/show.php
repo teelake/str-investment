@@ -90,7 +90,7 @@ if ($paymentDefault < $paymentDateMin) {
       <div style="font-size: 22px; font-weight: 800; margin-top: 8px;"><?= $fmt((float) ($loan['principal_amount'] ?? 0)) ?></div>
     </div>
     <div style="background: var(--card); border: 1px solid var(--line2); border-radius: var(--radius); padding: 18px; box-shadow: var(--shadow2);">
-      <div style="font-size: 12px; font-weight: 650; color: var(--muted); text-transform: uppercase;">Rate (booked)</div>
+      <div style="font-size: 12px; font-weight: 650; color: var(--muted); text-transform: uppercase;">Rate (booked, monthly)</div>
       <div style="font-size: 22px; font-weight: 800; margin-top: 8px;"><?= htmlspecialchars((string) ($loan['rate_percent'] ?? ''), ENT_QUOTES, 'UTF-8') ?>%</div>
     </div>
     <div style="background: var(--card); border: 1px solid var(--line2); border-radius: var(--radius); padding: 18px; box-shadow: var(--shadow2);">
@@ -134,6 +134,7 @@ if ($paymentDefault < $paymentDateMin) {
         </label>
         <button type="submit" class="btn primary">Disburse &amp; open ledger</button>
       </form>
+      <p style="margin:8px 0 0; font-size:12px; color:var(--muted2); max-width:560px;">Line 1 records <strong>principal only</strong> (no interest yet). Interest runs in <strong>30-day steps</strong> from this disbursement date—first charge in period 2 (day 30 onward), via payment or accrual.</p>
     <?php endif; ?>
     <?php if ($canClose): ?>
       <form method="post" action="<?= htmlspecialchars($basePath . '/loans/' . $id . '/close', ENT_QUOTES, 'UTF-8') ?>" style="display:inline;" onsubmit="return confirm('Close this loan? It must have zero outstanding balance.');">
@@ -148,7 +149,7 @@ if ($paymentDefault < $paymentDateMin) {
           Accrue through
           <input type="date" name="as_of" value="<?= htmlspecialchars($today, ENT_QUOTES, 'UTF-8') ?>" min="<?= htmlspecialchars($paymentDateMin, ENT_QUOTES, 'UTF-8') ?>" max="<?= htmlspecialchars($today, ENT_QUOTES, 'UTF-8') ?>" required style="padding:10px 12px; border-radius:12px; border:1px solid var(--line);" />
         </label>
-        <button type="submit" class="btn ghost">Apply monthly accrual</button>
+        <button type="submit" class="btn ghost">Apply accrual (30-day)</button>
       </form>
     <?php endif; ?>
   </div>
@@ -169,9 +170,9 @@ if ($paymentDefault < $paymentDateMin) {
         <button type="submit" class="btn primary">Apply payment</button>
       </form>
       <?php if ($paymentAmountDueMax !== null): ?>
-        <p style="margin: 10px 0 0; font-size: 12px; color: var(--muted2);">Maximum for this period (balance + interest): <strong><?= $fmt($paymentAmountDueMax) ?></strong>. Larger amounts are rejected.</p>
+        <p style="margin: 10px 0 0; font-size: 12px; color: var(--muted2);">Maximum for this payment: within the <strong>same 30-day period</strong> from disbursement as the last line = balance only; <strong>new period</strong> = balance + one charge at the booked monthly rate. Matches the default payment date; the server rechecks if you change it. Larger amounts are rejected.</p>
       <?php endif; ?>
-      <p style="margin: 12px 0 0; font-size: 12px; color: var(--muted2);">Adds a ledger line: interest on the previous closing, then applies your payment. Use <strong>Apply monthly accrual</strong> above (or the server cron script) to insert unpaid month lines first when that policy is enabled.</p>
+      <p style="margin: 12px 0 0; font-size: 12px; color: var(--muted2);">Interest runs in <strong>30-day steps</strong> from the disbursement date. A payment in the <strong>same</strong> step as the last line pays down the balance only; the <strong>next</strong> step adds one charge at the booked monthly rate, then your payment. Use <strong>Apply accrual</strong> (or cron) to insert unpaid period lines when that policy is on.</p>
     </div>
   <?php endif; ?>
 

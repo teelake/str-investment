@@ -73,8 +73,14 @@ final class LoansController extends BaseController
         $customerId = (int) Request::post('customer_id', 0);
         $productId = (int) Request::post('loan_product_id', 0);
         $principal = (float) Request::post('principal_amount', 0);
+        $rate = (float) Request::post('rate_percent', 0);
+        $basisNorm = LoanInterestBasis::normalize((string) Request::post('interest_basis', ''));
         if ($customerId <= 0 || $productId <= 0 || $principal <= 0) {
             $this->redirect('/loans/create?error=' . rawurlencode('Select customer and product, and enter principal.'));
+            return;
+        }
+        if (!is_finite($rate) || $rate <= 0 || $basisNorm === null) {
+            $this->redirect('/loans/create?error=' . rawurlencode('Enter a positive negotiated rate and choose how interest is calculated.'));
             return;
         }
 
@@ -91,8 +97,11 @@ final class LoansController extends BaseController
             $this->redirect('/loans/create?error=' . rawurlencode('Invalid product.'));
             return;
         }
+        if (!LoanInterestBasis::isBasisAllowed($basisNorm, $product)) {
+            $this->redirect('/loans/create?error=' . rawurlencode('This product does not allow the selected interest type.'));
+            return;
+        }
 
-        $rate = (float) $product['rate_percent'];
         $pm = (int) ($product['period_months'] ?? 1);
         $assignLoan = ConsoleAuth::userId();
         if ($assignLoan === null) {
@@ -106,6 +115,7 @@ final class LoansController extends BaseController
                 $productId,
                 $principal,
                 $rate,
+                $basisNorm,
                 $pm,
                 $assignLoan,
                 ConsoleAuth::userId()
@@ -113,6 +123,8 @@ final class LoansController extends BaseController
             AuditLogger::log(ConsoleAuth::userId(), 'loan.create', 'loan', $lid, [
                 'customer_id' => $customerId,
                 'principal' => $principal,
+                'rate_percent' => $rate,
+                'interest_basis' => $basisNorm,
             ]);
             $this->redirect('/loans/' . $lid);
         } catch (Throwable) {
@@ -278,8 +290,29 @@ final class LoansController extends BaseController
             $obCap = (float) ($lastLine['closing_balance'] ?? 0);
             if ($obCap > 0) {
                 $rCap = (float) ($loan['rate_percent'] ?? 0);
-                $intCap = LoanLedgerService::money($obCap * ($rCap / 100.0));
-                $paymentAmountDueMax = LoanLedgerService::money($obCap + $intCap);
+                $lastPdCap = (string) ($lastLine['period_date'] ?? '');
+                $todayCap = InputValidate::todayYmd();
+                $loanCreatedCap = substr((string) ($loan['created_at'] ?? ''), 0, 10);
+                if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $loanCreatedCap)) {
+                    $loanCreatedCap = InputValidate::LOAN_EVENT_DATE_MIN;
+                }
+                $disbursedCap = substr((string) ($loan['disbursed_at'] ?? ''), 0, 10);
+                $payDateMinCap = preg_match('/^\d{4}-\d{2}-\d{2}$/', $disbursedCap)
+                    ? max(InputValidate::LOAN_EVENT_DATE_MIN, $loanCreatedCap, $disbursedCap)
+                    : max(InputValidate::LOAN_EVENT_DATE_MIN, $loanCreatedCap);
+                $payCapDate = $todayCap;
+                if ($payCapDate < $payDateMinCap) {
+                    $payCapDate = $payDateMinCap;
+                }
+                if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $disbursedCap)) {
+                    $paymentAmountDueMax = LoanLedgerService::maxPaymentForNextLine(
+                        $obCap,
+                        $rCap,
+                        $payCapDate,
+                        $lastPdCap,
+                        $disbursedCap
+                    );
+                }
             }
         }
 
