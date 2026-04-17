@@ -11,7 +11,7 @@ $err = is_string($error) ? $error : '';
 ?>
 <div class="container" style="padding:0; max-width:640px;">
   <h1 style="font-size: var(--h2); margin: 0 0 8px;">Policies</h1>
-  <p style="color: var(--muted); margin: 0 0 22px;">Control how staff without “view all” permissions see customers and loans. Admins and managers with <code style="background: rgba(13,15,18,.06); padding: 2px 6px; border-radius: 8px;">data.view_all_*</code> grants are not limited by these toggles.</p>
+  <p style="color: var(--muted); margin: 0 0 22px;">Choose who sees which customers and loans, and whether the system helps update interest on active loans. Staff who are allowed to see <strong>everything</strong> in the organization are not limited by the first two options below.</p>
 
   <?php if ($ok !== ''): ?>
     <div style="background: var(--green-soft); border: 1px solid rgba(15,106,74,.2); color: var(--green2); padding: 12px 14px; border-radius: 14px; margin-bottom: 16px; font-size: 14px;"><?= htmlspecialchars($ok, ENT_QUOTES, 'UTF-8') ?></div>
@@ -26,22 +26,22 @@ $err = is_string($error) ? $error : '';
       <label style="display:flex; gap: 12px; align-items: flex-start; font-size: 14px; cursor: pointer;">
         <input type="checkbox" name="scope_customers" value="1" <?= $scopeCustomers ? 'checked' : '' ?> style="margin-top: 3px;" />
         <span>
-          <strong>Scope customers by assignment</strong><br />
-          <span style="color: var(--muted); font-size: 13px;">When checked, officers only see customers where they are the assigned handler (unless they have view-all). Uncheck to let all staff with customer access see every customer.</span>
+          <strong>Each person only sees their own customers</strong><br />
+          <span style="color: var(--muted); font-size: 13px;"><strong>On:</strong> someone only sees customers they are responsible for. <strong>Off:</strong> anyone who can open the customer list sees all customers. (People with full access still see everyone.)</span>
         </span>
       </label>
       <label style="display:flex; gap: 12px; align-items: flex-start; font-size: 14px; cursor: pointer;">
         <input type="checkbox" name="scope_loans" value="1" <?= $scopeLoans ? 'checked' : '' ?> style="margin-top: 3px;" />
         <span>
-          <strong>Scope loans by assignment</strong><br />
-          <span style="color: var(--muted); font-size: 13px;">When checked, officers only see loans assigned to them or tied to customers assigned to them. Uncheck for institution-wide loan lists (for roles without view-all).</span>
+          <strong>Each person only sees their own loans</strong><br />
+          <span style="color: var(--muted); font-size: 13px;"><strong>On:</strong> someone sees loans that belong to their customers or that are specifically assigned to them. <strong>Off:</strong> anyone who can open the loan list sees all loans. (People with full access still see everything.)</span>
         </span>
       </label>
       <label style="display:flex; gap: 12px; align-items: flex-start; font-size: 14px; cursor: pointer;">
         <input type="checkbox" name="ledger_auto_accrue" value="1" <?= $ledgerAutoAccrue ? 'checked' : '' ?> style="margin-top: 3px;" />
         <span>
-          <strong>Automatic ledger accrual (30-day periods)</strong><br />
-          <span style="color: var(--muted); font-size: 13px;">When on, the system adds <strong>monthly interest</strong> to the loan ledger when it has built up but not been paid yet. Use <strong>Apply accrual</strong> on an active loan, or run your usual scheduled job for all loans. Turn off to stop adding these interest lines—<strong>recording payments works the same either way</strong>.</span>
+          <strong>Let the system add unpaid interest to active loans</strong><br />
+          <span style="color: var(--muted); font-size: 13px;">When this is on, you can press <strong>Apply accrual</strong> on a live loan (or use your nightly/automatic run) so the <strong>amount owed</strong> includes interest that has built up month by month. When it’s off, the system won’t do that step for you. <strong>Recording money the customer paid</strong> works the same in both cases.</span>
         </span>
       </label>
       <button type="submit" class="btn primary" style="justify-self: start;">Save policies</button>
