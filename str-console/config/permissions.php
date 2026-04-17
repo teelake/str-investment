@@ -117,6 +117,7 @@ function str_console_route_permissions(): array
         'customers.store' => [...$auth, 'customers.create'],
         'customers.edit' => [...$auth, 'customers.edit'],
         'customers.update' => [...$auth, 'customers.edit'],
+        'customers.deactivate' => [...$auth, 'customers.edit'],
         'customers.assign' => [...$auth, 'customers.assign'],
 
         // Loans
@@ -170,6 +171,7 @@ function str_console_route_permissions(): array
         // Settings
         'settings.policies' => [...$auth, 'settings.policies'],
         'settings.users' => [...$auth, 'settings.users'],
+        'settings.users.deactivate' => [...$auth, 'settings.users'],
         'settings.roles' => [...$auth, 'settings.roles'],
         'settings.system' => [...$auth, 'settings.system'],
 

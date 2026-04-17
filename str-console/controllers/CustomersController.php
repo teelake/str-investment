@@ -453,4 +453,28 @@ final class CustomersController extends BaseController
 
         $this->redirect('/customers/' . $customerId);
     }
+
+    public function deactivate(int $customerId): void
+    {
+        $this->requirePostedCsrf('/customers');
+        if (!str_console_database_ready()) {
+            $this->redirect('/customers');
+            return;
+        }
+
+        $repo = new CustomerRepository();
+        if ($repo->find($customerId, ConsoleAuth::userId(), ConsoleAuth::grants()) === null) {
+            $this->redirect('/customers');
+            return;
+        }
+
+        try {
+            if ($repo->deactivate($customerId)) {
+                AuditLogger::log(ConsoleAuth::userId(), 'customer.deactivate', 'customer', $customerId, []);
+            }
+            $this->redirect('/customers?flash=' . rawurlencode('Customer deactivated.'));
+        } catch (Throwable) {
+            $this->redirect('/customers?error=' . rawurlencode('Could not deactivate customer.'));
+        }
+    }
 }

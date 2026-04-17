@@ -311,4 +311,54 @@ final class SettingsUsersController extends BaseController
             $this->redirect('/settings/users/' . $userId . '/edit?error=' . rawurlencode('Could not save changes.'));
         }
     }
+
+    public function deactivate(int $userId): void
+    {
+        $this->requirePostedCsrf('/settings/users');
+        if (!str_console_database_ready()) {
+            $this->redirect('/settings/users');
+            return;
+        }
+
+        $repo = new UserRepository();
+        $row = $repo->findById($userId);
+        if ($row === null) {
+            $this->redirect('/settings/users');
+            return;
+        }
+
+        $actorId = ConsoleAuth::userId();
+        $actorRole = (string) (ConsoleAuth::user()['role'] ?? '');
+        $allowed = str_console_assignable_role_keys($actorRole);
+        if ($allowed === []) {
+            $this->redirect('/settings/users');
+            return;
+        }
+
+        $targetRole = (string) ($row['role_key'] ?? '');
+        if (!in_array($targetRole, $allowed, true) && $userId !== $actorId) {
+            $this->redirect('/settings/users?error=' . rawurlencode('You cannot edit this user.'));
+            return;
+        }
+
+        if ($actorId !== null && $userId === $actorId) {
+            $this->redirect('/settings/users?error=' . rawurlencode('You cannot deactivate your own account.'));
+            return;
+        }
+
+        if ($targetRole === 'system_admin' && (int) ($row['is_active'] ?? 0) === 1 && $repo->countActiveByRole('system_admin') <= 1) {
+            $this->redirect('/settings/users?error=' . rawurlencode('Cannot deactivate the only active system admin.'));
+            return;
+        }
+
+        try {
+            $repo->setActive($userId, false);
+            AuditLogger::log(ConsoleAuth::userId(), 'console_user.deactivate', 'console_user', $userId, [
+                'email' => (string) ($row['email'] ?? ''),
+            ]);
+            $this->redirect('/settings/users?flash=' . rawurlencode('User deactivated.'));
+        } catch (Throwable) {
+            $this->redirect('/settings/users?error=' . rawurlencode('Could not deactivate user.'));
+        }
+    }
 }

@@ -28,9 +28,10 @@ final class CustomerRepository
         }
 
         [$searchSql, $searchParams] = self::listSearchClause($searchQ);
+        $activeOnly = ' AND c.is_active = 1';
 
         if ($wide) {
-            $countSql = 'SELECT COUNT(*) AS c FROM customers c WHERE 1=1' . $searchSql;
+            $countSql = 'SELECT COUNT(*) AS c FROM customers c WHERE 1=1' . $activeOnly . $searchSql;
             $stmtCount = $pdo->prepare($countSql);
             $stmtCount->execute($searchParams);
             $total = (int) ($stmtCount->fetch()['c'] ?? 0);
@@ -41,8 +42,8 @@ final class CustomerRepository
                         COALESCE(NULLIF(TRIM(cu.full_name), \'\'), cu.email) AS assigned_user_label
                  FROM customers c
                  LEFT JOIN console_users cu ON cu.id = c.assigned_user_id
-                 WHERE 1=1' . $searchSql . '
-                 ORDER BY c.id DESC
+                 WHERE 1=1' . $activeOnly . $searchSql . '
+                 ORDER BY c.id ASC
                  LIMIT :lim OFFSET :off'
             );
             foreach ($searchParams as $k => $v) {
@@ -54,7 +55,7 @@ final class CustomerRepository
         } else {
             $params = array_merge($searchParams, [':uid' => $consoleUserId]);
             $stmtCount = $pdo->prepare(
-                'SELECT COUNT(*) AS c FROM customers c WHERE c.assigned_user_id <=> :uid' . $searchSql
+                'SELECT COUNT(*) AS c FROM customers c WHERE c.assigned_user_id <=> :uid' . $activeOnly . $searchSql
             );
             $stmtCount->execute($params);
             $total = (int) ($stmtCount->fetch()['c'] ?? 0);
@@ -65,8 +66,8 @@ final class CustomerRepository
                         COALESCE(NULLIF(TRIM(cu.full_name), \'\'), cu.email) AS assigned_user_label
                  FROM customers c
                  LEFT JOIN console_users cu ON cu.id = c.assigned_user_id
-                 WHERE c.assigned_user_id <=> :uid' . $searchSql . '
-                 ORDER BY c.id DESC
+                 WHERE c.assigned_user_id <=> :uid' . $activeOnly . $searchSql . '
+                 ORDER BY c.id ASC
                  LIMIT :lim OFFSET :off'
             );
             foreach ($params as $k => $v) {
@@ -131,9 +132,9 @@ final class CustomerRepository
         }
         $pdo = Database::pdo();
         if ($wide) {
-            return (int) $pdo->query('SELECT COUNT(*) AS c FROM customers')->fetch()['c'];
+            return (int) $pdo->query('SELECT COUNT(*) AS c FROM customers WHERE is_active = 1')->fetch()['c'];
         }
-        $stmt = $pdo->prepare('SELECT COUNT(*) AS c FROM customers WHERE assigned_user_id <=> :uid');
+        $stmt = $pdo->prepare('SELECT COUNT(*) AS c FROM customers WHERE is_active = 1 AND assigned_user_id <=> :uid');
         $stmt->execute([':uid' => $consoleUserId]);
         return (int) ($stmt->fetch()['c'] ?? 0);
     }
@@ -145,7 +146,7 @@ final class CustomerRepository
     {
         $pdo = Database::pdo();
         $stmt = $pdo->prepare(
-            'SELECT id, full_name, phone, address, nin, bvn, assigned_user_id, created_at, updated_at
+            'SELECT id, full_name, phone, address, nin, bvn, assigned_user_id, is_active, created_at, updated_at
              FROM customers WHERE id = :id LIMIT 1'
         );
         $stmt->execute([':id' => $id]);
@@ -177,12 +178,12 @@ final class CustomerRepository
         }
         $pdo = Database::pdo();
         if ($wide) {
-            $stmt = $pdo->prepare('SELECT id, full_name FROM customers ORDER BY full_name ASC LIMIT :lim');
+            $stmt = $pdo->prepare('SELECT id, full_name FROM customers WHERE is_active = 1 ORDER BY full_name ASC LIMIT :lim');
             $stmt->bindValue(':lim', $limit, PDO::PARAM_INT);
             $stmt->execute();
         } else {
             $stmt = $pdo->prepare(
-                'SELECT id, full_name FROM customers WHERE assigned_user_id <=> :uid ORDER BY full_name ASC LIMIT :lim'
+                'SELECT id, full_name FROM customers WHERE is_active = 1 AND assigned_user_id <=> :uid ORDER BY full_name ASC LIMIT :lim'
             );
             $stmt->bindValue(':uid', $consoleUserId, PDO::PARAM_INT);
             $stmt->bindValue(':lim', $limit, PDO::PARAM_INT);
@@ -263,8 +264,8 @@ final class CustomerRepository
     ): int {
         $pdo = Database::pdo();
         $stmt = $pdo->prepare(
-            'INSERT INTO customers (full_name, phone, address, nin, bvn, assigned_user_id, created_at, updated_at)
-             VALUES (:name, :phone, :addr, :nin, :bvn, :aid, NOW(), NOW())'
+            'INSERT INTO customers (full_name, phone, address, nin, bvn, assigned_user_id, is_active, created_at, updated_at)
+             VALUES (:name, :phone, :addr, :nin, :bvn, :aid, 1, NOW(), NOW())'
         );
         $stmt->execute([
             ':name' => $fullName,
@@ -319,5 +320,15 @@ final class CustomerRepository
             ':bvn' => $bvn,
             ':id' => $id,
         ]);
+    }
+
+    public function deactivate(int $id): bool
+    {
+        $pdo = Database::pdo();
+        $stmt = $pdo->prepare(
+            'UPDATE customers SET is_active = 0, updated_at = NOW() WHERE id = :id AND is_active = 1'
+        );
+        $stmt->execute([':id' => $id]);
+        return $stmt->rowCount() > 0;
     }
 }

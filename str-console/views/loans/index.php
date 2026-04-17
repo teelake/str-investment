@@ -81,25 +81,44 @@ $fmt = static fn (float $n): string => '₦' . number_format($n, 2);
           <th style="padding:12px 14px;">Principal</th>
           <th style="padding:12px 14px;">Rate</th>
           <th style="padding:12px 14px;">Status</th>
+          <th style="padding:12px 14px; width:1%; white-space:nowrap; text-align:right;">Actions</th>
         </tr>
       </thead>
       <tbody>
         <?php if (count($rows) === 0): ?>
-          <tr><td colspan="5" style="padding:28px 14px; color:var(--muted);"><?= ($hasStatusFilter && !$statusInvalid) ? 'No loans match this status.' : 'No loans yet.' ?></td></tr>
+          <tr><td colspan="6" style="padding:28px 14px; color:var(--muted);"><?= ($hasStatusFilter && !$statusInvalid) ? 'No loans match this status.' : 'No loans yet.' ?></td></tr>
         <?php else: ?>
-          <?php foreach ($rows as $r): ?>
+          <?php foreach ($rows as $i => $r): ?>
             <?php
+            $rowNum = ($page - 1) * $perPage + $i + 1;
             $lid = (int) ($r['id'] ?? 0);
             $st = (string) ($r['status'] ?? '');
+            $canViewLoan = str_console_authorize_route($g, 'loans.show');
+            $canEditLoan = str_console_authorize_route($g, 'loans.edit') && ($st === 'draft' || $st === 'rejected');
+            $canCloseLoan = str_console_authorize_route($g, 'loans.close') && $st === 'active';
             ?>
             <tr style="border-bottom:1px solid var(--line2);">
-              <td style="padding:12px 14px;">
-                <a href="<?= htmlspecialchars($basePath . '/loans/' . $lid, ENT_QUOTES, 'UTF-8') ?>" style="font-weight:650; color:inherit;">#<?= $lid ?></a>
-              </td>
+              <td style="padding:12px 14px; font-family:ui-monospace,monospace; color:var(--muted);"><?= $rowNum ?></td>
               <td style="padding:12px 14px;"><?= htmlspecialchars((string) ($r['customer_name'] ?? ''), ENT_QUOTES, 'UTF-8') ?></td>
               <td style="padding:12px 14px;"><?= $fmt((float) ($r['principal_amount'] ?? 0)) ?></td>
               <td style="padding:12px 14px;"><?= htmlspecialchars((string) ($r['rate_percent'] ?? ''), ENT_QUOTES, 'UTF-8') ?>%</td>
               <td style="padding:12px 14px;"><?= htmlspecialchars($statusLabel($st), ENT_QUOTES, 'UTF-8') ?></td>
+              <td style="padding:12px 14px; text-align:right;">
+                <?php
+                if ($canViewLoan) {
+                    $viewHref = $basePath . '/loans/' . $lid;
+                    $editHref = $canEditLoan ? $basePath . '/loans/' . $lid . '/edit' : null;
+                    $dangerPost = $canCloseLoan ? [
+                        'action' => $basePath . '/loans/' . $lid . '/close',
+                        'title' => 'Close loan',
+                        'confirm' => 'Close this loan? It must have zero outstanding balance.',
+                    ] : null;
+                    require STR_CONSOLE_ROOT . '/views/partials/table_icon_actions.php';
+                } else {
+                    echo '—';
+                }
+                ?>
+              </td>
             </tr>
           <?php endforeach; ?>
         <?php endif; ?>

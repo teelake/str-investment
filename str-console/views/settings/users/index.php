@@ -67,27 +67,48 @@ $hasSt = $filterStatus !== '';
           <th style="padding: 12px 14px;">Phone</th>
           <th style="padding: 12px 14px;">Role</th>
           <th style="padding: 12px 14px;">Status</th>
-          <th style="padding: 12px 14px;"></th>
+          <th style="padding: 12px 14px; width: 1%; white-space: nowrap; text-align: right;">Actions</th>
         </tr>
       </thead>
       <tbody>
         <?php if (count($rows) === 0): ?>
           <tr><td colspan="7" style="padding: 28px 14px; color: var(--muted);"><?= ($hasSearch || $hasSt) ? 'No users match these filters.' : 'No users yet. Use the seed script or Add user.' ?></td></tr>
         <?php else: ?>
-          <?php foreach ($rows as $r): ?>
+          <?php
+          $g = ConsoleAuth::grants();
+          $actorId = ConsoleAuth::userId();
+          ?>
+          <?php foreach ($rows as $i => $r): ?>
             <?php
+            $rowNum = ($page - 1) * $perPage + $i + 1;
             $uid = (int) ($r['id'] ?? 0);
             $active = (int) ($r['is_active'] ?? 0) === 1;
             ?>
             <tr style="border-bottom: 1px solid var(--line2);">
-              <td style="padding: 12px 14px; font-family: ui-monospace, monospace; color: var(--muted);"><?= $uid ?></td>
+              <td style="padding: 12px 14px; font-family: ui-monospace, monospace; color: var(--muted);"><?= $rowNum ?></td>
               <td style="padding: 12px 14px; font-weight: 650;"><?= htmlspecialchars((string) ($r['email'] ?? ''), ENT_QUOTES, 'UTF-8') ?></td>
               <td style="padding: 12px 14px;"><?= htmlspecialchars((string) ($r['full_name'] ?? ''), ENT_QUOTES, 'UTF-8') ?></td>
               <td style="padding: 12px 14px; color: var(--muted);"><?= htmlspecialchars((string) ($r['phone'] ?? ''), ENT_QUOTES, 'UTF-8') ?></td>
               <td style="padding: 12px 14px;"><code style="font-size: 12px;"><?= htmlspecialchars((string) ($r['role_key'] ?? ''), ENT_QUOTES, 'UTF-8') ?></code></td>
               <td style="padding: 12px 14px;"><?= $active ? '<span style="color:var(--green2); font-weight:650;">Active</span>' : '<span style="color:var(--muted);">Inactive</span>' ?></td>
-              <td style="padding: 12px 14px;">
-                <a class="btn ghost" style="font-size: 13px; padding: 8px 12px;" href="<?= htmlspecialchars($basePath . '/settings/users/' . $uid . '/edit', ENT_QUOTES, 'UTF-8') ?>">Edit</a>
+              <td style="padding: 12px 14px; text-align: right;">
+                <?php
+                if (str_console_authorize_route($g, 'settings.users')) {
+                    $viewHref = $basePath . '/settings/users/' . $uid . '/edit';
+                    $editHref = $viewHref;
+                    $dangerPost = null;
+                    if ($active && ($actorId === null || $uid !== $actorId)) {
+                        $dangerPost = [
+                            'action' => $basePath . '/settings/users/' . $uid . '/deactivate',
+                            'title' => 'Deactivate user',
+                            'confirm' => 'Deactivate this console user? They will no longer be able to sign in.',
+                        ];
+                    }
+                    require STR_CONSOLE_ROOT . '/views/partials/table_icon_actions.php';
+                } else {
+                    echo '—';
+                }
+                ?>
               </td>
             </tr>
           <?php endforeach; ?>

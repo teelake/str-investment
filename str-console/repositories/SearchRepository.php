@@ -71,16 +71,17 @@ final class SearchRepository
             $selectList = 'SELECT c.id, c.full_name, c.phone, c.assigned_user_id,
                            COALESCE(NULLIF(TRIM(cu.full_name), \'\'), cu.email) AS assigned_user_label ';
 
+            $activeCust = $match . ' AND c.is_active = 1';
             if ($custWide) {
-                $stmtCt = $pdo->prepare('SELECT COUNT(*) AS c ' . $from . ' WHERE ' . $match);
+                $stmtCt = $pdo->prepare('SELECT COUNT(*) AS c ' . $from . ' WHERE ' . $activeCust);
                 $stmtCt->execute($params);
                 $customersTotal = (int) ($stmtCt->fetch()['c'] ?? 0);
                 $customersPage = Pagination::normalizePage($pageCustomers, $customersTotal, $perPage);
                 $off = ($customersPage - 1) * $perPage;
                 $stmt = $pdo->prepare(
                     $selectList . $from . '
-                    WHERE ' . $match . '
-                    ORDER BY c.id DESC
+                    WHERE ' . $activeCust . '
+                    ORDER BY c.id ASC
                     LIMIT :lim OFFSET :off'
                 );
                 foreach ($params as $k => $v) {
@@ -90,7 +91,7 @@ final class SearchRepository
                 $stmt->bindValue(':off', $off, PDO::PARAM_INT);
                 $stmt->execute();
             } else {
-                $where = $match . ' AND c.assigned_user_id <=> :uid';
+                $where = $activeCust . ' AND c.assigned_user_id <=> :uid';
                 $p2 = array_merge($params, [':uid' => $consoleUserId]);
                 $stmtCt = $pdo->prepare('SELECT COUNT(*) AS c ' . $from . ' WHERE ' . $where);
                 $stmtCt->execute($p2);
@@ -100,7 +101,7 @@ final class SearchRepository
                 $stmt = $pdo->prepare(
                     $selectList . $from . '
                     WHERE ' . $where . '
-                    ORDER BY c.id DESC
+                    ORDER BY c.id ASC
                     LIMIT :lim OFFSET :off'
                 );
                 foreach ($p2 as $k => $v) {
@@ -144,7 +145,7 @@ final class SearchRepository
                 $loansPage = Pagination::normalizePage($pageLoans, $loansTotal, $perPage);
                 $off = ($loansPage - 1) * $perPage;
                 $stmt = $pdo->prepare(
-                    $sel . $base . ' WHERE ' . $inner . ' ORDER BY l.id DESC LIMIT :lim OFFSET :off'
+                    $sel . $base . ' WHERE ' . $inner . ' ORDER BY l.id ASC LIMIT :lim OFFSET :off'
                 );
                 foreach ($params as $k => $v) {
                     $stmt->bindValue($k, $v, is_int($v) ? PDO::PARAM_INT : PDO::PARAM_STR);
@@ -164,7 +165,7 @@ final class SearchRepository
                 $loansPage = Pagination::normalizePage($pageLoans, $loansTotal, $perPage);
                 $off = ($loansPage - 1) * $perPage;
                 $stmt = $pdo->prepare(
-                    $sel . $base . ' WHERE ' . $where . ' ORDER BY l.id DESC LIMIT :lim OFFSET :off'
+                    $sel . $base . ' WHERE ' . $where . ' ORDER BY l.id ASC LIMIT :lim OFFSET :off'
                 );
                 foreach ($p2 as $k => $v) {
                     $stmt->bindValue($k, $v, is_int($v) ? PDO::PARAM_INT : PDO::PARAM_STR);

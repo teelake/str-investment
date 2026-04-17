@@ -53,7 +53,7 @@ final class UserRepository
         $stmt = $pdo->prepare(
             'SELECT id, email, role_key, extra_grants_json, full_name, phone, is_active, created_at, updated_at
              FROM console_users WHERE ' . $whereSql . '
-             ORDER BY id DESC
+             ORDER BY id ASC
              LIMIT :lim OFFSET :off'
         );
         foreach ($params as $k => $v) {
@@ -126,7 +126,7 @@ final class UserRepository
         $pdo = Database::pdo();
         $stmt = $pdo->query(
             'SELECT id, email, role_key, extra_grants_json, full_name, phone, is_active, created_at, updated_at
-             FROM console_users ORDER BY id DESC'
+             FROM console_users ORDER BY id ASC'
         );
         /** @var list<array<string, mixed>> */
         return $stmt->fetchAll();
@@ -262,5 +262,14 @@ final class UserRepository
             'UPDATE console_users SET password_hash = :ph, updated_at = NOW() WHERE id = :id'
         );
         $stmt->execute([':ph' => $passwordHash, ':id' => $id]);
+    }
+
+    public function setActive(int $id, bool $active): void
+    {
+        $pdo = Database::pdo();
+        $stmt = $pdo->prepare(
+            'UPDATE console_users SET is_active = :a, updated_at = NOW() WHERE id = :id'
+        );
+        $stmt->execute([':a' => $active ? 1 : 0, ':id' => $id]);
     }
 }

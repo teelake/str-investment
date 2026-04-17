@@ -61,7 +61,7 @@ final class LoanRepository
                 'SELECT l.*, c.full_name AS customer_name, c.assigned_user_id AS customer_assigned_user_id
                  ' . $baseFrom . '
                  WHERE 1=1' . $statusSql . '
-                 ORDER BY l.id DESC LIMIT :lim OFFSET :off'
+                 ORDER BY l.id ASC LIMIT :lim OFFSET :off'
             );
             foreach ($statusParams as $k => $v) {
                 $stmt->bindValue($k, $v);
@@ -83,7 +83,7 @@ final class LoanRepository
                 'SELECT l.*, c.full_name AS customer_name, c.assigned_user_id AS customer_assigned_user_id
                  ' . $baseFrom . '
                  WHERE 1=1' . $scope . $statusSql . '
-                 ORDER BY l.id DESC LIMIT :lim OFFSET :off'
+                 ORDER BY l.id ASC LIMIT :lim OFFSET :off'
             );
             foreach ($params as $k => $v) {
                 $stmt->bindValue($k, $v, is_int($v) ? PDO::PARAM_INT : PDO::PARAM_STR);

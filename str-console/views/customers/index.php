@@ -13,12 +13,22 @@ $perPage = (int) $pagination['per_page'];
 $g = ConsoleAuth::grants();
 $canBulkCustomers = str_console_authorize_route($g, 'bulk_upload.customers');
 $hasFilter = trim($filterQ) !== '';
+$flash = Request::query('flash');
+$qerr = Request::query('error');
+$flashOk = is_string($flash) ? $flash : '';
+$flashErr = is_string($qerr) ? $qerr : '';
 ?>
 <div class="container" style="padding:0">
   <?php if (is_string($dbError) && $dbError !== ''): ?>
     <div style="background: rgba(180, 120, 20, .1); border: 1px solid rgba(180, 120, 20, .25); color: #7a4a00; padding: 14px 16px; border-radius: 14px; margin-bottom: 16px; font-size: 14px;">
       <?= htmlspecialchars($dbError, ENT_QUOTES, 'UTF-8') ?>
     </div>
+  <?php endif; ?>
+  <?php if ($flashOk !== ''): ?>
+    <div style="background: var(--green-soft); border: 1px solid rgba(15,106,74,.2); color: var(--green2); padding: 12px 14px; border-radius: 14px; margin-bottom: 16px; font-size: 14px;"><?= htmlspecialchars($flashOk, ENT_QUOTES, 'UTF-8') ?></div>
+  <?php endif; ?>
+  <?php if ($flashErr !== ''): ?>
+    <div style="background: rgba(180, 40, 40, .08); border: 1px solid rgba(180, 40, 40, .2); color: #7f1d1d; padding: 12px 14px; border-radius: 14px; margin-bottom: 16px; font-size: 14px;"><?= htmlspecialchars($flashErr, ENT_QUOTES, 'UTF-8') ?></div>
   <?php endif; ?>
 
   <div style="display:flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 20px;">
@@ -57,21 +67,32 @@ $hasFilter = trim($filterQ) !== '';
           <th style="padding: 12px 14px;">Phone</th>
           <th style="padding: 12px 14px;">Assigned</th>
           <th style="padding: 12px 14px;">Created</th>
+          <th style="padding: 12px 14px; width: 1%; white-space: nowrap; text-align: right;">Actions</th>
         </tr>
       </thead>
       <tbody>
         <?php if (count($rows) === 0): ?>
           <tr>
-            <td colspan="5" style="padding: 28px 14px; color: var(--muted);"><?= $hasFilter ? 'No customers match your search.' : 'No customers in your scope yet.' ?></td>
+            <td colspan="6" style="padding: 28px 14px; color: var(--muted);"><?= $hasFilter ? 'No customers match your search.' : 'No customers in your scope yet.' ?></td>
           </tr>
         <?php else: ?>
-          <?php foreach ($rows as $r): ?>
+          <?php foreach ($rows as $i => $r): ?>
+            <?php
+            $rowNum = ($page - 1) * $perPage + $i + 1;
+            $cid = (int) ($r['id'] ?? 0);
+            $canView = str_console_authorize_route($g, 'customers.show');
+            $canEditCust = str_console_authorize_route($g, 'customers.edit');
+            ?>
             <tr style="border-bottom: 1px solid var(--line2);">
-              <td style="padding: 12px 14px; font-family: ui-monospace, monospace; color: var(--muted);"><?= (int) ($r['id'] ?? 0) ?></td>
+              <td style="padding: 12px 14px; font-family: ui-monospace, monospace; color: var(--muted);"><?= $rowNum ?></td>
               <td style="padding: 12px 14px; font-weight: 650;">
-                <a href="<?= htmlspecialchars($basePath . '/customers/' . (int) ($r['id'] ?? 0), ENT_QUOTES, 'UTF-8') ?>" style="color: inherit; text-decoration: underline; text-underline-offset: 4px;">
+                <?php if ($canView): ?>
+                  <a href="<?= htmlspecialchars($basePath . '/customers/' . $cid, ENT_QUOTES, 'UTF-8') ?>" style="color: inherit; text-decoration: none;">
+                    <?= htmlspecialchars((string) ($r['full_name'] ?? ''), ENT_QUOTES, 'UTF-8') ?>
+                  </a>
+                <?php else: ?>
                   <?= htmlspecialchars((string) ($r['full_name'] ?? ''), ENT_QUOTES, 'UTF-8') ?>
-                </a>
+                <?php endif; ?>
               </td>
               <td style="padding: 12px 14px;"><?= htmlspecialchars((string) ($r['phone'] ?? ''), ENT_QUOTES, 'UTF-8') ?></td>
               <td style="padding: 12px 14px; color: var(--muted);"><?php
@@ -85,6 +106,22 @@ $hasFilter = trim($filterQ) !== '';
                 }
               ?></td>
               <td style="padding: 12px 14px; color: var(--muted);"><?= htmlspecialchars((string) ($r['created_at'] ?? ''), ENT_QUOTES, 'UTF-8') ?></td>
+              <td style="padding: 12px 14px; text-align: right;">
+                <?php
+                if ($canView) {
+                    $viewHref = $basePath . '/customers/' . $cid;
+                    $editHref = $canEditCust ? $basePath . '/customers/' . $cid . '/edit' : null;
+                    $dangerPost = $canEditCust ? [
+                        'action' => $basePath . '/customers/' . $cid . '/deactivate',
+                        'title' => 'Deactivate customer',
+                        'confirm' => 'Deactivate this customer? They will be removed from the main customer list.',
+                    ] : null;
+                    require STR_CONSOLE_ROOT . '/views/partials/table_icon_actions.php';
+                } else {
+                    echo '—';
+                }
+                ?>
+              </td>
             </tr>
           <?php endforeach; ?>
         <?php endif; ?>

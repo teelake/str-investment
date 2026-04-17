@@ -54,7 +54,7 @@ final class ReportRepository
                 'SELECT l.*, c.full_name AS customer_name, c.assigned_user_id AS customer_assigned_user_id
                  ' . $baseFrom . '
                  WHERE 1=1' . $filterSql . '
-                 ORDER BY l.id DESC LIMIT :lim OFFSET :off'
+                 ORDER BY l.id ASC LIMIT :lim OFFSET :off'
             );
             foreach ($filterParams as $k => $v) {
                 $stmt->bindValue($k, $v);
@@ -74,7 +74,7 @@ final class ReportRepository
                 'SELECT l.*, c.full_name AS customer_name, c.assigned_user_id AS customer_assigned_user_id
                  ' . $baseFrom . '
                  WHERE 1=1' . $scope . $filterSql . '
-                 ORDER BY l.id DESC LIMIT :lim OFFSET :off'
+                 ORDER BY l.id ASC LIMIT :lim OFFSET :off'
             );
             foreach ($params as $k => $v) {
                 $stmt->bindValue($k, $v, is_int($v) ? PDO::PARAM_INT : PDO::PARAM_STR);
@@ -116,7 +116,7 @@ final class ReportRepository
                         l.rate_percent, l.interest_basis, l.period_months, l.created_at, l.disbursed_at, l.closed_at
                  ' . $baseFrom . '
                  WHERE 1=1' . $filterSql . '
-                 ORDER BY l.id DESC LIMIT ' . (string) (int) $lim
+                 ORDER BY l.id ASC LIMIT ' . (string) (int) $lim
             );
             $stmt->execute($filterParams);
         } else {
@@ -127,7 +127,7 @@ final class ReportRepository
                         l.rate_percent, l.interest_basis, l.period_months, l.created_at, l.disbursed_at, l.closed_at
                  ' . $baseFrom . '
                  WHERE 1=1' . $scope . $filterSql . '
-                 ORDER BY l.id DESC LIMIT ' . (string) (int) $lim
+                 ORDER BY l.id ASC LIMIT ' . (string) (int) $lim
             );
             $stmt->execute($params);
         }
@@ -166,12 +166,12 @@ final class ReportRepository
             $page = Pagination::normalizePage($page, $total, $perPage);
             $offset = ($page - 1) * $perPage;
             $stmt = $pdo->prepare(
-                'SELECT c.id, c.full_name, c.phone, c.assigned_user_id, c.created_at, c.updated_at,
+                'SELECT c.id, c.full_name, c.phone, c.assigned_user_id, c.is_active, c.created_at, c.updated_at,
                         COALESCE(NULLIF(TRIM(cu.full_name), \'\'), cu.email) AS assigned_user_label
                  FROM customers c
                  LEFT JOIN console_users cu ON cu.id = c.assigned_user_id
                  WHERE 1=1' . $filterSql . '
-                 ORDER BY c.id DESC LIMIT :lim OFFSET :off'
+                 ORDER BY c.id ASC LIMIT :lim OFFSET :off'
             );
             foreach ($filterParams as $k => $v) {
                 $stmt->bindValue($k, $v);
@@ -233,24 +233,24 @@ final class ReportRepository
 
         if ($wide) {
             $stmt = $pdo->prepare(
-                'SELECT c.id, c.full_name, c.phone, c.address, c.nin, c.bvn, c.assigned_user_id, c.created_at,
+                'SELECT c.id, c.full_name, c.phone, c.address, c.nin, c.bvn, c.assigned_user_id, c.is_active, c.created_at,
                         COALESCE(NULLIF(TRIM(cu.full_name), \'\'), cu.email) AS assigned_to
                  FROM customers c
                  LEFT JOIN console_users cu ON cu.id = c.assigned_user_id
                  WHERE 1=1' . $filterSql . '
-                 ORDER BY c.id DESC LIMIT ' . (string) (int) $lim
+                 ORDER BY c.id ASC LIMIT ' . (string) (int) $lim
             );
             $stmt->execute($filterParams);
         } else {
             $scope = ' AND c.assigned_user_id <=> :uid';
             $params = array_merge($filterParams, [':uid' => $consoleUserId]);
             $stmt = $pdo->prepare(
-                'SELECT c.id, c.full_name, c.phone, c.address, c.nin, c.bvn, c.assigned_user_id, c.created_at,
+                'SELECT c.id, c.full_name, c.phone, c.address, c.nin, c.bvn, c.assigned_user_id, c.is_active, c.created_at,
                         COALESCE(NULLIF(TRIM(cu.full_name), \'\'), cu.email) AS assigned_to
                  FROM customers c
                  LEFT JOIN console_users cu ON cu.id = c.assigned_user_id
                  WHERE 1=1' . $scope . $filterSql . '
-                 ORDER BY c.id DESC LIMIT ' . (string) (int) $lim
+                 ORDER BY c.id ASC LIMIT ' . (string) (int) $lim
             );
             $stmt->execute($params);
         }

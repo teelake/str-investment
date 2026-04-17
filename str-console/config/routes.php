@@ -28,6 +28,7 @@ function str_console_routes(): array
 
         ['GET', '#^/customers/(\d+)/edit$#', CustomersController::class, 'edit', 'customers.edit'],
         ['POST', '#^/customers/(\d+)/update$#', CustomersController::class, 'update', 'customers.update'],
+        ['POST', '#^/customers/(\d+)/deactivate$#', CustomersController::class, 'deactivate', 'customers.deactivate'],
 
         ['GET', '/loans', LoansController::class, 'index', 'loans.index'],
         ['GET', '/loans/create', LoansController::class, 'create', 'loans.create'],
@@ -62,6 +63,7 @@ function str_console_routes(): array
         ['POST', '/settings/users', SettingsUsersController::class, 'store', 'settings.users'],
         ['GET', '#^/settings/users/(\d+)/edit$#', SettingsUsersController::class, 'edit', 'settings.users'],
         ['POST', '#^/settings/users/(\d+)/update$#', SettingsUsersController::class, 'update', 'settings.users'],
+        ['POST', '#^/settings/users/(\d+)/deactivate$#', SettingsUsersController::class, 'deactivate', 'settings.users.deactivate'],
 
         ['GET', '/settings/roles', SettingsRolesController::class, 'index', 'settings.roles'],
         ['POST', '/settings/roles', SettingsRolesController::class, 'save', 'settings.roles'],
