@@ -239,6 +239,23 @@ function str_console_expand_grants(array $grants): array
 }
 
 /**
+ * Role keys an actor may assign when creating or editing console users.
+ *
+ * @return list<string>
+ */
+function str_console_assignable_role_keys(string $actorRoleKey): array
+{
+    $ordered = ['system_admin', 'admin', 'manager', 'credit_officer'];
+    if ($actorRoleKey === 'system_admin') {
+        return $ordered;
+    }
+    if ($actorRoleKey === 'admin') {
+        return array_values(array_diff($ordered, ['system_admin']));
+    }
+    return [];
+}
+
+/**
  * @param list<string> $grants
  * @param list<string> $required
  */
