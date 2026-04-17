@@ -10,7 +10,8 @@ $err = is_string($error) ? $error : '';
 $aid = $customer['assigned_user_id'] ?? null;
 $aidVal = $aid === null || $aid === '' ? '' : (string) (int) $aid;
 ?>
-<div class="container" style="padding:0; max-width: 640px;">
+<div class="console-form-page">
+  <div class="container" style="padding:0;">
   <a href="<?= htmlspecialchars($basePath . '/customers/' . $id, ENT_QUOTES, 'UTF-8') ?>" style="font-size: 13px; font-weight: 650; color: var(--muted); text-decoration: none;">← Back to customer</a>
   <h1 style="font-size: var(--h2); margin: 12px 0 8px;">Edit customer</h1>
   <p style="color: var(--muted); margin: 0 0 22px;">Update profile details<?= $canAssign ? ' and assignment.' : '.' ?></p>
@@ -41,14 +42,20 @@ $aidVal = $aid === null || $aid === '' ? '' : (string) (int) $aid;
       </label>
       <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 12px;">
         <label style="display:grid; gap:6px; font-size: 13px; font-weight: 650; color: var(--muted);">
-          NIN
-          <input name="nin" maxlength="32" value="<?= htmlspecialchars((string) ($customer['nin'] ?? ''), ENT_QUOTES, 'UTF-8') ?>"
-            style="padding: 12px 14px; border-radius: 14px; border: 1px solid var(--line); background: #fff; color: var(--ink);" />
+          NIN (optional)
+          <input name="nin" type="text" inputmode="numeric" autocomplete="off" maxlength="11" pattern="[0-9]{0,11}"
+            title="11 digits, or leave blank"
+            value="<?= htmlspecialchars((string) ($customer['nin'] ?? ''), ENT_QUOTES, 'UTF-8') ?>"
+            style="padding: 12px 14px; border-radius: 14px; border: 1px solid var(--line); background: #fff; color: var(--ink); font-family: ui-monospace, monospace;" />
+          <span style="font-size: 12px; font-weight: 500; color: var(--muted2);">11 digits (NIMC)</span>
         </label>
         <label style="display:grid; gap:6px; font-size: 13px; font-weight: 650; color: var(--muted);">
-          BVN
-          <input name="bvn" maxlength="32" value="<?= htmlspecialchars((string) ($customer['bvn'] ?? ''), ENT_QUOTES, 'UTF-8') ?>"
-            style="padding: 12px 14px; border-radius: 14px; border: 1px solid var(--line); background: #fff; color: var(--ink);" />
+          BVN (optional)
+          <input name="bvn" type="text" inputmode="numeric" autocomplete="off" maxlength="11" pattern="[0-9]{0,11}"
+            title="11 digits, or leave blank"
+            value="<?= htmlspecialchars((string) ($customer['bvn'] ?? ''), ENT_QUOTES, 'UTF-8') ?>"
+            style="padding: 12px 14px; border-radius: 14px; border: 1px solid var(--line); background: #fff; color: var(--ink); font-family: ui-monospace, monospace;" />
+          <span style="font-size: 12px; font-weight: 500; color: var(--muted2);">11 digits (CBN)</span>
         </label>
       </div>
       <?php if ($canAssign): ?>
@@ -76,5 +83,6 @@ $aidVal = $aid === null || $aid === '' ? '' : (string) (int) $aid;
         <a class="btn ghost" href="<?= htmlspecialchars($basePath . '/customers/' . $id, ENT_QUOTES, 'UTF-8') ?>">Cancel</a>
       </div>
     </form>
+  </div>
   </div>
 </div>

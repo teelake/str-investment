@@ -53,6 +53,7 @@ CREATE TABLE IF NOT EXISTS customer_documents (
   id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   customer_id BIGINT UNSIGNED NOT NULL,
   uploaded_by_user_id BIGINT UNSIGNED NULL,
+  document_type VARCHAR(64) NULL,
   original_name VARCHAR(255) NOT NULL,
   storage_path VARCHAR(500) NOT NULL,
   mime_type VARCHAR(120) NULL,

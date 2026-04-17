@@ -11,7 +11,7 @@ final class CustomerDocumentRepository
     {
         $pdo = Database::pdo();
         $stmt = $pdo->prepare(
-            'SELECT id, customer_id, uploaded_by_user_id, original_name, storage_path, mime_type, size_bytes, created_at
+            'SELECT id, customer_id, uploaded_by_user_id, document_type, original_name, storage_path, mime_type, size_bytes, created_at
              FROM customer_documents
              WHERE customer_id = :cid
              ORDER BY id DESC'
@@ -28,7 +28,7 @@ final class CustomerDocumentRepository
     {
         $pdo = Database::pdo();
         $stmt = $pdo->prepare(
-            'SELECT id, customer_id, uploaded_by_user_id, original_name, storage_path, mime_type, size_bytes, created_at
+            'SELECT id, customer_id, uploaded_by_user_id, document_type, original_name, storage_path, mime_type, size_bytes, created_at
              FROM customer_documents
              WHERE id = :id AND customer_id = :cid
              LIMIT 1'
@@ -41,19 +41,25 @@ final class CustomerDocumentRepository
     public function create(
         int $customerId,
         ?int $uploadedBy,
+        ?string $documentTypeKey,
         string $originalName,
         string $storagePath,
         string $mime,
         int $sizeBytes
     ): int {
         $pdo = Database::pdo();
+        $type = $documentTypeKey;
+        if ($type !== null && $type !== '' && strlen($type) > 64) {
+            $type = substr($type, 0, 64);
+        }
         $stmt = $pdo->prepare(
-            'INSERT INTO customer_documents (customer_id, uploaded_by_user_id, original_name, storage_path, mime_type, size_bytes, created_at)
-             VALUES (:cid, :uid, :oname, :spath, :mime, :sz, NOW())'
+            'INSERT INTO customer_documents (customer_id, uploaded_by_user_id, document_type, original_name, storage_path, mime_type, size_bytes, created_at)
+             VALUES (:cid, :uid, :dtype, :oname, :spath, :mime, :sz, NOW())'
         );
         $stmt->execute([
             ':cid' => $customerId,
             ':uid' => $uploadedBy,
+            ':dtype' => $type === '' ? null : $type,
             ':oname' => $originalName,
             ':spath' => $storagePath,
             ':mime' => $mime,

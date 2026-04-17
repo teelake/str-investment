@@ -45,8 +45,18 @@ final class CustomersController extends BaseController
         $name = trim(str_replace(["\0", "\r"], '', (string) Request::post('full_name', '')));
         $phone = trim(str_replace(["\0", "\r"], '', (string) Request::post('phone', '')));
         $address = trim(str_replace(["\0", "\r"], '', (string) Request::post('address', '')));
-        $nin = trim(str_replace(["\0", "\r"], '', (string) Request::post('nin', '')));
-        $bvn = trim(str_replace(["\0", "\r"], '', (string) Request::post('bvn', '')));
+        $ninRaw = (string) Request::post('nin', '');
+        $bvnRaw = (string) Request::post('bvn', '');
+        $ninNorm = InputValidate::optionalNinBvn($ninRaw);
+        if ($ninNorm === false) {
+            $this->redirect('/customers/create?error=' . rawurlencode('NIN must be exactly 11 digits (Nigeria NIMC), or leave blank.'));
+            return;
+        }
+        $bvnNorm = InputValidate::optionalNinBvn($bvnRaw);
+        if ($bvnNorm === false) {
+            $this->redirect('/customers/create?error=' . rawurlencode('BVN must be exactly 11 digits (Nigeria CBN), or leave blank.'));
+            return;
+        }
 
         if ($name === '' || $phone === '') {
             $this->redirect('/customers/create?error=' . rawurlencode('Name and phone are required.'));
@@ -60,14 +70,10 @@ final class CustomersController extends BaseController
             $this->redirect('/customers/create?error=' . rawurlencode('Phone is too long.'));
             return;
         }
-        if (mb_strlen($nin) > 32 || mb_strlen($bvn) > 32) {
-            $this->redirect('/customers/create?error=' . rawurlencode('NIN or BVN is too long.'));
-            return;
-        }
 
         $addrVal = $address === '' ? null : $address;
-        $ninVal = $nin === '' ? null : $nin;
-        $bvnVal = $bvn === '' ? null : $bvn;
+        $ninVal = $ninNorm;
+        $bvnVal = $bvnNorm;
 
         try {
             $repo = new CustomerRepository();
@@ -114,6 +120,7 @@ final class CustomersController extends BaseController
             $this->render('customers/show', [
                 'customer' => $customer,
                 'documents' => $documents,
+                'documentTypes' => str_console_customer_document_types(),
                 'showSensitiveIds' => str_console_authorize($grants, ['customers.view_sensitive_ids']),
                 'canUpload' => str_console_authorize($grants, ['documents.upload']),
                 'canDeleteDocs' => str_console_authorize($grants, ['documents.delete']),
@@ -184,8 +191,16 @@ final class CustomersController extends BaseController
         $name = trim(str_replace(["\0", "\r"], '', (string) Request::post('full_name', '')));
         $phone = trim(str_replace(["\0", "\r"], '', (string) Request::post('phone', '')));
         $address = trim(str_replace(["\0", "\r"], '', (string) Request::post('address', '')));
-        $nin = trim(str_replace(["\0", "\r"], '', (string) Request::post('nin', '')));
-        $bvn = trim(str_replace(["\0", "\r"], '', (string) Request::post('bvn', '')));
+        $ninNorm = InputValidate::optionalNinBvn((string) Request::post('nin', ''));
+        if ($ninNorm === false) {
+            $this->redirect('/customers/' . $customerId . '/edit?error=' . rawurlencode('NIN must be exactly 11 digits, or leave blank.'));
+            return;
+        }
+        $bvnNorm = InputValidate::optionalNinBvn((string) Request::post('bvn', ''));
+        if ($bvnNorm === false) {
+            $this->redirect('/customers/' . $customerId . '/edit?error=' . rawurlencode('BVN must be exactly 11 digits, or leave blank.'));
+            return;
+        }
 
         if ($name === '' || $phone === '') {
             $this->redirect('/customers/' . $customerId . '/edit?error=' . rawurlencode('Name and phone are required.'));
@@ -199,14 +214,10 @@ final class CustomersController extends BaseController
             $this->redirect('/customers/' . $customerId . '/edit?error=' . rawurlencode('Phone is too long.'));
             return;
         }
-        if (mb_strlen($nin) > 32 || mb_strlen($bvn) > 32) {
-            $this->redirect('/customers/' . $customerId . '/edit?error=' . rawurlencode('NIN or BVN is too long.'));
-            return;
-        }
 
         $addrVal = $address === '' ? null : $address;
-        $ninVal = $nin === '' ? null : $nin;
-        $bvnVal = $bvn === '' ? null : $bvn;
+        $ninVal = $ninNorm;
+        $bvnVal = $bvnNorm;
 
         $grants = ConsoleAuth::grants();
         $setAssignee = str_console_authorize($grants, ['customers.assign']);
@@ -256,34 +267,97 @@ final class CustomersController extends BaseController
             return;
         }
 
-        $file = $_FILES['document'] ?? null;
-        if (!is_array($file)) {
-            $this->redirect('/customers/' . $customerId . '?doc_error=' . rawurlencode('Choose a file to upload.'));
+        $typeKey = trim((string) Request::post('document_type', ''));
+        $allowedTypes = str_console_customer_document_types();
+        if (!isset($allowedTypes[$typeKey])) {
+            $this->redirect('/customers/' . $customerId . '?doc_error=' . rawurlencode('Select a document type.'));
             return;
         }
 
-        /** @var array{name: string, type: string, tmp_name: string, error: int, size: int} $file */
-        try {
-            $stored = CustomerDocumentStorage::store($customerId, $file);
-            $docRepo = new CustomerDocumentRepository();
-            $newId = $docRepo->create(
-                $customerId,
-                ConsoleAuth::userId(),
-                $stored['original_name'],
-                $stored['relative_path'],
-                $stored['mime'],
-                $stored['size']
-            );
-            AuditLogger::log(ConsoleAuth::userId(), 'customer_document.upload', 'customer_document', $newId, [
-                'customer_id' => $customerId,
-                'name' => $stored['original_name'],
-            ]);
-            $this->redirect('/customers/' . $customerId . '?doc_ok=1');
-        } catch (InvalidArgumentException $e) {
-            $this->redirect('/customers/' . $customerId . '?doc_error=' . rawurlencode($e->getMessage()));
-        } catch (Throwable) {
-            $this->redirect('/customers/' . $customerId . '?doc_error=' . rawurlencode('Upload failed. Try again.'));
+        $files = self::normalizeUploadedFiles('documents');
+        $toProcess = [];
+        foreach ($files as $file) {
+            if ((int) ($file['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE) {
+                continue;
+            }
+            $toProcess[] = $file;
         }
+        if ($toProcess === []) {
+            $this->redirect('/customers/' . $customerId . '?doc_error=' . rawurlencode('Choose one or more files to upload.'));
+            return;
+        }
+
+        $docRepo = new CustomerDocumentRepository();
+        $uploaded = 0;
+        $lastErr = 'Upload failed. Try again.';
+        foreach ($toProcess as $file) {
+            if ((int) ($file['error'] ?? UPLOAD_ERR_OK) !== UPLOAD_ERR_OK) {
+                $lastErr = 'One or more files could not be uploaded.';
+                continue;
+            }
+            try {
+                $stored = CustomerDocumentStorage::store($customerId, $file);
+                $newId = $docRepo->create(
+                    $customerId,
+                    ConsoleAuth::userId(),
+                    $typeKey,
+                    $stored['original_name'],
+                    $stored['relative_path'],
+                    $stored['mime'],
+                    $stored['size']
+                );
+                ++$uploaded;
+                AuditLogger::log(ConsoleAuth::userId(), 'customer_document.upload', 'customer_document', $newId, [
+                    'customer_id' => $customerId,
+                    'document_type' => $typeKey,
+                    'name' => $stored['original_name'],
+                ]);
+            } catch (InvalidArgumentException $e) {
+                $lastErr = $e->getMessage();
+            } catch (Throwable) {
+                $lastErr = 'Upload failed. Try again.';
+            }
+        }
+
+        if ($uploaded === 0) {
+            $this->redirect('/customers/' . $customerId . '?doc_error=' . rawurlencode($lastErr));
+            return;
+        }
+        $this->redirect('/customers/' . $customerId . '?doc_ok=' . (string) $uploaded);
+    }
+
+    /**
+     * @return list<array{name: string, type: string, tmp_name: string, error: int, size: int}>
+     */
+    private static function normalizeUploadedFiles(string $field): array
+    {
+        if (!isset($_FILES[$field]) || !is_array($_FILES[$field])) {
+            return [];
+        }
+        $f = $_FILES[$field];
+        if (!isset($f['name'])) {
+            return [];
+        }
+        if (!is_array($f['name'])) {
+            return [[
+                'name' => (string) ($f['name'] ?? ''),
+                'type' => (string) ($f['type'] ?? ''),
+                'tmp_name' => (string) ($f['tmp_name'] ?? ''),
+                'error' => (int) ($f['error'] ?? UPLOAD_ERR_NO_FILE),
+                'size' => (int) ($f['size'] ?? 0),
+            ]];
+        }
+        $out = [];
+        foreach ($f['name'] as $i => $name) {
+            $out[] = [
+                'name' => (string) $name,
+                'type' => (string) ($f['type'][$i] ?? ''),
+                'tmp_name' => (string) ($f['tmp_name'][$i] ?? ''),
+                'error' => (int) ($f['error'][$i] ?? UPLOAD_ERR_NO_FILE),
+                'size' => (int) ($f['size'][$i] ?? 0),
+            ];
+        }
+        return $out;
     }
 
     public function documentDownload(int $customerId, int $documentId): void

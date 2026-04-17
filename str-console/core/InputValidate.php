@@ -15,6 +15,24 @@ final class InputValidate
 
     public const REJECTION_REASON_MAX = 500;
 
+    /**
+     * Nigeria NIN (NIMC) and BVN (CBN) are 11-digit numeric identifiers.
+     * Non-digits are stripped; empty after strip means “not provided”.
+     *
+     * @return null Omit field. non-empty-string Exactly 11 digits. false Invalid (wrong length or non-numeric after strip).
+     */
+    public static function optionalNinBvn(string $raw): null|string|false
+    {
+        $digits = preg_replace('/\D/', '', trim(str_replace(["\0", "\r"], '', $raw))) ?? '';
+        if ($digits === '') {
+            return null;
+        }
+        if (strlen($digits) !== 11 || !ctype_digit($digits)) {
+            return false;
+        }
+        return $digits;
+    }
+
     /** Strip NUL / CR; trim. Returns null if empty after trim. */
     public static function optionalPersonName(string $raw): ?string
     {

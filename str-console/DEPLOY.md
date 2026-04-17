@@ -26,6 +26,7 @@ Run SQL migrations in `database/migrations/` in **numeric filename order** again
 | `005_console_users_extra_grants.sql` | **`console_users.extra_grants_json`** — required for current code; login and profile queries fail without it |
 | `006_password_resets.sql` | Password reset tokens table |
 | `007_console_users_phone.sql` | **`console_users.phone`** |
+| `008_customer_documents_document_type.sql` | **`customer_documents.document_type`** — KYC category per file; required for current upload code |
 
 If you see **Unknown column 'extra_grants_json'** in PHP logs, **`005` was not applied** on that database. Run it (and any later migrations you have not run) via phpMyAdmin, MySQL client, or your host’s SQL tool.
 

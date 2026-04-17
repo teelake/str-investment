@@ -123,6 +123,15 @@ $docTitle = match (true) {
       margin: 0 auto; padding: 28px 0 48px;
     }
     .console-main--guest { width: min(520px, calc(100% - (var(--gutter) * 2))); padding-top: 48px; }
+    /* Centered content column: frame is centered; labels and fields stay left-aligned (readable admin pattern). */
+    .console-form-page {
+      max-width: 640px;
+      margin-inline: auto;
+      text-align: left;
+    }
+    .console-form-page--wide {
+      max-width: min(1100px, 100%);
+    }
 
     @media (max-width: 900px) {
       .console-layout { flex-direction: column; }

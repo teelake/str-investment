@@ -2,6 +2,7 @@
 declare(strict_types=1);
 /** @var array<string, mixed> $customer */
 /** @var list<array<string, mixed>> $documents */
+/** @var array<string, string> $documentTypes */
 /** @var bool $showSensitiveIds */
 /** @var bool $canUpload */
 /** @var bool $canDeleteDocs */
@@ -17,6 +18,7 @@ $phone = (string) ($customer['phone'] ?? '');
 $address = (string) ($customer['address'] ?? '');
 $nin = $customer['nin'] ?? null;
 $bvn = $customer['bvn'] ?? null;
+$documentTypes = is_array($documentTypes ?? null) ? $documentTypes : [];
 $mask = static function (?string $v): string {
     if ($v === null || $v === '') {
         return '—';
@@ -34,12 +36,14 @@ $bvnHtml = $showSensitiveIds
     ? ($bvn !== null && $bvn !== '' ? htmlspecialchars((string) $bvn, ENT_QUOTES, 'UTF-8') : '—')
     : htmlspecialchars($mask($bvn !== null ? (string) $bvn : null), ENT_QUOTES, 'UTF-8');
 $err = is_string($docError) ? $docError : '';
-$ok = $docOk === '1' || $docOk === 1;
+$docOkStr = is_string($docOk) ? $docOk : (is_int($docOk) ? (string) $docOk : '');
+$docOkCount = ctype_digit($docOkStr) ? (int) $docOkStr : 0;
 $canEdit = $canEdit ?? false;
 $editErr = is_string($editError ?? null) ? (string) $editError : '';
 $editDone = $editOk === '1' || $editOk === 1;
 ?>
-<div class="container" style="padding:0">
+<div class="console-form-page console-form-page--wide">
+  <div class="container" style="padding:0">
   <div style="margin-bottom: 20px;">
     <a href="<?= htmlspecialchars($basePath . '/customers', ENT_QUOTES, 'UTF-8') ?>" style="font-size: 13px; font-weight: 650; color: var(--muted); text-decoration: none;">← Customers</a>
     <h1 style="font-size: var(--h2); margin: 12px 0 6px;"><?= htmlspecialchars($name, ENT_QUOTES, 'UTF-8') ?></h1>
@@ -60,8 +64,10 @@ $editDone = $editOk === '1' || $editOk === 1;
   <?php if ($editErr !== ''): ?>
     <div style="background: rgba(180, 40, 40, .08); border: 1px solid rgba(180, 40, 40, .2); color: #7f1d1d; padding: 12px 14px; border-radius: 14px; margin-bottom: 16px; font-size: 14px;"><?= htmlspecialchars($editErr, ENT_QUOTES, 'UTF-8') ?></div>
   <?php endif; ?>
-  <?php if ($ok): ?>
-    <div style="background: var(--green-soft); border: 1px solid rgba(15,106,74,.2); color: var(--green2); padding: 12px 14px; border-radius: 14px; margin-bottom: 16px; font-size: 14px;">Document uploaded.</div>
+  <?php if ($docOkCount > 0): ?>
+    <div style="background: var(--green-soft); border: 1px solid rgba(15,106,74,.2); color: var(--green2); padding: 12px 14px; border-radius: 14px; margin-bottom: 16px; font-size: 14px;">
+      <?= $docOkCount === 1 ? '1 document uploaded.' : htmlspecialchars((string) $docOkCount, ENT_QUOTES, 'UTF-8') . ' documents uploaded.' ?>
+    </div>
   <?php endif; ?>
   <?php if ($err !== ''): ?>
     <div style="background: rgba(180, 40, 40, .08); border: 1px solid rgba(180, 40, 40, .2); color: #7f1d1d; padding: 12px 14px; border-radius: 14px; margin-bottom: 16px; font-size: 14px;"><?= htmlspecialchars($err, ENT_QUOTES, 'UTF-8') ?></div>
@@ -86,11 +92,20 @@ $editDone = $editOk === '1' || $editOk === 1;
       <?php if ($canUpload): ?>
         <form method="post" action="<?= htmlspecialchars($basePath . '/customers/' . $id . '/documents', ENT_QUOTES, 'UTF-8') ?>" enctype="multipart/form-data" style="display:grid; gap: 10px; margin-bottom: 18px; padding-bottom: 18px; border-bottom: 1px solid var(--line2);">
           <?php require STR_CONSOLE_ROOT . '/views/partials/csrf.php'; ?>
-          <label style="font-size: 13px; font-weight: 650; color: var(--muted);">
-            Upload ID or supporting file
-            <input type="file" name="document" accept=".pdf,.jpg,.jpeg,.png,.webp" required style="margin-top: 6px; width: 100%; font-size: 14px;" />
+          <label style="display:grid; gap: 6px; font-size: 13px; font-weight: 650; color: var(--muted);">
+            Document type
+            <select name="document_type" required style="margin-top: 2px; padding: 12px 14px; border-radius: 14px; border: 1px solid var(--line); background: #fff; color: var(--ink); font-size: 14px;">
+              <option value="" selected>— Select type —</option>
+              <?php foreach ($documentTypes as $typeKey => $typeLabel): ?>
+                <option value="<?= htmlspecialchars((string) $typeKey, ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars((string) $typeLabel, ENT_QUOTES, 'UTF-8') ?></option>
+              <?php endforeach; ?>
+            </select>
           </label>
-          <p style="margin:0; font-size: 12px; color: var(--muted2);">PDF, JPG, PNG, or WebP · max 8 MB</p>
+          <label style="font-size: 13px; font-weight: 650; color: var(--muted);">
+            Files (you can select several at once)
+            <input type="file" name="documents[]" accept=".pdf,.jpg,.jpeg,.png,.webp" multiple required style="margin-top: 6px; width: 100%; font-size: 14px;" />
+          </label>
+          <p style="margin:0; font-size: 12px; color: var(--muted2);">PDF, JPG, PNG, or WebP · max 8 MB per file · all files use the type selected above</p>
           <button type="submit" class="btn primary" style="justify-self: start; font-size: 14px;">Upload</button>
         </form>
       <?php endif; ?>
@@ -103,6 +118,7 @@ $editDone = $editOk === '1' || $editOk === 1;
             <?php
             $did = (int) ($d['id'] ?? 0);
             $oname = (string) ($d['original_name'] ?? '');
+            $dtypeLabel = str_console_customer_document_type_label(isset($d['document_type']) ? (string) $d['document_type'] : null);
             $sz = isset($d['size_bytes']) ? (int) $d['size_bytes'] : 0;
             $szLabel = $sz > 0 ? number_format($sz / 1024, 1) . ' KB' : '';
             ?>
@@ -110,7 +126,8 @@ $editDone = $editOk === '1' || $editOk === 1;
               <div>
                 <div style="font-weight: 650; font-size: 14px;"><?= htmlspecialchars($oname, ENT_QUOTES, 'UTF-8') ?></div>
                 <div style="font-size: 12px; color: var(--muted); margin-top: 4px;">
-                  <?= htmlspecialchars((string) ($d['created_at'] ?? ''), ENT_QUOTES, 'UTF-8') ?>
+                  <span style="font-weight: 650;"><?= htmlspecialchars($dtypeLabel, ENT_QUOTES, 'UTF-8') ?></span>
+                  · <?= htmlspecialchars((string) ($d['created_at'] ?? ''), ENT_QUOTES, 'UTF-8') ?>
                   <?= $szLabel !== '' ? ' · ' . htmlspecialchars($szLabel, ENT_QUOTES, 'UTF-8') : '' ?>
                 </div>
               </div>
@@ -128,5 +145,6 @@ $editDone = $editOk === '1' || $editOk === 1;
         </ul>
       <?php endif; ?>
     </div>
+  </div>
   </div>
 </div>

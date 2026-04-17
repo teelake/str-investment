@@ -20,6 +20,7 @@ require_once STR_CONSOLE_ROOT . '/core/ErrorLogging.php';
 str_console_bootstrap_error_logging();
 
 require_once STR_CONSOLE_ROOT . '/config/permissions.php';
+require_once STR_CONSOLE_ROOT . '/config/customer_documents.php';
 
 if (session_status() !== PHP_SESSION_ACTIVE) {
     session_start([

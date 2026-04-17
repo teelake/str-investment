@@ -5,7 +5,8 @@ declare(strict_types=1);
 $basePath = Request::basePath();
 $err = is_string($error) ? $error : '';
 ?>
-<div class="container" style="padding:0; max-width: 640px;">
+<div class="console-form-page">
+  <div class="container" style="padding:0;">
   <a href="<?= htmlspecialchars($basePath . '/customers', ENT_QUOTES, 'UTF-8') ?>" style="font-size: 13px; font-weight: 650; color: var(--muted); text-decoration: none;">← Customers</a>
   <h1 style="font-size: var(--h2); margin: 12px 0 8px;">Bulk import — customers</h1>
   <p style="color: var(--muted); margin: 0 0 22px;">Upload a UTF-8 CSV. First row must be headers. Each new row creates a customer assigned to you.</p>
@@ -34,6 +35,7 @@ $err = is_string($error) ? $error : '';
     <strong style="display:block; margin-bottom:8px;">Expected columns</strong>
     <code style="display:block; white-space: pre-wrap; word-break: break-all;">full_name,name,phone,address,nin,bvn</code>
     <p style="margin: 10px 0 0; color: var(--muted2);"><code>full_name</code> (or <code>name</code>) and <code>phone</code> are required per row.</p>
+    <p style="margin: 8px 0 0; color: var(--muted2);"><code>nin</code> and <code>bvn</code> are optional; if present, each must be exactly <strong>11 digits</strong> (Nigeria NIN / BVN). Spaces or dashes are ignored.</p>
     <p style="margin: 12px 0 0;">
       <a class="btn ghost" style="font-size: 13px; padding: 10px 14px;" href="<?= htmlspecialchars($basePath . '/downloads/customers-import-template.csv', ENT_QUOTES, 'UTF-8') ?>" download>Download CSV template</a>
     </p>
@@ -48,5 +50,6 @@ $err = is_string($error) ? $error : '';
       </label>
       <button type="submit" class="btn primary">Import</button>
     </form>
+  </div>
   </div>
 </div>

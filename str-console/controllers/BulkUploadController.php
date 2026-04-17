@@ -106,13 +106,24 @@ final class BulkUploadController extends BaseController
                 continue;
             }
 
+            $ninNorm = InputValidate::optionalNinBvn($nin);
+            if ($ninNorm === false) {
+                $errors[] = ['line' => $lineNo, 'message' => 'NIN must be blank or exactly 11 digits (Nigeria NIMC).'];
+                continue;
+            }
+            $bvnNorm = InputValidate::optionalNinBvn($bvn);
+            if ($bvnNorm === false) {
+                $errors[] = ['line' => $lineNo, 'message' => 'BVN must be blank or exactly 11 digits (Nigeria CBN).'];
+                continue;
+            }
+
             try {
                 $newId = $repo->create(
                     $name,
                     $phone,
                     $address === '' ? null : $address,
-                    $nin === '' ? null : $nin,
-                    $bvn === '' ? null : $bvn,
+                    $ninNorm,
+                    $bvnNorm,
                     $uid
                 );
                 ++$imported;
