@@ -110,6 +110,9 @@ $g = ConsoleAuth::grants();
           <?php if (str_console_authorize_route($g, 'loan_products.index')): ?>
             <a href="<?= htmlspecialchars($basePath . '/loan-products', ENT_QUOTES, 'UTF-8') ?>" <?= str_starts_with($path, '/loan-products') ? 'aria-current="page"' : '' ?>>Loan products</a>
           <?php endif; ?>
+          <?php if (str_console_authorize_route($g, 'settings.policies')): ?>
+            <a href="<?= htmlspecialchars($basePath . '/settings/policies', ENT_QUOTES, 'UTF-8') ?>" <?= str_starts_with($path, '/settings') ? 'aria-current="page"' : '' ?>>Policies</a>
+          <?php endif; ?>
         </nav>
         <div class="console-sidebar__foot">
           <div class="console-sidebar__email"><?= htmlspecialchars($email, ENT_QUOTES, 'UTF-8') ?></div>

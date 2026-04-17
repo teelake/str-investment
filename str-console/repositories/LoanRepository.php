@@ -8,7 +8,7 @@ final class LoanRepository
 
     public static function canAccessRow(array $loan, ?int $consoleUserId, array $grants): bool
     {
-        if (str_console_authorize($grants, ['data.view_all_loans'])) {
+        if (PolicyService::loansWideAccess($grants)) {
             return true;
         }
         if ($consoleUserId === null) {
@@ -33,15 +33,15 @@ final class LoanRepository
         $page = max(1, $page);
         $perPage = self::PER_PAGE;
         $offset = ($page - 1) * $perPage;
-        $viewAll = str_console_authorize($grants, ['data.view_all_loans']);
+        $wide = PolicyService::loansWideAccess($grants);
         $pdo = Database::pdo();
 
-        if (!$viewAll && $consoleUserId === null) {
+        if (!$wide && $consoleUserId === null) {
             return ['rows' => [], 'total' => 0, 'page' => $page, 'per_page' => $perPage];
         }
 
         $baseFrom = 'FROM loans l INNER JOIN customers c ON c.id = l.customer_id';
-        if ($viewAll) {
+        if ($wide) {
             $countSql = 'SELECT COUNT(*) AS c ' . $baseFrom;
             $total = (int) ($pdo->query($countSql)->fetch()['c'] ?? 0);
             $stmt = $pdo->prepare(
@@ -175,16 +175,16 @@ final class LoanRepository
      */
     public function dashboardTotals(?int $consoleUserId, array $grants): array
     {
-        $viewAll = str_console_authorize($grants, ['data.view_all_loans']);
+        $wide = PolicyService::loansWideAccess($grants);
         $pdo = Database::pdo();
 
-        if (!$viewAll && $consoleUserId === null) {
+        if (!$wide && $consoleUserId === null) {
             return ['active_loans' => 0, 'outstanding' => 0.0];
         }
 
         $scope = '';
         $params = [];
-        if (!$viewAll) {
+        if (!$wide) {
             $scope = ' AND (l.assigned_user_id <=> :uid OR c.assigned_user_id <=> :uid2)';
             $params[':uid'] = $consoleUserId;
             $params[':uid2'] = $consoleUserId;

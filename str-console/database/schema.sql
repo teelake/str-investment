@@ -117,3 +117,11 @@ CREATE TABLE IF NOT EXISTS loan_ledger_lines (
   KEY idx_ledger_loan (loan_id),
   CONSTRAINT fk_ledger_loan FOREIGN KEY (loan_id) REFERENCES loans (id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS console_settings (
+  setting_key VARCHAR(64) NOT NULL,
+  setting_value TEXT NOT NULL,
+  updated_by_user_id BIGINT UNSIGNED NULL,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (setting_key)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

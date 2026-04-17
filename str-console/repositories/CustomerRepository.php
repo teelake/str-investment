@@ -16,10 +16,10 @@ final class CustomerRepository
         $perPage = self::PER_PAGE;
         $offset = ($page - 1) * $perPage;
 
-        $viewAll = str_console_authorize($grants, ['data.view_all_customers']);
+        $wide = PolicyService::customersWideAccess($grants);
         $pdo = Database::pdo();
 
-        if (!$viewAll && $consoleUserId === null) {
+        if (!$wide && $consoleUserId === null) {
             return [
                 'rows' => [],
                 'total' => 0,
@@ -28,7 +28,7 @@ final class CustomerRepository
             ];
         }
 
-        if ($viewAll) {
+        if ($wide) {
             $countStmt = $pdo->query('SELECT COUNT(*) AS c FROM customers');
             $total = (int) ($countStmt->fetch()['c'] ?? 0);
             $stmt = $pdo->prepare(
@@ -73,12 +73,12 @@ final class CustomerRepository
      */
     public function countScoped(?int $consoleUserId, array $grants): int
     {
-        $viewAll = str_console_authorize($grants, ['data.view_all_customers']);
-        if (!$viewAll && $consoleUserId === null) {
+        $wide = PolicyService::customersWideAccess($grants);
+        if (!$wide && $consoleUserId === null) {
             return 0;
         }
         $pdo = Database::pdo();
-        if ($viewAll) {
+        if ($wide) {
             return (int) $pdo->query('SELECT COUNT(*) AS c FROM customers')->fetch()['c'];
         }
         $stmt = $pdo->prepare('SELECT COUNT(*) AS c FROM customers WHERE assigned_user_id <=> :uid');
@@ -101,8 +101,8 @@ final class CustomerRepository
         if (!is_array($row)) {
             return null;
         }
-        $viewAll = str_console_authorize($grants, ['data.view_all_customers']);
-        if (!$viewAll) {
+        $wide = PolicyService::customersWideAccess($grants);
+        if (!$wide) {
             if ($consoleUserId === null) {
                 return null;
             }
@@ -115,19 +115,16 @@ final class CustomerRepository
     }
 
     /**
-     * @return int new customer id
-     */
-    /**
      * @return list<array{id: int, full_name: string}>
      */
     public function listNamesForConsoleUser(?int $consoleUserId, array $grants, int $limit = 500): array
     {
-        $viewAll = str_console_authorize($grants, ['data.view_all_customers']);
-        if (!$viewAll && $consoleUserId === null) {
+        $wide = PolicyService::customersWideAccess($grants);
+        if (!$wide && $consoleUserId === null) {
             return [];
         }
         $pdo = Database::pdo();
-        if ($viewAll) {
+        if ($wide) {
             $stmt = $pdo->prepare('SELECT id, full_name FROM customers ORDER BY full_name ASC LIMIT :lim');
             $stmt->bindValue(':lim', $limit, PDO::PARAM_INT);
             $stmt->execute();

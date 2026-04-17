@@ -47,6 +47,8 @@ require_once STR_CONSOLE_ROOT . '/core/Database.php';
 require_once STR_CONSOLE_ROOT . '/services/AuditLogger.php';
 require_once STR_CONSOLE_ROOT . '/services/CustomerDocumentStorage.php';
 require_once STR_CONSOLE_ROOT . '/repositories/UserRepository.php';
+require_once STR_CONSOLE_ROOT . '/repositories/ConsoleSettingRepository.php';
+require_once STR_CONSOLE_ROOT . '/services/PolicyService.php';
 require_once STR_CONSOLE_ROOT . '/repositories/CustomerRepository.php';
 require_once STR_CONSOLE_ROOT . '/repositories/CustomerDocumentRepository.php';
 require_once STR_CONSOLE_ROOT . '/repositories/LoanProductRepository.php';
@@ -59,6 +61,7 @@ require_once STR_CONSOLE_ROOT . '/controllers/DashboardController.php';
 require_once STR_CONSOLE_ROOT . '/controllers/CustomersController.php';
 require_once STR_CONSOLE_ROOT . '/controllers/LoanProductsController.php';
 require_once STR_CONSOLE_ROOT . '/controllers/LoansController.php';
+require_once STR_CONSOLE_ROOT . '/controllers/SettingsController.php';
 
 require_once STR_CONSOLE_ROOT . '/config/routes.php';
 
