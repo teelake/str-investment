@@ -56,7 +56,7 @@ $err = is_string($error) ? $error : '';
         </select>
       </label>
       <label style="display:grid; gap:6px; font-size:13px; font-weight:650; color:var(--muted);">
-        Negotiated monthly rate (%)
+        Monthly rate (%)
         <input name="rate_percent" type="number" step="0.0001" min="0.0001" required
           style="padding:12px 14px; border-radius:14px; border:1px solid var(--line); background:#fff;" />
       </label>
