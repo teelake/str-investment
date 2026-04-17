@@ -82,7 +82,7 @@ $docTitle = match (true) {
     .console-topbar__start { display: flex; align-items: center; gap: 12px; }
     .console-topbar__brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink); }
     .console-topbar__brand img { height: 32px; width: auto; }
-    .console-topbar__search { flex: 1; min-width: 160px; max-width: 420px; margin: 0 auto; }
+    .console-topbar__search { flex: 1; min-width: 160px; max-width: none; margin: 0; }
     .console-topbar__search input {
       width: 100%; padding: 10px 14px; border-radius: 12px; border: 1px solid var(--line2);
       font-size: 14px; background: var(--card); color: var(--ink);

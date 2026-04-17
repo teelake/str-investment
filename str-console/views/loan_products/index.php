@@ -7,8 +7,8 @@ $basePath = Request::basePath();
 $dbError = $dbError ?? null;
 $filterActivity = $filterActivity ?? '';
 $rows = $pagination['rows'];
-$total = (int) $pagination['total'];
 $page = (int) $pagination['page'];
+$total = (int) $pagination['total'];
 $perPage = (int) $pagination['per_page'];
 ?>
 <div class="container" style="padding:0">
