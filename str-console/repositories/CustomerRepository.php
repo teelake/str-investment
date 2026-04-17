@@ -10,11 +10,10 @@ final class CustomerRepository
      * @param list<string> $grants
      * @return array{rows: list<array<string, mixed>>, total: int, page: int, per_page: int}
      */
-    public function paginateForConsoleUser(?int $consoleUserId, array $grants, int $page): array
+    public function paginateForConsoleUser(?int $consoleUserId, array $grants, int $page, ?string $searchQ = null): array
     {
-        $page = max(1, $page);
+        $page = Pagination::sanitizeRequestedPage($page);
         $perPage = self::PER_PAGE;
-        $offset = ($page - 1) * $perPage;
 
         $wide = PolicyService::customersWideAccess($grants);
         $pdo = Database::pdo();
@@ -23,39 +22,60 @@ final class CustomerRepository
             return [
                 'rows' => [],
                 'total' => 0,
-                'page' => $page,
+                'page' => 1,
                 'per_page' => $perPage,
             ];
         }
 
+        [$searchSql, $searchParams] = self::listSearchClause($searchQ);
+
         if ($wide) {
-            $countStmt = $pdo->query('SELECT COUNT(*) AS c FROM customers');
-            $total = (int) ($countStmt->fetch()['c'] ?? 0);
+            $countSql = 'SELECT COUNT(*) AS c FROM customers c WHERE 1=1' . $searchSql;
+            $stmtCount = $pdo->prepare($countSql);
+            $stmtCount->execute($searchParams);
+            $total = (int) ($stmtCount->fetch()['c'] ?? 0);
+            $page = Pagination::normalizePage($page, $total, $perPage);
+            $offset = ($page - 1) * $perPage;
             $stmt = $pdo->prepare(
                 'SELECT c.id, c.full_name, c.phone, c.address, c.nin, c.bvn, c.assigned_user_id, c.created_at, c.updated_at,
                         COALESCE(NULLIF(TRIM(cu.full_name), \'\'), cu.email) AS assigned_user_label
                  FROM customers c
                  LEFT JOIN console_users cu ON cu.id = c.assigned_user_id
+                 WHERE 1=1' . $searchSql . '
                  ORDER BY c.id DESC
                  LIMIT :lim OFFSET :off'
             );
+            foreach ($searchParams as $k => $v) {
+                $stmt->bindValue($k, $v);
+            }
             $stmt->bindValue(':lim', $perPage, PDO::PARAM_INT);
             $stmt->bindValue(':off', $offset, PDO::PARAM_INT);
             $stmt->execute();
         } else {
-            $stmtCount = $pdo->prepare('SELECT COUNT(*) AS c FROM customers WHERE assigned_user_id <=> :uid');
-            $stmtCount->execute([':uid' => $consoleUserId]);
+            $params = array_merge($searchParams, [':uid' => $consoleUserId]);
+            $stmtCount = $pdo->prepare(
+                'SELECT COUNT(*) AS c FROM customers c WHERE c.assigned_user_id <=> :uid' . $searchSql
+            );
+            $stmtCount->execute($params);
             $total = (int) ($stmtCount->fetch()['c'] ?? 0);
+            $page = Pagination::normalizePage($page, $total, $perPage);
+            $offset = ($page - 1) * $perPage;
             $stmt = $pdo->prepare(
                 'SELECT c.id, c.full_name, c.phone, c.address, c.nin, c.bvn, c.assigned_user_id, c.created_at, c.updated_at,
                         COALESCE(NULLIF(TRIM(cu.full_name), \'\'), cu.email) AS assigned_user_label
                  FROM customers c
                  LEFT JOIN console_users cu ON cu.id = c.assigned_user_id
-                 WHERE c.assigned_user_id <=> :uid
+                 WHERE c.assigned_user_id <=> :uid' . $searchSql . '
                  ORDER BY c.id DESC
                  LIMIT :lim OFFSET :off'
             );
-            $stmt->bindValue(':uid', $consoleUserId, $consoleUserId === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
+            foreach ($params as $k => $v) {
+                if ($k === ':uid') {
+                    $stmt->bindValue($k, $v, $consoleUserId === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
+                    continue;
+                }
+                $stmt->bindValue($k, $v);
+            }
             $stmt->bindValue(':lim', $perPage, PDO::PARAM_INT);
             $stmt->bindValue(':off', $offset, PDO::PARAM_INT);
             $stmt->execute();
@@ -70,6 +90,34 @@ final class CustomerRepository
             'page' => $page,
             'per_page' => $perPage,
         ];
+    }
+
+    /**
+     * @return array{0: string, 1: array<string, mixed>}
+     */
+    private static function listSearchClause(?string $raw): array
+    {
+        $t = trim((string) $raw);
+        if ($t === '') {
+            return ['', []];
+        }
+        if (mb_strlen($t) > 120) {
+            $t = mb_substr($t, 0, 120);
+        }
+        $like = '%' . addcslashes($t, '%_\\') . '%';
+        $parts = ['c.full_name LIKE :clistq', 'c.phone LIKE :clistq', 'c.nin LIKE :clistq', 'c.bvn LIKE :clistq'];
+        $params = [':clistq' => $like];
+        if (ctype_digit($t) && (int) $t > 0) {
+            $parts[] = 'c.id = :clistid';
+            $params[':clistid'] = (int) $t;
+        }
+        $dig = preg_replace('/\D/', '', $t) ?? '';
+        if (strlen($dig) >= 2) {
+            $parts[] = "REGEXP_REPLACE(c.phone, '[^0-9]', '') LIKE :clistqd";
+            $params[':clistqd'] = '%' . addcslashes($dig, '%_\\') . '%';
+        }
+
+        return [' AND (' . implode(' OR ', $parts) . ')', $params];
     }
 
     /**

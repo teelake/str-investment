@@ -42,6 +42,20 @@ $canEdit = $canEdit ?? false;
 $editErr = is_string($editError ?? null) ? (string) $editError : '';
 $editDone = $editOk === '1' || $editOk === 1;
 ?>
+<style>
+  .customer-show-main-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    align-items: start;
+    margin-bottom: 24px;
+  }
+  @media (max-width: 900px) {
+    .customer-show-main-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
 <div class="console-form-page console-form-page--wide">
   <div class="container" style="padding:0">
   <div style="margin-bottom: 20px;">
@@ -73,7 +87,7 @@ $editDone = $editOk === '1' || $editOk === 1;
     <div style="background: rgba(180, 40, 40, .08); border: 1px solid rgba(180, 40, 40, .2); color: #7f1d1d; padding: 12px 14px; border-radius: 14px; margin-bottom: 16px; font-size: 14px;"><?= htmlspecialchars($err, ENT_QUOTES, 'UTF-8') ?></div>
   <?php endif; ?>
 
-  <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-bottom: 24px;">
+  <div class="customer-show-main-grid">
     <div style="background: var(--card); border: 1px solid var(--line2); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow2);">
       <h2 style="font-size: 15px; margin: 0 0 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted);">Profile</h2>
       <dl style="margin:0; display:grid; gap: 12px; font-size: 14px;">

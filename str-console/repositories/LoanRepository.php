@@ -28,45 +28,66 @@ final class LoanRepository
     /**
      * @return array{rows: list<array<string, mixed>>, total: int, page: int, per_page: int}
      */
-    public function paginateForConsoleUser(?int $consoleUserId, array $grants, int $page): array
+    public function paginateForConsoleUser(?int $consoleUserId, array $grants, int $page, ?string $status = null): array
     {
-        $page = max(1, $page);
+        $page = Pagination::sanitizeRequestedPage($page);
         $perPage = self::PER_PAGE;
-        $offset = ($page - 1) * $perPage;
         $wide = PolicyService::loansWideAccess($grants);
         $pdo = Database::pdo();
 
         if (!$wide && $consoleUserId === null) {
-            return ['rows' => [], 'total' => 0, 'page' => $page, 'per_page' => $perPage];
+            return ['rows' => [], 'total' => 0, 'page' => 1, 'per_page' => $perPage];
+        }
+
+        $statusNorm = $status !== null && trim($status) !== ''
+            ? ReportRepository::normalizeLoanStatus(trim($status))
+            : null;
+        $statusSql = '';
+        $statusParams = [];
+        if ($statusNorm !== null) {
+            $statusSql = ' AND l.status = :loanst';
+            $statusParams[':loanst'] = $statusNorm;
         }
 
         $baseFrom = 'FROM loans l INNER JOIN customers c ON c.id = l.customer_id';
         if ($wide) {
-            $countSql = 'SELECT COUNT(*) AS c ' . $baseFrom;
-            $total = (int) ($pdo->query($countSql)->fetch()['c'] ?? 0);
+            $countSql = 'SELECT COUNT(*) AS c ' . $baseFrom . ' WHERE 1=1' . $statusSql;
+            $stmtCount = $pdo->prepare($countSql);
+            $stmtCount->execute($statusParams);
+            $total = (int) ($stmtCount->fetch()['c'] ?? 0);
+            $page = Pagination::normalizePage($page, $total, $perPage);
+            $offset = ($page - 1) * $perPage;
             $stmt = $pdo->prepare(
                 'SELECT l.*, c.full_name AS customer_name, c.assigned_user_id AS customer_assigned_user_id
                  ' . $baseFrom . '
+                 WHERE 1=1' . $statusSql . '
                  ORDER BY l.id DESC LIMIT :lim OFFSET :off'
             );
+            foreach ($statusParams as $k => $v) {
+                $stmt->bindValue($k, $v);
+            }
             $stmt->bindValue(':lim', $perPage, PDO::PARAM_INT);
             $stmt->bindValue(':off', $offset, PDO::PARAM_INT);
             $stmt->execute();
         } else {
+            $scope = ' AND (l.assigned_user_id <=> :uid OR c.assigned_user_id <=> :uid2)';
+            $params = array_merge($statusParams, [':uid' => $consoleUserId, ':uid2' => $consoleUserId]);
             $stmtCount = $pdo->prepare(
-                'SELECT COUNT(*) AS c ' . $baseFrom . '
-                 WHERE (l.assigned_user_id <=> :uid OR c.assigned_user_id <=> :uid2)'
+                'SELECT COUNT(*) AS c ' . $baseFrom . ' WHERE 1=1' . $scope . $statusSql
             );
-            $stmtCount->execute([':uid' => $consoleUserId, ':uid2' => $consoleUserId]);
+            $stmtCount->execute($params);
             $total = (int) ($stmtCount->fetch()['c'] ?? 0);
+            $page = Pagination::normalizePage($page, $total, $perPage);
+            $offset = ($page - 1) * $perPage;
             $stmt = $pdo->prepare(
                 'SELECT l.*, c.full_name AS customer_name, c.assigned_user_id AS customer_assigned_user_id
                  ' . $baseFrom . '
-                 WHERE (l.assigned_user_id <=> :uid OR c.assigned_user_id <=> :uid2)
+                 WHERE 1=1' . $scope . $statusSql . '
                  ORDER BY l.id DESC LIMIT :lim OFFSET :off'
             );
-            $stmt->bindValue(':uid', $consoleUserId, PDO::PARAM_INT);
-            $stmt->bindValue(':uid2', $consoleUserId, PDO::PARAM_INT);
+            foreach ($params as $k => $v) {
+                $stmt->bindValue($k, $v, PDO::PARAM_INT);
+            }
             $stmt->bindValue(':lim', $perPage, PDO::PARAM_INT);
             $stmt->bindValue(':off', $offset, PDO::PARAM_INT);
             $stmt->execute();
