@@ -40,6 +40,8 @@ function str_console_dev_login_enabled(): bool
 }
 
 require_once STR_CONSOLE_ROOT . '/core/Request.php';
+require_once STR_CONSOLE_ROOT . '/core/FormGuard.php';
+require_once STR_CONSOLE_ROOT . '/core/InputValidate.php';
 require_once STR_CONSOLE_ROOT . '/core/ErrorPage.php';
 require_once STR_CONSOLE_ROOT . '/core/ConsoleAuth.php';
 require_once STR_CONSOLE_ROOT . '/core/BaseController.php';

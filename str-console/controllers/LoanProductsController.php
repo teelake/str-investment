@@ -43,15 +43,20 @@ final class LoanProductsController extends BaseController
 
     public function store(): void
     {
+        $this->requirePostedCsrf('/loan-products/create');
         if (!str_console_database_ready()) {
             $this->redirect('/loan-products/create?error=' . rawurlencode('Database not configured.'));
             return;
         }
-        $name = trim((string) Request::post('name', ''));
+        $name = trim(str_replace(["\0", "\r"], '', (string) Request::post('name', '')));
         $rate = (float) Request::post('rate_percent', 0);
         $pm = max(1, (int) Request::post('period_months', 1));
         if ($name === '' || $rate <= 0) {
             $this->redirect('/loan-products/create?error=' . rawurlencode('Name and a positive rate are required.'));
+            return;
+        }
+        if (mb_strlen($name) > InputValidate::PERSON_NAME_MAX) {
+            $this->redirect('/loan-products/create?error=' . rawurlencode('Name is too long.'));
             return;
         }
         try {
@@ -84,16 +89,21 @@ final class LoanProductsController extends BaseController
 
     public function update(int $id): void
     {
+        $this->requirePostedCsrf('/loan-products/' . $id . '/edit');
         if (!str_console_database_ready()) {
             $this->redirect('/loan-products');
             return;
         }
-        $name = trim((string) Request::post('name', ''));
+        $name = trim(str_replace(["\0", "\r"], '', (string) Request::post('name', '')));
         $rate = (float) Request::post('rate_percent', 0);
         $pm = max(1, (int) Request::post('period_months', 1));
         $active = (string) Request::post('is_active', '') === '1';
         if ($name === '' || $rate <= 0) {
             $this->redirect('/loan-products/' . $id . '/edit?error=' . rawurlencode('Invalid fields.'));
+            return;
+        }
+        if (mb_strlen($name) > InputValidate::PERSON_NAME_MAX) {
+            $this->redirect('/loan-products/' . $id . '/edit?error=' . rawurlencode('Name is too long.'));
             return;
         }
         try {
@@ -112,6 +122,7 @@ final class LoanProductsController extends BaseController
 
     public function retire(int $id): void
     {
+        $this->requirePostedCsrf('/loan-products');
         if (!str_console_database_ready()) {
             $this->redirect('/loan-products');
             return;

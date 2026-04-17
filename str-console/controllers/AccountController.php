@@ -26,6 +26,7 @@ final class AccountController extends BaseController
 
     public function saveProfile(): void
     {
+        $this->requirePostedCsrf('/account/profile');
         $uid = ConsoleAuth::userId();
         if ($uid === null || !str_console_database_ready()) {
             $this->redirect('/');
@@ -39,11 +40,17 @@ final class AccountController extends BaseController
         }
 
         $email = trim((string) Request::post('email', ''));
-        $fullName = trim((string) Request::post('full_name', ''));
+        $fullNameRaw = (string) Request::post('full_name', '');
+        $fullNameStripped = trim(str_replace(["\0", "\r"], '', $fullNameRaw));
+        $fullNameOpt = InputValidate::optionalPersonName($fullNameRaw);
         $phoneRaw = trim((string) Request::post('phone', ''));
 
-        if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        if ($email === '' || !InputValidate::emailOk($email)) {
             $this->redirect('/account/profile?error=' . rawurlencode('Enter a valid email.'));
+            return;
+        }
+        if ($fullNameStripped !== '' && $fullNameOpt === null) {
+            $this->redirect('/account/profile?error=' . rawurlencode('Full name is too long (max ' . InputValidate::PERSON_NAME_MAX . ' characters).'));
             return;
         }
         $phoneNorm = UserRepository::normalizeOptionalPhone($phoneRaw);
@@ -57,7 +64,7 @@ final class AccountController extends BaseController
         }
 
         try {
-            $repo->updateSelfProfile($uid, $email, $fullName === '' ? null : $fullName, $phoneNorm);
+            $repo->updateSelfProfile($uid, $email, $fullNameOpt, $phoneNorm);
             AuditLogger::log($uid, 'console_user.self_profile', 'console_user', $uid, ['email' => $email]);
             $roleKey = (string) ($row['role_key'] ?? '');
             $fresh = $repo->findById($uid);
@@ -94,6 +101,7 @@ final class AccountController extends BaseController
 
     public function savePassword(): void
     {
+        $this->requirePostedCsrf('/account/password');
         $uid = ConsoleAuth::userId();
         if ($uid === null || !str_console_database_ready()) {
             $this->redirect('/');
@@ -112,6 +120,10 @@ final class AccountController extends BaseController
 
         if ($current === '' || $new === '' || $confirm === '') {
             $this->redirect('/account/password?error=' . rawurlencode('Fill in all password fields.'));
+            return;
+        }
+        if (strlen($current) > InputValidate::PASSWORD_MAX_BYTES || strlen($new) > InputValidate::PASSWORD_MAX_BYTES || strlen($confirm) > InputValidate::PASSWORD_MAX_BYTES) {
+            $this->redirect('/account/password?error=' . rawurlencode('Password field is too long.'));
             return;
         }
         if ($new !== $confirm) {
@@ -146,6 +158,7 @@ final class AccountController extends BaseController
                     is_string($ph) && $ph !== '' ? $ph : null
                 );
             }
+            FormGuard::rotate();
             $this->redirect('/account/password?flash=' . rawurlencode('Password updated.'));
         } catch (Throwable) {
             $this->redirect('/account/password?error=' . rawurlencode('Could not update password.'));

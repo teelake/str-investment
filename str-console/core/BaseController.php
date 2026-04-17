@@ -17,6 +17,9 @@ abstract class BaseController
             return;
         }
 
+        if (!array_key_exists('csrfToken', $params)) {
+            $params['csrfToken'] = FormGuard::token();
+        }
         extract($params, EXTR_SKIP);
         $basePath = Request::basePath();
 
@@ -25,6 +28,17 @@ abstract class BaseController
         $content = ob_get_clean();
 
         require $viewsDir . '/layout.php';
+    }
+
+    /**
+     * Reject POST when CSRF token is missing or wrong (session fixation / cross-site POST).
+     */
+    protected function requirePostedCsrf(string $redirectPath, string $errorMessage = 'This form expired or was blocked. Refresh the page and try again.'): void
+    {
+        if (!FormGuard::validatePost()) {
+            $sep = str_contains($redirectPath, '?') ? '&' : '?';
+            $this->redirect($redirectPath . $sep . 'error=' . rawurlencode($errorMessage));
+        }
     }
 
     protected function redirect(string $path, int $status = 302): void

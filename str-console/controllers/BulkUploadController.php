@@ -52,6 +52,7 @@ final class BulkUploadController extends BaseController
 
     public function customersImport(): void
     {
+        $this->requirePostedCsrf('/bulk-upload/customers');
         if (!str_console_database_ready()) {
             $this->redirect('/bulk-upload/customers?error=' . rawurlencode('Database not configured.'));
             return;
@@ -147,6 +148,7 @@ final class BulkUploadController extends BaseController
 
     public function loansImport(): void
     {
+        $this->requirePostedCsrf('/bulk-upload/loans');
         if (!str_console_database_ready()) {
             $this->redirect('/bulk-upload/loans?error=' . rawurlencode('Database not configured.'));
             return;

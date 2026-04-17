@@ -21,12 +21,13 @@ final class SettingsSystemController extends BaseController
 
     public function save(): void
     {
+        $this->requirePostedCsrf('/settings/system');
         if (!str_console_database_ready()) {
             $this->redirect('/settings/system?error=' . rawurlencode('Database not configured.'));
             return;
         }
 
-        $notice = trim((string) Request::post('maintenance_notice', ''));
+        $notice = trim(str_replace(["\0", "\r"], '', (string) Request::post('maintenance_notice', '')));
         if (strlen($notice) > 2000) {
             $this->redirect('/settings/system?error=' . rawurlencode('Maintenance notice is too long (max 2000 characters).'));
             return;

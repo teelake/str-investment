@@ -35,6 +35,7 @@ final class SettingsUsersController extends BaseController
 
     public function store(): void
     {
+        $this->requirePostedCsrf('/settings/users/create');
         if (!str_console_database_ready()) {
             $this->redirect('/settings/users/create?error=' . rawurlencode('Database not configured.'));
             return;
@@ -50,19 +51,29 @@ final class SettingsUsersController extends BaseController
         $email = trim((string) Request::post('email', ''));
         $password = (string) Request::post('password', '');
         $roleKey = trim((string) Request::post('role_key', ''));
-        $fullName = trim((string) Request::post('full_name', ''));
+        $fullNameRaw = (string) Request::post('full_name', '');
+        $fullNameStripped = trim(str_replace(["\0", "\r"], '', $fullNameRaw));
+        $fullNameOpt = InputValidate::optionalPersonName($fullNameRaw);
         $phoneRaw = trim((string) Request::post('phone', ''));
 
-        if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        if ($email === '' || !InputValidate::emailOk($email)) {
             $this->redirect('/settings/users/create?error=' . rawurlencode('Enter a valid email.'));
+            return;
+        }
+        if ($fullNameStripped !== '' && $fullNameOpt === null) {
+            $this->redirect('/settings/users/create?error=' . rawurlencode('Full name is too long (max ' . InputValidate::PERSON_NAME_MAX . ' characters).'));
             return;
         }
         if (strlen($password) < 10) {
             $this->redirect('/settings/users/create?error=' . rawurlencode('Password must be at least 10 characters.'));
             return;
         }
-        if (!in_array($roleKey, $allowed, true)) {
-            $this->redirect('/settings/users/create?error=' . rawurlencode('Invalid role.'));
+        if (strlen($password) > InputValidate::PASSWORD_MAX_BYTES) {
+            $this->redirect('/settings/users/create?error=' . rawurlencode('Password is too long.'));
+            return;
+        }
+        if ($roleKey === '' || !in_array($roleKey, $allowed, true)) {
+            $this->redirect('/settings/users/create?error=' . rawurlencode('Select a valid role.'));
             return;
         }
         $phoneNorm = UserRepository::normalizeOptionalPhone($phoneRaw);
@@ -79,7 +90,7 @@ final class SettingsUsersController extends BaseController
 
         try {
             $hash = password_hash($password, PASSWORD_DEFAULT);
-            $id = $repo->create($email, $hash, $roleKey, $fullName === '' ? null : $fullName, $phoneNorm);
+            $id = $repo->create($email, $hash, $roleKey, $fullNameOpt, $phoneNorm);
             AuditLogger::log(ConsoleAuth::userId(), 'console_user.create', 'console_user', $id, [
                 'email' => $email,
                 'role_key' => $roleKey,
@@ -131,6 +142,7 @@ final class SettingsUsersController extends BaseController
 
     public function update(int $userId): void
     {
+        $this->requirePostedCsrf('/settings/users/' . $userId . '/edit');
         if (!str_console_database_ready()) {
             $this->redirect('/settings/users');
             return;
@@ -159,13 +171,19 @@ final class SettingsUsersController extends BaseController
 
         $email = trim((string) Request::post('email', ''));
         $roleKey = trim((string) Request::post('role_key', ''));
-        $fullName = trim((string) Request::post('full_name', ''));
+        $fullNameRaw = (string) Request::post('full_name', '');
+        $fullNameStripped = trim(str_replace(["\0", "\r"], '', $fullNameRaw));
+        $fullNameOpt = InputValidate::optionalPersonName($fullNameRaw);
         $phoneRaw = trim((string) Request::post('phone', ''));
         $isActive = isset($_POST['is_active']) && (string) $_POST['is_active'] === '1';
         $password = (string) Request::post('password', '');
 
-        if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        if ($email === '' || !InputValidate::emailOk($email)) {
             $this->redirect('/settings/users/' . $userId . '/edit?error=' . rawurlencode('Enter a valid email.'));
+            return;
+        }
+        if ($fullNameStripped !== '' && $fullNameOpt === null) {
+            $this->redirect('/settings/users/' . $userId . '/edit?error=' . rawurlencode('Full name is too long (max ' . InputValidate::PERSON_NAME_MAX . ' characters).'));
             return;
         }
         if (!in_array($roleKey, $allowed, true)) {
@@ -206,6 +224,10 @@ final class SettingsUsersController extends BaseController
                 $this->redirect('/settings/users/' . $userId . '/edit?error=' . rawurlencode('Password must be at least 10 characters or leave blank.'));
                 return;
             }
+            if (strlen($password) > InputValidate::PASSWORD_MAX_BYTES) {
+                $this->redirect('/settings/users/' . $userId . '/edit?error=' . rawurlencode('Password is too long.'));
+                return;
+            }
             $newHash = password_hash($password, PASSWORD_DEFAULT);
         }
 
@@ -214,7 +236,7 @@ final class SettingsUsersController extends BaseController
                 $userId,
                 $email,
                 $roleKey,
-                $fullName === '' ? null : $fullName,
+                $fullNameOpt,
                 $phoneNorm,
                 $isActive,
                 $newHash

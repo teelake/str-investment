@@ -36,19 +36,32 @@ final class CustomersController extends BaseController
 
     public function store(): void
     {
+        $this->requirePostedCsrf('/customers/create');
         if (!str_console_database_ready()) {
             $this->redirect('/customers/create?error=' . rawurlencode('Database not configured.'));
             return;
         }
 
-        $name = trim((string) Request::post('full_name', ''));
-        $phone = trim((string) Request::post('phone', ''));
-        $address = trim((string) Request::post('address', ''));
-        $nin = trim((string) Request::post('nin', ''));
-        $bvn = trim((string) Request::post('bvn', ''));
+        $name = trim(str_replace(["\0", "\r"], '', (string) Request::post('full_name', '')));
+        $phone = trim(str_replace(["\0", "\r"], '', (string) Request::post('phone', '')));
+        $address = trim(str_replace(["\0", "\r"], '', (string) Request::post('address', '')));
+        $nin = trim(str_replace(["\0", "\r"], '', (string) Request::post('nin', '')));
+        $bvn = trim(str_replace(["\0", "\r"], '', (string) Request::post('bvn', '')));
 
         if ($name === '' || $phone === '') {
             $this->redirect('/customers/create?error=' . rawurlencode('Name and phone are required.'));
+            return;
+        }
+        if (mb_strlen($name) > InputValidate::PERSON_NAME_MAX) {
+            $this->redirect('/customers/create?error=' . rawurlencode('Name is too long.'));
+            return;
+        }
+        if (strlen($phone) > 32) {
+            $this->redirect('/customers/create?error=' . rawurlencode('Phone is too long.'));
+            return;
+        }
+        if (mb_strlen($nin) > 32 || mb_strlen($bvn) > 32) {
+            $this->redirect('/customers/create?error=' . rawurlencode('NIN or BVN is too long.'));
             return;
         }
 
@@ -155,6 +168,7 @@ final class CustomersController extends BaseController
 
     public function update(int $customerId): void
     {
+        $this->requirePostedCsrf('/customers/' . $customerId . '/edit');
         if (!str_console_database_ready()) {
             $this->redirect('/customers/' . $customerId . '?edit_error=' . rawurlencode('Database not configured.'));
             return;
@@ -167,14 +181,26 @@ final class CustomersController extends BaseController
             return;
         }
 
-        $name = trim((string) Request::post('full_name', ''));
-        $phone = trim((string) Request::post('phone', ''));
-        $address = trim((string) Request::post('address', ''));
-        $nin = trim((string) Request::post('nin', ''));
-        $bvn = trim((string) Request::post('bvn', ''));
+        $name = trim(str_replace(["\0", "\r"], '', (string) Request::post('full_name', '')));
+        $phone = trim(str_replace(["\0", "\r"], '', (string) Request::post('phone', '')));
+        $address = trim(str_replace(["\0", "\r"], '', (string) Request::post('address', '')));
+        $nin = trim(str_replace(["\0", "\r"], '', (string) Request::post('nin', '')));
+        $bvn = trim(str_replace(["\0", "\r"], '', (string) Request::post('bvn', '')));
 
         if ($name === '' || $phone === '') {
             $this->redirect('/customers/' . $customerId . '/edit?error=' . rawurlencode('Name and phone are required.'));
+            return;
+        }
+        if (mb_strlen($name) > InputValidate::PERSON_NAME_MAX) {
+            $this->redirect('/customers/' . $customerId . '/edit?error=' . rawurlencode('Name is too long.'));
+            return;
+        }
+        if (strlen($phone) > 32) {
+            $this->redirect('/customers/' . $customerId . '/edit?error=' . rawurlencode('Phone is too long.'));
+            return;
+        }
+        if (mb_strlen($nin) > 32 || mb_strlen($bvn) > 32) {
+            $this->redirect('/customers/' . $customerId . '/edit?error=' . rawurlencode('NIN or BVN is too long.'));
             return;
         }
 
@@ -218,6 +244,7 @@ final class CustomersController extends BaseController
 
     public function documentStore(int $customerId): void
     {
+        $this->requirePostedCsrf('/customers/' . $customerId);
         if (!str_console_database_ready()) {
             $this->redirect('/customers');
             return;
@@ -297,6 +324,7 @@ final class CustomersController extends BaseController
 
     public function documentDestroy(int $customerId, int $documentId): void
     {
+        $this->requirePostedCsrf('/customers/' . $customerId);
         if (!str_console_database_ready()) {
             $this->redirect('/customers');
             return;

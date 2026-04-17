@@ -51,6 +51,7 @@ final class LoansController extends BaseController
 
     public function store(): void
     {
+        $this->requirePostedCsrf('/loans/create');
         if (!str_console_database_ready()) {
             $this->redirect('/loans');
             return;
@@ -159,6 +160,7 @@ final class LoansController extends BaseController
 
     public function update(int $loanId): void
     {
+        $this->requirePostedCsrf('/loans/' . $loanId . '/edit');
         if (!str_console_database_ready()) {
             $this->redirect('/loans');
             return;
@@ -289,6 +291,7 @@ final class LoansController extends BaseController
 
     public function submit(int $loanId): void
     {
+        $this->requirePostedCsrf('/loans/' . $loanId);
         $this->transitionLoan($loanId, function (LoanRepository $r) use ($loanId): bool {
             return $r->markSubmitted($loanId);
         }, 'loan.submit', 'Submitted for approval.', 'Could not submit.');
@@ -301,6 +304,7 @@ final class LoansController extends BaseController
             $this->redirect('/loans/' . $loanId);
             return;
         }
+        $this->requirePostedCsrf('/loans/' . $loanId);
         $this->transitionLoan($loanId, function (LoanRepository $r) use ($loanId, $uid): bool {
             return $r->markApproved($loanId, $uid);
         }, 'loan.approve', 'Loan approved.', 'Could not approve.');
@@ -308,9 +312,14 @@ final class LoansController extends BaseController
 
     public function reject(int $loanId): void
     {
-        $reason = trim((string) Request::post('reason', ''));
+        $this->requirePostedCsrf('/loans/' . $loanId);
+        $reason = trim(str_replace(["\0", "\r"], '', (string) Request::post('reason', '')));
         if ($reason === '') {
             $this->redirect('/loans/' . $loanId . '?error=' . rawurlencode('Enter a rejection reason.'));
+            return;
+        }
+        if (mb_strlen($reason) > InputValidate::REJECTION_REASON_MAX) {
+            $this->redirect('/loans/' . $loanId . '?error=' . rawurlencode('Rejection reason is too long.'));
             return;
         }
         $this->transitionLoan($loanId, function (LoanRepository $r) use ($loanId, $reason): bool {
@@ -320,6 +329,7 @@ final class LoansController extends BaseController
 
     public function disburse(int $loanId): void
     {
+        $this->requirePostedCsrf('/loans/' . $loanId);
         $date = trim((string) Request::post('disbursed_on', ''));
         if ($date === '' || !preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
             $this->redirect('/loans/' . $loanId . '?error=' . rawurlencode('Use a valid disbursement date (YYYY-MM-DD).'));
@@ -342,6 +352,7 @@ final class LoansController extends BaseController
 
     public function accrue(int $loanId): void
     {
+        $this->requirePostedCsrf('/loans/' . $loanId);
         if (!str_console_database_ready()) {
             $this->redirect('/loans');
             return;
@@ -385,6 +396,7 @@ final class LoansController extends BaseController
 
     public function close(int $loanId): void
     {
+        $this->requirePostedCsrf('/loans/' . $loanId);
         if (!str_console_database_ready()) {
             $this->redirect('/loans');
             return;
@@ -418,6 +430,7 @@ final class LoansController extends BaseController
 
     public function paymentVoid(int $loanId): void
     {
+        $this->requirePostedCsrf('/loans/' . $loanId);
         if (!str_console_database_ready()) {
             $this->redirect('/loans');
             return;
@@ -443,6 +456,7 @@ final class LoansController extends BaseController
 
     public function paymentAdjust(int $loanId): void
     {
+        $this->requirePostedCsrf('/loans/' . $loanId);
         if (!str_console_database_ready()) {
             $this->redirect('/loans');
             return;
@@ -469,6 +483,7 @@ final class LoansController extends BaseController
 
     public function payment(int $loanId): void
     {
+        $this->requirePostedCsrf('/loans/' . $loanId);
         $amount = (float) Request::post('amount', 0);
         $paidOn = trim((string) Request::post('paid_on', ''));
         if ($amount <= 0 || $paidOn === '' || !preg_match('/^\d{4}-\d{2}-\d{2}$/', $paidOn)) {
@@ -495,6 +510,7 @@ final class LoansController extends BaseController
      */
     private function transitionLoan(int $loanId, callable $fn, string $auditAction, string $okMsg, string $failMsg): void
     {
+        $this->requirePostedCsrf('/loans/' . $loanId);
         if (!str_console_database_ready()) {
             $this->redirect('/loans');
             return;

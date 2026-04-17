@@ -25,6 +25,7 @@ final class SettingsRolesController extends BaseController
 
     public function save(): void
     {
+        $this->requirePostedCsrf('/settings/roles');
         if (!str_console_database_ready()) {
             $this->redirect('/settings/roles?error=' . rawurlencode('Database not configured.'));
             return;

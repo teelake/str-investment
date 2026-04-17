@@ -24,22 +24,34 @@ final class AuthController extends BaseController
 
     public function login(): void
     {
+        if (FormGuard::honeypotTriggered()) {
+            self::loginFailureDelay();
+            $this->redirect('/login?error=' . rawurlencode('Sign-in could not be completed. Please try again.'));
+            return;
+        }
+        if (!FormGuard::validatePost()) {
+            self::loginFailureDelay();
+            $this->redirect('/login?error=' . rawurlencode('This form expired. Refresh the page and try again.'));
+            return;
+        }
+
         $email = trim((string) Request::post('email', ''));
         $next = self::safeNextPath(Request::post('next'));
 
-        if ($email === '') {
-            $this->redirect('/login?error=' . rawurlencode('Enter your work email.'));
+        if ($email === '' || !InputValidate::emailOk($email)) {
+            $this->redirect('/login?error=' . rawurlencode('Enter a valid work email.'));
             return;
         }
 
         if (str_console_dev_login_enabled()) {
-            $role = (string) Request::post('role', '');
+            $role = trim((string) Request::post('role', ''));
             $defaults = str_console_default_role_grants();
-            if (!isset($defaults[$role])) {
-                $this->redirect('/login?error=' . rawurlencode('Invalid role.'));
+            if ($role === '' || !isset($defaults[$role])) {
+                $this->redirect('/login?error=' . rawurlencode('Select a valid role.'));
                 return;
             }
             ConsoleAuth::login(null, $email, $role, str_console_user_login_grants($role, null), null, null);
+            FormGuard::rotate();
             $this->redirect($next);
             return;
         }
@@ -52,6 +64,10 @@ final class AuthController extends BaseController
         $password = (string) Request::post('password', '');
         if ($password === '') {
             $this->redirect('/login?error=' . rawurlencode('Enter your password.'));
+            return;
+        }
+        if (strlen($password) > InputValidate::PASSWORD_MAX_BYTES) {
+            $this->redirect('/login?error=' . rawurlencode('Password is too long.'));
             return;
         }
 
@@ -82,6 +98,7 @@ final class AuthController extends BaseController
                 is_string($fname) && $fname !== '' ? $fname : null,
                 is_string($ph) && $ph !== '' ? $ph : null
             );
+            FormGuard::rotate();
             $this->redirect($next);
         } catch (Throwable $e) {
             self::loginFailureDelay();
@@ -129,8 +146,19 @@ final class AuthController extends BaseController
             return;
         }
 
+        if (FormGuard::honeypotTriggered()) {
+            self::loginFailureDelay();
+            $this->redirect('/forgot-password?error=' . rawurlencode('Request could not be processed. Please try again.'));
+            return;
+        }
+        if (!FormGuard::validatePost()) {
+            self::loginFailureDelay();
+            $this->redirect('/forgot-password?error=' . rawurlencode('This form expired. Refresh the page and try again.'));
+            return;
+        }
+
         $email = trim((string) Request::post('email', ''));
-        if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        if ($email === '' || !InputValidate::emailOk($email)) {
             $this->redirect('/forgot-password?error=' . rawurlencode('Enter a valid email address.'));
             return;
         }
@@ -229,6 +257,17 @@ final class AuthController extends BaseController
             return;
         }
 
+        if (FormGuard::honeypotTriggered()) {
+            self::loginFailureDelay();
+            $this->redirect('/reset-password?error=' . rawurlencode('Request could not be processed. Please try again.'));
+            return;
+        }
+        if (!FormGuard::validatePost()) {
+            self::loginFailureDelay();
+            $this->redirect('/reset-password?error=' . rawurlencode('This form expired. Open the link from your email again.'));
+            return;
+        }
+
         $token = trim((string) Request::post('token', ''));
         $csrf = trim((string) Request::post('csrf', ''));
         $expect = (string) ($_SESSION['str_pwd_reset_csrf'] ?? '');
@@ -240,6 +279,10 @@ final class AuthController extends BaseController
             return;
         }
 
+        if (strlen($new) > InputValidate::PASSWORD_MAX_BYTES || strlen($confirm) > InputValidate::PASSWORD_MAX_BYTES) {
+            $this->redirect('/reset-password?token=' . rawurlencode($token) . '&error=' . rawurlencode('Password is too long.'));
+            return;
+        }
         if (strlen($new) < 10) {
             $this->redirect('/reset-password?token=' . rawurlencode($token) . '&error=' . rawurlencode('Password must be at least 10 characters.'));
             return;
@@ -283,7 +326,9 @@ final class AuthController extends BaseController
 
     public function logout(): void
     {
+        $this->requirePostedCsrf('/login');
         ConsoleAuth::logout();
+        FormGuard::rotate();
         $this->redirect('/login');
     }
 

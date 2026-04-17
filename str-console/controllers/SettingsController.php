@@ -17,6 +17,7 @@ final class SettingsController extends BaseController
 
     public function savePolicies(): void
     {
+        $this->requirePostedCsrf('/settings/policies');
         if (!str_console_database_ready()) {
             $this->redirect('/settings/policies?error=' . rawurlencode('Database not configured.'));
             return;
