@@ -25,7 +25,9 @@ final class SettingsUsersController extends BaseController
             return;
         }
         try {
-            $data = (new UserRepository())->paginate($page, $q === '' ? null : $q, $st);
+            $actorRole = (string) (ConsoleAuth::user()['role'] ?? '');
+            $hideSysAdmins = !str_console_may_view_system_admin_user_records($actorRole);
+            $data = (new UserRepository())->paginate($page, $q === '' ? null : $q, $st, $hideSysAdmins);
             $this->render('settings/users/index', [
                 'pagination' => $data,
                 'filterQ' => $q,

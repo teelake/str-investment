@@ -30,7 +30,7 @@ final class LoanProductRepository
         $stmt = $pdo->prepare(
             'SELECT id, name, rate_percent, period_months, is_active, created_at, updated_at
              FROM loan_products WHERE ' . $where . '
-             ORDER BY is_active DESC, name ASC
+             ORDER BY id DESC
              LIMIT :lim OFFSET :off'
         );
         $stmt->bindValue(':lim', $perPage, PDO::PARAM_INT);
@@ -50,7 +50,7 @@ final class LoanProductRepository
         $pdo = Database::pdo();
         $stmt = $pdo->query(
             'SELECT id, name, rate_percent, period_months, is_active, created_at, updated_at
-             FROM loan_products ORDER BY is_active DESC, name ASC'
+             FROM loan_products ORDER BY id DESC'
         );
         /** @var list<array<string, mixed>> */
         return $stmt->fetchAll();

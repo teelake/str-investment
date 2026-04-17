@@ -30,6 +30,20 @@ final class LoanLedgerService
         $pdo = Database::pdo();
         $pdo->beginTransaction();
         try {
+            $sel = $pdo->prepare(
+                'SELECT id, created_at FROM loans WHERE id = :id AND status = \'approved\' FOR UPDATE'
+            );
+            $sel->execute([':id' => $loanId]);
+            $row = $sel->fetch();
+            if (!is_array($row)) {
+                $pdo->rollBack();
+                throw new RuntimeException('Loan is not approved for disbursement.');
+            }
+            if (!InputValidate::loanDisburseDateOk($periodDateYmd, (string) ($row['created_at'] ?? ''))) {
+                $pdo->rollBack();
+                throw new RuntimeException('Disbursement date must be from loan creation through today.');
+            }
+
             $u = $pdo->prepare(
                 'UPDATE loans SET status = \'active\', disbursed_at = :d, updated_at = NOW()
                  WHERE id = :id AND status = \'approved\''
@@ -98,7 +112,7 @@ final class LoanLedgerService
         $pdo->beginTransaction();
         try {
             $stmt = $pdo->prepare(
-                'SELECT id, status, rate_percent, period_months, disbursed_at
+                'SELECT id, status, rate_percent, period_months, disbursed_at, created_at
                  FROM loans WHERE id = :id FOR UPDATE'
             );
             $stmt->execute([':id' => $loanId]);
@@ -115,6 +129,10 @@ final class LoanLedgerService
             $disbStr = substr((string) $disbursedRaw, 0, 10);
             $disbursed = DateTimeImmutable::createFromFormat('Y-m-d', $disbStr);
             if ($disbursed === false || $disbursed->format('Y-m-d') !== $disbStr) {
+                $pdo->rollBack();
+                return 0;
+            }
+            if (!InputValidate::loanPostDisburseDateOk($asOfDateYmd, $disbStr, (string) ($loan['created_at'] ?? ''))) {
                 $pdo->rollBack();
                 return 0;
             }
@@ -215,12 +233,16 @@ final class LoanLedgerService
         $pdo = Database::pdo();
         $pdo->beginTransaction();
         try {
-            $stmt = $pdo->prepare('SELECT id, status, rate_percent FROM loans WHERE id = :id FOR UPDATE');
+            $stmt = $pdo->prepare('SELECT id, status, rate_percent, disbursed_at FROM loans WHERE id = :id FOR UPDATE');
             $stmt->execute([':id' => $loanId]);
             $loan = $stmt->fetch();
             if (!is_array($loan) || ($loan['status'] ?? '') !== 'active') {
                 $pdo->rollBack();
                 throw new RuntimeException('Loan is not active.');
+            }
+            if (!InputValidate::loanPostDisburseDateOk($paymentDateYmd, (string) ($loan['disbursed_at'] ?? ''))) {
+                $pdo->rollBack();
+                throw new RuntimeException('Payment date must be from disbursement through today.');
             }
 
             $rate = (float) $loan['rate_percent'];
@@ -240,7 +262,16 @@ final class LoanLedgerService
             $lineNo = $ledger->nextLineNo($loanId);
             $interest = self::money($opening * ($rate / 100.0));
             $amountDue = self::money($opening + $interest);
-            $pay = self::money(min($amount, $amountDue));
+            $payIn = self::money($amount);
+            if ($payIn > $amountDue) {
+                $pdo->rollBack();
+                throw new RuntimeException(
+                    'Payment cannot exceed the amount due for this period (opening balance plus interest): '
+                    . number_format($amountDue, 2, '.', '')
+                    . '.'
+                );
+            }
+            $pay = $payIn;
             $closing = self::money($amountDue - $pay);
 
             $ledger->insertLine(

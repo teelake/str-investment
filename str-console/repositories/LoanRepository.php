@@ -379,12 +379,12 @@ final class LoanRepository
         $sel = 'SELECT l.id, l.status, l.principal_amount, l.rate_percent, l.updated_at, c.full_name AS customer_name
                 FROM loans l INNER JOIN customers c ON c.id = l.customer_id';
         if ($wide) {
-            $stmt = $pdo->prepare($sel . ' ORDER BY l.updated_at DESC, l.id DESC LIMIT :lim');
+            $stmt = $pdo->prepare($sel . ' ORDER BY l.id DESC LIMIT :lim');
             $stmt->bindValue(':lim', $limit, PDO::PARAM_INT);
             $stmt->execute();
         } else {
             $stmt = $pdo->prepare(
-                $sel . ' WHERE (l.assigned_user_id <=> :uid OR c.assigned_user_id <=> :uid2) ORDER BY l.updated_at DESC, l.id DESC LIMIT :lim'
+                $sel . ' WHERE (l.assigned_user_id <=> :uid OR c.assigned_user_id <=> :uid2) ORDER BY l.id DESC LIMIT :lim'
             );
             $stmt->bindValue(':uid', $consoleUserId, PDO::PARAM_INT);
             $stmt->bindValue(':uid2', $consoleUserId, PDO::PARAM_INT);

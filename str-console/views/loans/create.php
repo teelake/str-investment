@@ -42,6 +42,7 @@ $err = is_string($error) ? $error : '';
       <label style="display:grid; gap:6px; font-size:13px; font-weight:650; color:var(--muted);">
         Product
         <select name="loan_product_id" required style="padding:12px 14px; border-radius:14px; border:1px solid var(--line); background:#fff;">
+          <option value="" selected disabled>Select a product…</option>
           <?php foreach ($products as $p): ?>
             <?php $pid = (int) ($p['id'] ?? 0); ?>
             <option value="<?= $pid ?>"><?= htmlspecialchars((string) ($p['name'] ?? ''), ENT_QUOTES, 'UTF-8') ?> — <?= htmlspecialchars((string) ($p['rate_percent'] ?? ''), ENT_QUOTES, 'UTF-8') ?>%</option>

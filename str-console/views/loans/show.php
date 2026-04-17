@@ -14,6 +14,7 @@ declare(strict_types=1);
 /** @var bool $canAdjustPayment */
 /** @var float $lastLineAmountDue */
 /** @var float|null $lastLinePayment */
+/** @var float|null $paymentAmountDueMax */
 /** @var bool $canEditLoan */
 /** @var mixed $flash */
 /** @var mixed $flashError */
@@ -40,8 +41,27 @@ $canVoidPayment = $canVoidPayment ?? false;
 $canAdjustPayment = $canAdjustPayment ?? false;
 $lastLineAmountDue = $lastLineAmountDue ?? 0.0;
 $lastLinePayment = $lastLinePayment ?? null;
+$paymentAmountDueMax = $paymentAmountDueMax ?? null;
 $canEditLoan = $canEditLoan ?? false;
-$today = (new DateTimeImmutable('now'))->format('Y-m-d');
+$today = InputValidate::todayYmd();
+$loanCreatedDay = substr((string) ($loan['created_at'] ?? ''), 0, 10);
+if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $loanCreatedDay)) {
+    $loanCreatedDay = InputValidate::LOAN_EVENT_DATE_MIN;
+}
+$disburseDateMin = max(InputValidate::LOAN_EVENT_DATE_MIN, $loanCreatedDay);
+$disburseDefault = $today;
+if ($disburseDefault < $disburseDateMin) {
+    $disburseDefault = $disburseDateMin;
+}
+
+$disbursedDay = substr((string) ($loan['disbursed_at'] ?? ''), 0, 10);
+$paymentDateMin = preg_match('/^\d{4}-\d{2}-\d{2}$/', $disbursedDay)
+    ? max(InputValidate::LOAN_EVENT_DATE_MIN, $disbursedDay)
+    : InputValidate::LOAN_EVENT_DATE_MIN;
+$paymentDefault = $today;
+if ($paymentDefault < $paymentDateMin) {
+    $paymentDefault = $paymentDateMin;
+}
 ?>
 <div class="container" style="padding:0">
   <div style="margin-bottom: 20px;">
@@ -110,7 +130,7 @@ $today = (new DateTimeImmutable('now'))->format('Y-m-d');
         <?php require STR_CONSOLE_ROOT . '/views/partials/csrf.php'; ?>
         <label style="display:grid; gap:4px; font-size:12px; font-weight:650; color:var(--muted);">
           Disbursement date
-          <input type="date" name="disbursed_on" value="<?= htmlspecialchars($today, ENT_QUOTES, 'UTF-8') ?>" required style="padding:10px 12px; border-radius:12px; border:1px solid var(--line);" />
+          <input type="date" name="disbursed_on" value="<?= htmlspecialchars($disburseDefault, ENT_QUOTES, 'UTF-8') ?>" min="<?= htmlspecialchars($disburseDateMin, ENT_QUOTES, 'UTF-8') ?>" max="<?= htmlspecialchars($today, ENT_QUOTES, 'UTF-8') ?>" required style="padding:10px 12px; border-radius:12px; border:1px solid var(--line);" />
         </label>
         <button type="submit" class="btn primary">Disburse &amp; open ledger</button>
       </form>
@@ -119,6 +139,16 @@ $today = (new DateTimeImmutable('now'))->format('Y-m-d');
       <form method="post" action="<?= htmlspecialchars($basePath . '/loans/' . $id . '/close', ENT_QUOTES, 'UTF-8') ?>" style="display:inline;" onsubmit="return confirm('Close this loan? It must have zero outstanding balance.');">
         <?php require STR_CONSOLE_ROOT . '/views/partials/csrf.php'; ?>
         <button type="submit" class="btn ghost" style="border-color:rgba(15,106,74,.35); color:var(--green2);">Close loan</button>
+      </form>
+    <?php endif; ?>
+    <?php if ($canAccrue && $st === 'active'): ?>
+      <form method="post" action="<?= htmlspecialchars($basePath . '/loans/' . $id . '/accrue', ENT_QUOTES, 'UTF-8') ?>" style="display:flex; flex-wrap:wrap; gap:8px; align-items:flex-end;">
+        <?php require STR_CONSOLE_ROOT . '/views/partials/csrf.php'; ?>
+        <label style="display:grid; gap:4px; font-size:12px; font-weight:650; color:var(--muted);">
+          Accrue through
+          <input type="date" name="as_of" value="<?= htmlspecialchars($today, ENT_QUOTES, 'UTF-8') ?>" min="<?= htmlspecialchars($paymentDateMin, ENT_QUOTES, 'UTF-8') ?>" max="<?= htmlspecialchars($today, ENT_QUOTES, 'UTF-8') ?>" required style="padding:10px 12px; border-radius:12px; border:1px solid var(--line);" />
+        </label>
+        <button type="submit" class="btn ghost">Apply monthly accrual</button>
       </form>
     <?php endif; ?>
   </div>
@@ -130,14 +160,17 @@ $today = (new DateTimeImmutable('now'))->format('Y-m-d');
         <?php require STR_CONSOLE_ROOT . '/views/partials/csrf.php'; ?>
         <label style="display:grid; gap:4px; font-size:12px; font-weight:650; color:var(--muted);">
           Amount (₦)
-          <input name="amount" type="number" step="0.01" min="0.01" required style="padding:10px 12px; border-radius:12px; border:1px solid var(--line); width:140px;" />
+          <input name="amount" type="number" step="0.01" min="0.01"<?= $paymentAmountDueMax !== null ? ' max="' . htmlspecialchars((string) $paymentAmountDueMax, ENT_QUOTES, 'UTF-8') . '"' : '' ?> required style="padding:10px 12px; border-radius:12px; border:1px solid var(--line); width:140px;" />
         </label>
         <label style="display:grid; gap:4px; font-size:12px; font-weight:650; color:var(--muted);">
           Paid on
-          <input type="date" name="paid_on" value="<?= htmlspecialchars($today, ENT_QUOTES, 'UTF-8') ?>" required style="padding:10px 12px; border-radius:12px; border:1px solid var(--line);" />
+          <input type="date" name="paid_on" value="<?= htmlspecialchars($paymentDefault, ENT_QUOTES, 'UTF-8') ?>" min="<?= htmlspecialchars($paymentDateMin, ENT_QUOTES, 'UTF-8') ?>" max="<?= htmlspecialchars($today, ENT_QUOTES, 'UTF-8') ?>" required style="padding:10px 12px; border-radius:12px; border:1px solid var(--line);" />
         </label>
         <button type="submit" class="btn primary">Apply payment</button>
       </form>
+      <?php if ($paymentAmountDueMax !== null): ?>
+        <p style="margin: 10px 0 0; font-size: 12px; color: var(--muted2);">Maximum for this period (balance + interest): <strong><?= $fmt($paymentAmountDueMax) ?></strong>. Larger amounts are rejected.</p>
+      <?php endif; ?>
       <p style="margin: 12px 0 0; font-size: 12px; color: var(--muted2);">Adds a ledger line: interest on the previous closing, then applies your payment. Use <strong>Apply monthly accrual</strong> above (or the server cron script) to insert unpaid month lines first when that policy is enabled.</p>
     </div>
   <?php endif; ?>

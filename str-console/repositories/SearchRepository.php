@@ -80,7 +80,7 @@ final class SearchRepository
                 $stmt = $pdo->prepare(
                     $selectList . $from . '
                     WHERE ' . $match . '
-                    ORDER BY c.full_name ASC
+                    ORDER BY c.id DESC
                     LIMIT :lim OFFSET :off'
                 );
                 foreach ($params as $k => $v) {
@@ -100,7 +100,7 @@ final class SearchRepository
                 $stmt = $pdo->prepare(
                     $selectList . $from . '
                     WHERE ' . $where . '
-                    ORDER BY c.full_name ASC
+                    ORDER BY c.id DESC
                     LIMIT :lim OFFSET :off'
                 );
                 foreach ($p2 as $k => $v) {

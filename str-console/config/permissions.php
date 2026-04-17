@@ -386,6 +386,14 @@ function str_console_assignable_role_keys(string $actorRoleKey): array
 }
 
 /**
+ * Only system_admin may see other system_admin accounts (users list) and their audit trail.
+ */
+function str_console_may_view_system_admin_user_records(string $actorRoleKey): bool
+{
+    return $actorRoleKey === 'system_admin';
+}
+
+/**
  * @param list<string> $grants
  * @param list<string> $required
  */

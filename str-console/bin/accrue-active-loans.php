@@ -33,12 +33,14 @@ if (!str_console_database_ready()) {
     exit(1);
 }
 
-$asOf = isset($argv[1]) ? trim((string) $argv[1]) : '';
-if ($asOf === '') {
-    $asOf = (new DateTimeImmutable('now'))->format('Y-m-d');
-}
-if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $asOf)) {
+$asOfRaw = isset($argv[1]) ? trim((string) $argv[1]) : '';
+$asOf = $asOfRaw === '' ? InputValidate::todayYmd() : InputValidate::parseDateYmd($asOfRaw);
+if ($asOf === null) {
     fwrite(STDERR, "Invalid date. Use YYYY-MM-DD or omit for today.\n");
+    exit(1);
+}
+if ($asOf > InputValidate::todayYmd()) {
+    fwrite(STDERR, "Accrual date cannot be in the future.\n");
     exit(1);
 }
 

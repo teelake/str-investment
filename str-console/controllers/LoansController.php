@@ -273,6 +273,16 @@ final class LoansController extends BaseController
             && $lastLine['payment_amount'] !== null
             && (float) $lastLine['payment_amount'] > 0;
 
+        $paymentAmountDueMax = null;
+        if ($active && is_array($lastLine)) {
+            $obCap = (float) ($lastLine['closing_balance'] ?? 0);
+            if ($obCap > 0) {
+                $rCap = (float) ($loan['rate_percent'] ?? 0);
+                $intCap = LoanLedgerService::money($obCap * ($rCap / 100.0));
+                $paymentAmountDueMax = LoanLedgerService::money($obCap + $intCap);
+            }
+        }
+
         $this->render('loans/show', [
             'loan' => $loan,
             'ledger' => $lines,
@@ -298,6 +308,7 @@ final class LoansController extends BaseController
             'lastLinePayment' => is_array($lastLine) && isset($lastLine['payment_amount']) && $lastLine['payment_amount'] !== null
                 ? (float) $lastLine['payment_amount']
                 : null,
+            'paymentAmountDueMax' => $paymentAmountDueMax,
             'flash' => Request::query('flash'),
             'flashError' => Request::query('error'),
         ]);
@@ -345,7 +356,8 @@ final class LoansController extends BaseController
     {
         $this->requirePostedCsrf('/loans/' . $loanId);
         $date = trim((string) Request::post('disbursed_on', ''));
-        if ($date === '' || !preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
+        $ymd = InputValidate::parseDateYmd($date);
+        if ($ymd === null) {
             $this->redirect('/loans/' . $loanId . '?error=' . rawurlencode('Use a valid disbursement date (YYYY-MM-DD).'));
             return;
         }
@@ -355,9 +367,13 @@ final class LoansController extends BaseController
             $this->redirect('/loans');
             return;
         }
+        if (!InputValidate::loanDisburseDateOk($ymd, (string) ($loan['created_at'] ?? ''))) {
+            $this->redirect('/loans/' . $loanId . '?error=' . rawurlencode('Disbursement date must be from the loan creation date through today (not in the future).'));
+            return;
+        }
         try {
-            LoanLedgerService::completeDisbursement($loanId, $date);
-            AuditLogger::log(ConsoleAuth::userId(), 'loan.disburse', 'loan', $loanId, ['date' => $date]);
+            LoanLedgerService::completeDisbursement($loanId, $ymd);
+            AuditLogger::log(ConsoleAuth::userId(), 'loan.disburse', 'loan', $loanId, ['date' => $ymd]);
             $this->redirect('/loans/' . $loanId . '?flash=' . rawurlencode('Disbursed. First ledger line created.'));
         } catch (Throwable $e) {
             $this->redirect('/loans/' . $loanId . '?error=' . rawurlencode($e->getMessage()));
@@ -386,9 +402,14 @@ final class LoansController extends BaseController
             return;
         }
 
-        $asOf = trim((string) Request::post('as_of', ''));
-        if ($asOf === '' || !preg_match('/^\d{4}-\d{2}-\d{2}$/', $asOf)) {
-            $asOf = (new DateTimeImmutable('now'))->format('Y-m-d');
+        $asOfRaw = trim((string) Request::post('as_of', ''));
+        $asOf = InputValidate::parseDateYmd($asOfRaw);
+        if ($asOf === null) {
+            $asOf = InputValidate::todayYmd();
+        }
+        if (!InputValidate::loanPostDisburseDateOk($asOf, (string) ($loan['disbursed_at'] ?? ''), (string) ($loan['created_at'] ?? ''))) {
+            $this->redirect('/loans/' . $loanId . '?error=' . rawurlencode('Accrual date must be on or after booking and disbursement, through today.'));
+            return;
         }
 
         try {
@@ -500,8 +521,9 @@ final class LoansController extends BaseController
         $this->requirePostedCsrf('/loans/' . $loanId);
         $amount = (float) Request::post('amount', 0);
         $paidOn = trim((string) Request::post('paid_on', ''));
-        if ($amount <= 0 || $paidOn === '' || !preg_match('/^\d{4}-\d{2}-\d{2}$/', $paidOn)) {
-            $this->redirect('/loans/' . $loanId . '?error=' . rawurlencode('Enter amount and payment date.'));
+        $ymd = InputValidate::parseDateYmd($paidOn);
+        if (!is_finite($amount) || $amount <= 0 || $ymd === null) {
+            $this->redirect('/loans/' . $loanId . '?error=' . rawurlencode('Enter a valid amount and payment date.'));
             return;
         }
         $loanRepo = new LoanRepository();
@@ -510,9 +532,13 @@ final class LoansController extends BaseController
             $this->redirect('/loans');
             return;
         }
+        if (!InputValidate::loanPostDisburseDateOk($ymd, (string) ($loan['disbursed_at'] ?? ''), (string) ($loan['created_at'] ?? ''))) {
+            $this->redirect('/loans/' . $loanId . '?error=' . rawurlencode('Payment date must be on or after booking and disbursement, and not in the future.'));
+            return;
+        }
         try {
-            LoanLedgerService::applyPayment($loanId, $amount, $paidOn);
-            AuditLogger::log(ConsoleAuth::userId(), 'loan.payment', 'loan', $loanId, ['amount' => $amount, 'date' => $paidOn]);
+            LoanLedgerService::applyPayment($loanId, $amount, $ymd);
+            AuditLogger::log(ConsoleAuth::userId(), 'loan.payment', 'loan', $loanId, ['amount' => $amount, 'date' => $ymd]);
             $this->redirect('/loans/' . $loanId . '?flash=' . rawurlencode('Payment recorded.'));
         } catch (Throwable $e) {
             $this->redirect('/loans/' . $loanId . '?error=' . rawurlencode($e->getMessage()));

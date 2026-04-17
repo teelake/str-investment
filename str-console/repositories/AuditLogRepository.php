@@ -9,8 +9,13 @@ final class AuditLogRepository
     /**
      * @return array{rows: list<array<string, mixed>>, total: int, page: int, per_page: int}
      */
-    public function paginate(int $page, ?string $entityType, ?string $dateFromYmd = null, ?string $dateToYmd = null): array
-    {
+    public function paginate(
+        int $page,
+        ?string $entityType,
+        ?string $dateFromYmd = null,
+        ?string $dateToYmd = null,
+        bool $hideActionsBySystemAdminActors = false
+    ): array {
         $page = Pagination::sanitizeRequestedPage($page);
         $perPage = self::PER_PAGE;
         $pdo = Database::pdo();
@@ -18,29 +23,34 @@ final class AuditLogRepository
         $conds = [];
         $params = [];
         if ($entityType !== null && $entityType !== '') {
-            $conds[] = 'entity_type = :t';
+            $conds[] = 'al.entity_type = :t';
             $params[':t'] = $entityType;
         }
         if ($dateFromYmd !== null) {
-            $conds[] = 'DATE(created_at) >= :dfrom';
+            $conds[] = 'DATE(al.created_at) >= :dfrom';
             $params[':dfrom'] = $dateFromYmd;
         }
         if ($dateToYmd !== null) {
-            $conds[] = 'DATE(created_at) <= :dto';
+            $conds[] = 'DATE(al.created_at) <= :dto';
             $params[':dto'] = $dateToYmd;
         }
+        if ($hideActionsBySystemAdminActors) {
+            $conds[] = '(al.actor_user_id IS NULL OR NOT EXISTS (SELECT 1 FROM console_users cu WHERE cu.id = al.actor_user_id AND cu.role_key = :sar))';
+            $params[':sar'] = 'system_admin';
+        }
         $where = $conds === [] ? '1=1' : implode(' AND ', $conds);
+        $from = 'FROM audit_log al';
 
-        $stmtCount = $pdo->prepare('SELECT COUNT(*) AS c FROM audit_log WHERE ' . $where);
+        $stmtCount = $pdo->prepare('SELECT COUNT(*) AS c ' . $from . ' WHERE ' . $where);
         $stmtCount->execute($params);
         $total = (int) ($stmtCount->fetch()['c'] ?? 0);
         $page = Pagination::normalizePage($page, $total, $perPage);
         $offset = ($page - 1) * $perPage;
 
         $stmt = $pdo->prepare(
-            'SELECT id, actor_user_id, action, entity_type, entity_id, payload_json, created_at
-             FROM audit_log WHERE ' . $where . '
-             ORDER BY id DESC LIMIT :lim OFFSET :off'
+            'SELECT al.id, al.actor_user_id, al.action, al.entity_type, al.entity_id, al.payload_json, al.created_at
+             ' . $from . ' WHERE ' . $where . '
+             ORDER BY al.id DESC LIMIT :lim OFFSET :off'
         );
         foreach ($params as $k => $v) {
             $stmt->bindValue($k, $v);

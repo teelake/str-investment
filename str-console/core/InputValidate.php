@@ -7,6 +7,9 @@ declare(strict_types=1);
  */
 final class InputValidate
 {
+    /** Inclusive floor for loan disbursement, payments, and accrual dates (calendar). */
+    public const LOAN_EVENT_DATE_MIN = '2000-01-01';
+
     public const EMAIL_MAX = 190;
 
     public const PERSON_NAME_MAX = 190;
@@ -77,5 +80,66 @@ final class InputValidate
             return false;
         }
         return (bool) filter_var($email, FILTER_VALIDATE_EMAIL);
+    }
+
+    /** Real calendar day Y-m-d, or null if malformed. */
+    public static function parseDateYmd(string $raw): ?string
+    {
+        $raw = trim($raw);
+        if ($raw === '' || !preg_match('/^\d{4}-\d{2}-\d{2}$/', $raw)) {
+            return null;
+        }
+        $dt = DateTimeImmutable::createFromFormat('Y-m-d', $raw);
+        if ($dt === false || $dt->format('Y-m-d') !== $raw) {
+            return null;
+        }
+        return $raw;
+    }
+
+    public static function todayYmd(): string
+    {
+        return (new DateTimeImmutable('today'))->format('Y-m-d');
+    }
+
+    /**
+     * Disbursement: not before loan record existed, not after today.
+     *
+     * @param string $ymd From parseDateYmd
+     * @param string $loanCreatedAt DB datetime or date string
+     */
+    public static function loanDisburseDateOk(string $ymd, string $loanCreatedAt): bool
+    {
+        $today = self::todayYmd();
+        $created = substr(trim($loanCreatedAt), 0, 10);
+        if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $created)) {
+            $created = self::LOAN_EVENT_DATE_MIN;
+        }
+        $floor = max(self::LOAN_EVENT_DATE_MIN, $created);
+
+        return $ymd >= $floor && $ymd <= $today;
+    }
+
+    /**
+     * Payment date or accrual as-of: not before loan booking (created_at) or disbursement,
+     * whichever is later; not after today.
+     *
+     * @param string $ymd From parseDateYmd
+     * @param string $disbursedAt DB datetime or date string
+     * @param string $bookedAt Loan created_at (booking). Empty = ignore booking floor (disburse-only checks).
+     */
+    public static function loanPostDisburseDateOk(string $ymd, string $disbursedAt, string $bookedAt = ''): bool
+    {
+        $today = self::todayYmd();
+        $disb = substr(trim($disbursedAt), 0, 10);
+        if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $disb)) {
+            return false;
+        }
+        $floor = max(self::LOAN_EVENT_DATE_MIN, $disb);
+        $book = substr(trim($bookedAt), 0, 10);
+        if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $book)) {
+            $floor = max($floor, $book);
+        }
+
+        return $ymd >= $floor && $ymd <= $today;
     }
 }

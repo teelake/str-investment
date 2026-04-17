@@ -30,7 +30,9 @@ final class AuditController extends BaseController
 
         try {
             $repo = new AuditLogRepository();
-            $data = $repo->paginate($page, $filterForRepo, $fromNorm, $toNorm);
+            $actorRole = (string) (ConsoleAuth::user()['role'] ?? '');
+            $hideSysAdminActors = !str_console_may_view_system_admin_user_records($actorRole);
+            $data = $repo->paginate($page, $filterForRepo, $fromNorm, $toNorm, $hideSysAdminActors);
             $types = $repo->distinctEntityTypes();
             $this->render('audit/index', [
                 'pagination' => $data,

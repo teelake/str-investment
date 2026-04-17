@@ -10,7 +10,7 @@ final class UserRepository
      * @param ''|'active'|'inactive' $status
      * @return array{rows: list<array<string, mixed>>, total: int, page: int, per_page: int}
      */
-    public function paginate(int $page, ?string $searchQ, string $status = ''): array
+    public function paginate(int $page, ?string $searchQ, string $status = '', bool $excludeSystemAdminAccounts = false): array
     {
         $page = Pagination::sanitizeRequestedPage($page);
         $perPage = self::PER_PAGE;
@@ -18,6 +18,10 @@ final class UserRepository
 
         $where = ['1=1'];
         $params = [];
+        if ($excludeSystemAdminAccounts) {
+            $where[] = 'role_key <> :hide_sys_role';
+            $params[':hide_sys_role'] = 'system_admin';
+        }
         if ($status === 'active') {
             $where[] = 'is_active = 1';
         } elseif ($status === 'inactive') {
@@ -49,7 +53,7 @@ final class UserRepository
         $stmt = $pdo->prepare(
             'SELECT id, email, role_key, extra_grants_json, full_name, phone, is_active, created_at, updated_at
              FROM console_users WHERE ' . $whereSql . '
-             ORDER BY is_active DESC, email ASC
+             ORDER BY id DESC
              LIMIT :lim OFFSET :off'
         );
         foreach ($params as $k => $v) {
@@ -122,7 +126,7 @@ final class UserRepository
         $pdo = Database::pdo();
         $stmt = $pdo->query(
             'SELECT id, email, role_key, extra_grants_json, full_name, phone, is_active, created_at, updated_at
-             FROM console_users ORDER BY is_active DESC, email ASC'
+             FROM console_users ORDER BY id DESC'
         );
         /** @var list<array<string, mixed>> */
         return $stmt->fetchAll();
