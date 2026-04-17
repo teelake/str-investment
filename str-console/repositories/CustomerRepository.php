@@ -103,11 +103,11 @@ final class CustomerRepository
         }
         $viewAll = str_console_authorize($grants, ['data.view_all_customers']);
         if (!$viewAll) {
-            $aid = $row['assigned_user_id'] ?? null;
-            if ($aid === null && $consoleUserId === null) {
+            if ($consoleUserId === null) {
                 return null;
             }
-            if ((int) ($aid ?? 0) !== (int) ($consoleUserId ?? 0)) {
+            $aid = $row['assigned_user_id'] ?? null;
+            if ((int) ($aid ?? 0) !== (int) $consoleUserId) {
                 return null;
             }
         }

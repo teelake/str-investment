@@ -8,6 +8,17 @@ declare(strict_types=1);
 
 define('STR_CONSOLE_ROOT', __DIR__);
 
+/**
+ * Load optional local overrides first so STR_CONSOLE_ERROR_LOG / DB / env constants exist.
+ */
+$local = STR_CONSOLE_ROOT . '/config/local.php';
+if (is_file($local)) {
+    require_once $local;
+}
+
+require_once STR_CONSOLE_ROOT . '/core/ErrorLogging.php';
+str_console_bootstrap_error_logging();
+
 require_once STR_CONSOLE_ROOT . '/config/permissions.php';
 
 if (session_status() !== PHP_SESSION_ACTIVE) {
@@ -15,14 +26,6 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
         'cookie_httponly' => true,
         'cookie_samesite' => 'Lax',
     ]);
-}
-
-/**
- * Load optional local overrides (not committed): dev flags, DB DSN, etc.
- */
-$local = STR_CONSOLE_ROOT . '/config/local.php';
-if (is_file($local)) {
-    require_once $local;
 }
 
 /**
@@ -39,9 +42,15 @@ function str_console_dev_login_enabled(): bool
 require_once STR_CONSOLE_ROOT . '/core/Request.php';
 require_once STR_CONSOLE_ROOT . '/core/ConsoleAuth.php';
 require_once STR_CONSOLE_ROOT . '/core/BaseController.php';
+require_once STR_CONSOLE_ROOT . '/core/Database.php';
+
+require_once STR_CONSOLE_ROOT . '/services/AuditLogger.php';
+require_once STR_CONSOLE_ROOT . '/repositories/UserRepository.php';
+require_once STR_CONSOLE_ROOT . '/repositories/CustomerRepository.php';
 
 require_once STR_CONSOLE_ROOT . '/controllers/AuthController.php';
 require_once STR_CONSOLE_ROOT . '/controllers/DashboardController.php';
+require_once STR_CONSOLE_ROOT . '/controllers/CustomersController.php';
 
 require_once STR_CONSOLE_ROOT . '/config/routes.php';
 

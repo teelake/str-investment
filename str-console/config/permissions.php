@@ -256,3 +256,7 @@ function str_console_authorize_route(array $grants, string $routeId): bool
     }
     return str_console_authorize($grants, $map[$routeId]);
 }
+
+// Always load DB helpers with permissions so controllers never see undefined functions
+// if an older bootstrap omitted config/database.php.
+require_once __DIR__ . '/database.php';

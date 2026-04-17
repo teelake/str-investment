@@ -19,5 +19,9 @@ function str_console_routes(): array
         ['GET', '/login', AuthController::class, 'showLogin', 'auth.login'],
         ['POST', '/login', AuthController::class, 'login', 'auth.login.submit'],
         ['POST', '/logout', AuthController::class, 'logout', 'auth.logout'],
+
+        ['GET', '/customers', CustomersController::class, 'index', 'customers.index'],
+        ['GET', '/customers/create', CustomersController::class, 'create', 'customers.create'],
+        ['POST', '/customers', CustomersController::class, 'store', 'customers.store'],
     ];
 }

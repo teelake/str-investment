@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 /** @var bool $devLogin */
+/** @var bool $dbReady */
 /** @var list<string> $roles */
 /** @var string $next */
 /** @var mixed $error */
@@ -38,8 +39,15 @@ $err = is_string($error) ? $error : '';
           </select>
         </label>
         <p style="margin:0; font-size: 12px; color: var(--muted2);">Demo login: set environment variable <code style="background: rgba(13,15,18,.06); padding: 2px 6px; border-radius: 8px;">STR_CONSOLE_DEV_LOGIN=1</code>. Replace with real authentication before production.</p>
+      <?php elseif ($dbReady): ?>
+        <label style="display:grid; gap:6px; font-size: 13px; font-weight: 650; color: var(--muted);">
+          Password
+          <input name="password" type="password" required autocomplete="current-password"
+            style="padding: 12px 14px; border-radius: 14px; border: 1px solid var(--line); background: #fff; color: var(--ink);" />
+        </label>
+        <p style="margin:0; font-size: 12px; color: var(--muted2);">Use an account created with <code style="background: rgba(13,15,18,.06); padding: 2px 6px; border-radius: 8px;">php str-console/bin/seed-admin.php</code>.</p>
       <?php else: ?>
-        <p style="margin:0; font-size: 13px; color: var(--muted);">Password-based sign-in is not wired yet. Enable demo login for local testing or implement your auth in <code style="background: rgba(13,15,18,.06); padding: 2px 6px; border-radius: 8px;">AuthController::login()</code>.</p>
+        <p style="margin:0; font-size: 13px; color: var(--muted);">Configure the database (see <code style="background: rgba(13,15,18,.06); padding: 2px 6px; border-radius: 8px;">str-console/config/database.php</code>) or enable <code style="background: rgba(13,15,18,.06); padding: 2px 6px; border-radius: 8px;">STR_CONSOLE_DEV_LOGIN=1</code> for demo access.</p>
       <?php endif; ?>
 
       <button type="submit" class="btn primary" style="justify-content: center; margin-top: 4px;">Continue</button>

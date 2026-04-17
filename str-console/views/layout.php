@@ -31,7 +31,13 @@ $styles = Request::asset('assets/styles.css');
     }
     .console-brand { font-weight: 800; letter-spacing: -0.02em; font-size: 15px; }
     .console-brand span { color: var(--muted); font-weight: 600; margin-left: 8px; font-size: 13px; }
-    .console-actions { display: flex; align-items: center; gap: 10px; }
+    .console-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
+    .console-nav { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-right: auto; }
+    .console-nav a {
+      font-size: 13px; font-weight: 650; color: var(--muted);
+      padding: 8px 12px; border-radius: 999px;
+    }
+    .console-nav a:hover { background: rgba(13,15,18,.04); color: var(--ink); }
     .console-main {
       flex: 1;
       width: min(var(--container), calc(100% - (var(--gutter) * 2)));
@@ -44,9 +50,17 @@ $styles = Request::asset('assets/styles.css');
   <div class="console-shell">
     <header class="console-top">
       <div class="console-top__inner">
-        <div class="console-brand">STR Console<span>Internal</span></div>
+        <a class="console-brand" href="<?= htmlspecialchars($basePath . '/', ENT_QUOTES, 'UTF-8') ?>" style="color: inherit; text-decoration: none;">STR Console<span>Internal</span></a>
         <div class="console-actions">
           <?php if (ConsoleAuth::check()): ?>
+            <nav class="console-nav" aria-label="Console">
+              <?php if (str_console_authorize_route(ConsoleAuth::grants(), 'dashboard.index')): ?>
+                <a href="<?= htmlspecialchars($basePath . '/', ENT_QUOTES, 'UTF-8') ?>">Dashboard</a>
+              <?php endif; ?>
+              <?php if (str_console_authorize_route(ConsoleAuth::grants(), 'customers.index')): ?>
+                <a href="<?= htmlspecialchars($basePath . '/customers', ENT_QUOTES, 'UTF-8') ?>">Customers</a>
+              <?php endif; ?>
+            </nav>
             <form method="post" action="<?= htmlspecialchars($basePath . '/logout', ENT_QUOTES, 'UTF-8') ?>">
               <button type="submit" class="btn ghost" style="font-size: 13px; padding: 10px 14px;">Sign out</button>
             </form>
