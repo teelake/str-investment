@@ -40,7 +40,7 @@ $err = is_string($error) ? $error : '';
         <input type="checkbox" name="ledger_auto_accrue" value="1" <?= $ledgerAutoAccrue ? 'checked' : '' ?> style="margin-top: 3px;" />
         <span>
           <strong>Automatic monthly ledger accrual</strong><br />
-          <span style="color: var(--muted); font-size: 13px;">When checked, opening an active loan runs interest accrual through today: new ledger lines with no payment (same interest-on-closing formula as payments), one per month after the last line, until the loan’s booked <code style="background: rgba(13,15,18,.06); padding: 2px 6px; border-radius: 8px;">period_months</code> from disbursement. Turn off to accrue only when recording payments.</span>
+          <span style="color: var(--muted); font-size: 13px;">When checked, staff can run <strong>Apply accrual</strong> on an active loan (POST only) and you can schedule <code style="background: rgba(13,15,18,.06); padding: 2px 6px; border-radius: 8px;">bin/accrue-active-loans.php</code> for batch runs. Accrual adds ledger lines with no payment (same interest-on-closing formula as payments), one calendar month after the last line, until <code style="background: rgba(13,15,18,.06); padding: 2px 6px; border-radius: 8px;">period_months</code> from disbursement or the chosen date. Uncheck to disable accrual (payments still work).</span>
         </span>
       </label>
       <button type="submit" class="btn primary" style="justify-self: start;">Save policies</button>

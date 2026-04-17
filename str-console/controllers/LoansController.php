@@ -127,24 +127,7 @@ final class LoansController extends BaseController
         }
         $outstanding = LoanLedgerService::outstandingForLoan($loanId);
         $grants = ConsoleAuth::grants();
-
-        $accrualAdded = 0;
-        if (($loan['status'] ?? '') === 'active' && !empty($loan['disbursed_at']) && PolicyService::ledgerAutoAccrue()) {
-            try {
-                $today = (new DateTimeImmutable('now'))->format('Y-m-d');
-                $accrualAdded = LoanLedgerService::runPeriodicAccrualThrough($loanId, $today);
-                if ($accrualAdded > 0) {
-                    AuditLogger::log(ConsoleAuth::userId(), 'loan.ledger.accrual', 'loan', $loanId, [
-                        'lines_added' => $accrualAdded,
-                        'through' => $today,
-                    ]);
-                    $lines = (new LoanLedgerRepository())->listByLoan($loanId);
-                    $outstanding = LoanLedgerService::outstandingForLoan($loanId);
-                }
-            } catch (Throwable) {
-                // leave ledger as-is; page still loads
-            }
-        }
+        $active = ($loan['status'] ?? '') === 'active';
 
         $this->render('loans/show', [
             'loan' => $loan,
@@ -154,10 +137,13 @@ final class LoansController extends BaseController
             'canApprove' => str_console_authorize($grants, ['loans.approve']) && ($loan['status'] ?? '') === 'pending_approval',
             'canReject' => str_console_authorize($grants, ['loans.reject']) && ($loan['status'] ?? '') === 'pending_approval',
             'canDisburse' => str_console_authorize($grants, ['loans.disburse']) && ($loan['status'] ?? '') === 'approved',
-            'canPay' => str_console_authorize($grants, ['payments.record']) && ($loan['status'] ?? '') === 'active',
+            'canPay' => str_console_authorize($grants, ['payments.record']) && $active,
+            'canAccrue' => str_console_authorize($grants, ['payments.record'])
+                && $active
+                && !empty($loan['disbursed_at'])
+                && PolicyService::ledgerAutoAccrue(),
             'flash' => Request::query('flash'),
             'flashError' => Request::query('error'),
-            'accrualAdded' => $accrualAdded,
         ]);
     }
 
@@ -209,6 +195,49 @@ final class LoansController extends BaseController
             LoanLedgerService::completeDisbursement($loanId, $date);
             AuditLogger::log(ConsoleAuth::userId(), 'loan.disburse', 'loan', $loanId, ['date' => $date]);
             $this->redirect('/loans/' . $loanId . '?flash=' . rawurlencode('Disbursed. First ledger line created.'));
+        } catch (Throwable $e) {
+            $this->redirect('/loans/' . $loanId . '?error=' . rawurlencode($e->getMessage()));
+        }
+    }
+
+    public function accrue(int $loanId): void
+    {
+        if (!str_console_database_ready()) {
+            $this->redirect('/loans');
+            return;
+        }
+        if (!PolicyService::ledgerAutoAccrue()) {
+            $this->redirect('/loans/' . $loanId . '?error=' . rawurlencode('Monthly accrual is turned off in Policies.'));
+            return;
+        }
+        $loanRepo = new LoanRepository();
+        $loan = $loanRepo->find($loanId);
+        if ($loan === null || !LoanRepository::canAccessRow($loan, ConsoleAuth::userId(), ConsoleAuth::grants())) {
+            $this->redirect('/loans');
+            return;
+        }
+        if (($loan['status'] ?? '') !== 'active' || empty($loan['disbursed_at'])) {
+            $this->redirect('/loans/' . $loanId . '?error=' . rawurlencode('Loan must be active and disbursed.'));
+            return;
+        }
+
+        $asOf = trim((string) Request::post('as_of', ''));
+        if ($asOf === '' || !preg_match('/^\d{4}-\d{2}-\d{2}$/', $asOf)) {
+            $asOf = (new DateTimeImmutable('now'))->format('Y-m-d');
+        }
+
+        try {
+            $n = LoanLedgerService::runPeriodicAccrualThrough($loanId, $asOf);
+            if ($n > 0) {
+                AuditLogger::log(ConsoleAuth::userId(), 'loan.ledger.accrual', 'loan', $loanId, [
+                    'lines_added' => $n,
+                    'through' => $asOf,
+                    'source' => 'manual_post',
+                ]);
+                $this->redirect('/loans/' . $loanId . '?flash=' . rawurlencode('Applied ' . $n . ' accrual line(s) through ' . $asOf . '.'));
+                return;
+            }
+            $this->redirect('/loans/' . $loanId . '?flash=' . rawurlencode('No new accrual lines were due (already caught up through that date, or past term).'));
         } catch (Throwable $e) {
             $this->redirect('/loans/' . $loanId . '?error=' . rawurlencode($e->getMessage()));
         }

@@ -171,6 +171,26 @@ final class LoanRepository
     }
 
     /**
+     * Active loans with a disbursement date (candidates for periodic accrual).
+     *
+     * @return list<int>
+     */
+    public function listActiveDisbursedLoanIds(): array
+    {
+        $pdo = Database::pdo();
+        $stmt = $pdo->query(
+            "SELECT id FROM loans WHERE status = 'active' AND disbursed_at IS NOT NULL ORDER BY id ASC"
+        );
+        /** @var list<array{id: int|string}> $rows */
+        $rows = $stmt->fetchAll();
+        $out = [];
+        foreach ($rows as $r) {
+            $out[] = (int) ($r['id'] ?? 0);
+        }
+        return $out;
+    }
+
+    /**
      * @return array{active_loans: int, outstanding: float}
      */
     public function dashboardTotals(?int $consoleUserId, array $grants): array

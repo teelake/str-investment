@@ -1,0 +1,19 @@
+# Local secrets (DB, error log path) — never commit
+str-console/config/local.php
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Logs & deps (if added later)
+*.log
+vendor/

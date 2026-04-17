@@ -1,5 +1,6 @@
 -- STR Console — core tables (MySQL 8+)
 -- Charset: utf8mb4
+-- For incremental deploys, also apply database/migrations/*.sql in order after first install.
 
 CREATE TABLE IF NOT EXISTS console_users (
   id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,

@@ -41,6 +41,7 @@ function str_console_routes(): array
         ['POST', '#^/loans/(\d+)/approve$#', LoansController::class, 'approve', 'loans.approve'],
         ['POST', '#^/loans/(\d+)/reject$#', LoansController::class, 'reject', 'loans.reject'],
         ['POST', '#^/loans/(\d+)/disburse$#', LoansController::class, 'disburse', 'loans.disburse'],
+        ['POST', '#^/loans/(\d+)/accrue$#', LoansController::class, 'accrue', 'loans.accrue'],
         ['POST', '#^/loans/(\d+)/payment$#', LoansController::class, 'payment', 'loans.payment'],
 
         ['GET', '/settings/policies', SettingsController::class, 'policies', 'settings.policies'],

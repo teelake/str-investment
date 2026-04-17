@@ -3,8 +3,17 @@
 declare(strict_types=1);
 
 /**
- * Rolling balance ledger: each line is opening → interest (rate% of opening) → amount due → payment → closing.
- * First line after disburse uses opening = principal. Further lines use opening = previous closing.
+ * Rolling-balance loan ledger (booked rate on the loan row).
+ *
+ * Model (contract wording may differ — align product/legal before go-live):
+ * - Interest each step = booked rate_percent × opening balance for that line, rounded to 2 decimals.
+ * - “Opening” on the first line after disburse = principal. Every later line uses opening = previous line’s closing.
+ * - Payment lines: interest is charged on opening, total due = opening + interest, payment caps at that due, closing = due − payment.
+ * - Periodic accrual (optional, when PolicyService::ledgerAutoAccrue()): inserts lines with no payment so closing = amount due
+ *   (interest rolls into balance). Next line’s period_date is previous period_date + 1 calendar month (PHP DateTimeImmutable).
+ * - Accrual stops at disbursed_at + period_months (term) or the as-of date, whichever is earlier.
+ *
+ * Triggers: disburse creates line 1; payments and periodic accrual must not run on GET — use POST or CLI/cron only.
  */
 final class LoanLedgerService
 {
@@ -76,6 +85,10 @@ final class LoanLedgerService
      */
     public static function runPeriodicAccrualThrough(int $loanId, string $asOfDateYmd): int
     {
+        if (!PolicyService::ledgerAutoAccrue()) {
+            return 0;
+        }
+
         $asOf = DateTimeImmutable::createFromFormat('Y-m-d', $asOfDateYmd);
         if ($asOf === false || $asOf->format('Y-m-d') !== $asOfDateYmd) {
             throw new InvalidArgumentException('Invalid as-of date.');
@@ -166,6 +179,31 @@ final class LoanLedgerService
             }
             throw $e;
         }
+    }
+
+    /**
+     * Batch accrual for automation (e.g. daily cron). Respects ledger.auto_accrue policy.
+     *
+     * @return array{loans_seen: int, lines_added: int}
+     */
+    public static function runPeriodicAccrualAllActiveLoans(string $asOfDateYmd): array
+    {
+        if (!PolicyService::ledgerAutoAccrue()) {
+            return ['loans_seen' => 0, 'lines_added' => 0];
+        }
+
+        $repo = new LoanRepository();
+        $ids = $repo->listActiveDisbursedLoanIds();
+        $linesAdded = 0;
+        foreach ($ids as $id) {
+            try {
+                $linesAdded += self::runPeriodicAccrualThrough($id, $asOfDateYmd);
+            } catch (Throwable) {
+                // continue other loans
+            }
+        }
+
+        return ['loans_seen' => count($ids), 'lines_added' => $linesAdded];
     }
 
     public static function applyPayment(int $loanId, float $amount, string $paymentDateYmd): void
