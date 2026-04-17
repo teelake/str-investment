@@ -49,6 +49,7 @@ final class LoanInterestBasis
     {
         return match ($basis) {
             self::FLAT_MONTHLY => 'Flat monthly (on original principal)',
+            self::REDUCING_BALANCE => 'Reducing balance',
             default => 'Reducing balance',
         };
     }

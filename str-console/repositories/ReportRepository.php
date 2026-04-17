@@ -113,7 +113,7 @@ final class ReportRepository
         if ($wide) {
             $stmt = $pdo->prepare(
                 'SELECT l.id, l.customer_id, c.full_name AS customer_name, l.status, l.principal_amount,
-                        l.rate_percent, l.period_months, l.created_at, l.disbursed_at, l.closed_at
+                        l.rate_percent, l.interest_basis, l.period_months, l.created_at, l.disbursed_at, l.closed_at
                  ' . $baseFrom . '
                  WHERE 1=1' . $filterSql . '
                  ORDER BY l.id DESC LIMIT ' . (string) (int) $lim
@@ -124,7 +124,7 @@ final class ReportRepository
             $params = array_merge($filterParams, [':uid' => $consoleUserId, ':uid2' => $consoleUserId]);
             $stmt = $pdo->prepare(
                 'SELECT l.id, l.customer_id, c.full_name AS customer_name, l.status, l.principal_amount,
-                        l.rate_percent, l.period_months, l.created_at, l.disbursed_at, l.closed_at
+                        l.rate_percent, l.interest_basis, l.period_months, l.created_at, l.disbursed_at, l.closed_at
                  ' . $baseFrom . '
                  WHERE 1=1' . $scope . $filterSql . '
                  ORDER BY l.id DESC LIMIT ' . (string) (int) $lim

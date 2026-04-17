@@ -18,7 +18,7 @@ $active = (int) ($product['is_active'] ?? 0) === 1;
   <div style="margin-top:24px; background: var(--card); border: 1px solid var(--line2); border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow2); display:grid; gap:14px;">
     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
       <div>
-        <div style="font-size:11px; font-weight:650; color:var(--muted); text-transform:uppercase;">Rate (monthly %)</div>
+        <div style="font-size:11px; font-weight:650; color:var(--muted); text-transform:uppercase;">Suggested rate (monthly %)</div>
         <div style="font-size:20px; font-weight:800; margin-top:6px;"><?= htmlspecialchars((string) ($product['rate_percent'] ?? ''), ENT_QUOTES, 'UTF-8') ?>%</div>
       </div>
       <div>
@@ -26,7 +26,17 @@ $active = (int) ($product['is_active'] ?? 0) === 1;
         <div style="font-size:20px; font-weight:800; margin-top:6px;"><?= (int) ($product['period_months'] ?? 0) ?></div>
       </div>
     </div>
-    <p style="margin:0; font-size:13px; color:var(--muted2);">Rates and term are copied onto each loan when it is created.</p>
+    <?php
+    $pb = LoanInterestBasis::normalize((string) ($product['default_interest_basis'] ?? '')) ?? LoanInterestBasis::REDUCING_BALANCE;
+    $par = (int) ($product['allow_reducing_balance'] ?? 1) === 1;
+    $paf = (int) ($product['allow_flat_monthly'] ?? 1) === 1;
+    ?>
+    <div style="font-size:13px; color:var(--muted2); line-height:1.5;">
+      <strong>Interest options:</strong>
+      <?= $par ? 'Reducing balance' : '' ?><?= $par && $paf ? '; ' : '' ?><?= $paf ? 'Flat on original principal' : '' ?>.
+      Default for new loans: <strong><?= htmlspecialchars(LoanInterestBasis::label($pb), ENT_QUOTES, 'UTF-8') ?></strong>.
+    </div>
+    <p style="margin:0; font-size:13px; color:var(--muted2);">Negotiated rate and interest type are set on each loan at booking; this page is the product template.</p>
     <?php if (str_console_authorize_route(ConsoleAuth::grants(), 'loan_products.edit')): ?>
       <a class="btn primary" style="justify-self:start;" href="<?= htmlspecialchars($basePath . '/loan-products/' . $id . '/edit', ENT_QUOTES, 'UTF-8') ?>">Edit product</a>
     <?php endif; ?>

@@ -161,7 +161,7 @@ final class ReportsController extends BaseController
             $name = 'loans-report-' . date('Y-m-d') . '.csv';
             self::sendCsv(
                 $name,
-                ['id', 'customer_id', 'customer_name', 'status', 'principal_amount', 'rate_percent', 'period_months', 'created_at', 'disbursed_at', 'closed_at'],
+                ['id', 'customer_id', 'customer_name', 'status', 'principal_amount', 'rate_percent', 'interest_basis', 'period_months', 'created_at', 'disbursed_at', 'closed_at'],
                 $rows
             );
         } catch (Throwable) {

@@ -210,8 +210,14 @@ final class LoansController extends BaseController
         $customerId = (int) Request::post('customer_id', 0);
         $productId = (int) Request::post('loan_product_id', 0);
         $principal = (float) Request::post('principal_amount', 0);
+        $rate = (float) Request::post('rate_percent', 0);
+        $basisNorm = LoanInterestBasis::normalize((string) Request::post('interest_basis', ''));
         if ($customerId <= 0 || $productId <= 0 || $principal <= 0) {
             $this->redirect('/loans/' . $loanId . '/edit?error=' . rawurlencode('Select customer and product, and enter principal.'));
+            return;
+        }
+        if (!is_finite($rate) || $rate <= 0 || $basisNorm === null) {
+            $this->redirect('/loans/' . $loanId . '/edit?error=' . rawurlencode('Enter a positive negotiated rate and choose how interest is calculated.'));
             return;
         }
 
@@ -231,12 +237,15 @@ final class LoansController extends BaseController
             $this->redirect('/loans/' . $loanId . '/edit?error=' . rawurlencode('Choose an active product or keep the current one.'));
             return;
         }
+        if (!LoanInterestBasis::isBasisAllowed($basisNorm, $product)) {
+            $this->redirect('/loans/' . $loanId . '/edit?error=' . rawurlencode('This product does not allow the selected interest type.'));
+            return;
+        }
 
-        $rate = (float) $product['rate_percent'];
         $pm = (int) ($product['period_months'] ?? 1);
 
         try {
-            if (!$loanRepo->updateDraftOrRejected($loanId, $customerId, $productId, $principal, $rate, $pm)) {
+            if (!$loanRepo->updateDraftOrRejected($loanId, $customerId, $productId, $principal, $rate, $basisNorm, $pm)) {
                 $this->redirect('/loans/' . $loanId . '/edit?error=' . rawurlencode('Loan could not be updated (wrong status?).'));
                 return;
             }
@@ -244,6 +253,8 @@ final class LoansController extends BaseController
                 'customer_id' => $customerId,
                 'loan_product_id' => $productId,
                 'principal' => $principal,
+                'rate_percent' => $rate,
+                'interest_basis' => $basisNorm,
             ]);
             $msg = $st === 'rejected' ? 'Loan updated and returned to draft. You can submit again.' : 'Loan updated.';
             $this->redirect('/loans/' . $loanId . '?flash=' . rawurlencode($msg));
@@ -305,12 +316,19 @@ final class LoansController extends BaseController
                     $payCapDate = $payDateMinCap;
                 }
                 if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $disbursedCap)) {
+                    $basisCap = (string) ($loan['interest_basis'] ?? LoanInterestBasis::REDUCING_BALANCE);
+                    if (!in_array($basisCap, LoanInterestBasis::all(), true)) {
+                        $basisCap = LoanInterestBasis::REDUCING_BALANCE;
+                    }
+                    $origCap = (float) ($loan['principal_amount'] ?? 0);
                     $paymentAmountDueMax = LoanLedgerService::maxPaymentForNextLine(
                         $obCap,
                         $rCap,
                         $payCapDate,
                         $lastPdCap,
-                        $disbursedCap
+                        $disbursedCap,
+                        $basisCap,
+                        $origCap
                     );
                 }
             }

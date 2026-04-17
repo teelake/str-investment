@@ -279,6 +279,7 @@ final class BulkUploadController extends BaseController
 
             $rate = (float) $product['rate_percent'];
             $pm = (int) ($product['period_months'] ?? 1);
+            $basis = LoanInterestBasis::defaultFromProduct($product);
             $assignLoan = $consoleUid;
             if ($assignLoan === null) {
                 $assignLoan = isset($c['assigned_user_id']) ? (int) $c['assigned_user_id'] : null;
@@ -290,6 +291,7 @@ final class BulkUploadController extends BaseController
                     $productId,
                     $principal,
                     $rate,
+                    $basis,
                     $pm,
                     $assignLoan,
                     ConsoleAuth::userId()

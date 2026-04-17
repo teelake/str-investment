@@ -15,7 +15,7 @@ $perPage = (int) $pagination['per_page'];
   <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:flex-end; gap:16px; margin-bottom:20px;">
     <div>
       <h1 style="font-size: var(--h2); margin: 0 0 6px;">Loan products</h1>
-      <p style="color: var(--muted); margin: 0; font-size: 14px;">Rates are snapshotted onto each loan at creation.</p>
+      <p style="color: var(--muted); margin: 0; font-size: 14px;">Templates: suggested rate, allowed interest types, and term. Each loan stores its own negotiated deal.</p>
     </div>
     <?php if (str_console_authorize_route(ConsoleAuth::grants(), 'loan_products.create')): ?>
       <a class="btn primary" href="<?= htmlspecialchars($basePath . '/loan-products/create', ENT_QUOTES, 'UTF-8') ?>">New product</a>

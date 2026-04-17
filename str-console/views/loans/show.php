@@ -94,6 +94,11 @@ if ($paymentDefault < $paymentDateMin) {
       <div style="font-size: 22px; font-weight: 800; margin-top: 8px;"><?= htmlspecialchars((string) ($loan['rate_percent'] ?? ''), ENT_QUOTES, 'UTF-8') ?>%</div>
     </div>
     <div style="background: var(--card); border: 1px solid var(--line2); border-radius: var(--radius); padding: 18px; box-shadow: var(--shadow2);">
+      <div style="font-size: 12px; font-weight: 650; color: var(--muted); text-transform: uppercase;">Interest type</div>
+      <?php $basisShow = LoanInterestBasis::normalize((string) ($loan['interest_basis'] ?? '')) ?? LoanInterestBasis::REDUCING_BALANCE; ?>
+      <div style="font-size: 15px; font-weight: 700; margin-top: 8px; line-height: 1.35;"><?= htmlspecialchars(LoanInterestBasis::label($basisShow), ENT_QUOTES, 'UTF-8') ?></div>
+    </div>
+    <div style="background: var(--card); border: 1px solid var(--line2); border-radius: var(--radius); padding: 18px; box-shadow: var(--shadow2);">
       <div style="font-size: 12px; font-weight: 650; color: var(--muted); text-transform: uppercase;">Outstanding</div>
       <div style="font-size: 22px; font-weight: 800; margin-top: 8px;"><?= $fmt($outstanding) ?></div>
     </div>

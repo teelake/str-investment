@@ -25,15 +25,47 @@ final class LoanLedgerMoneyTest extends TestCase
     {
         $this->assertSame(
             1000.0,
-            LoanLedgerService::maxPaymentForNextLine(1000.0, 12.0, '2026-04-20', '2026-04-17', '2026-04-01')
+            LoanLedgerService::maxPaymentForNextLine(
+                1000.0,
+                12.0,
+                '2026-04-20',
+                '2026-04-17',
+                '2026-04-01',
+                LoanInterestBasis::REDUCING_BALANCE,
+                5000.0
+            )
         );
     }
 
-    public function testMaxPaymentNext30DayPeriodAddsInterest(): void
+    public function testMaxPaymentNext30DayPeriodAddsReducingInterest(): void
     {
         $this->assertSame(
             1120.0,
-            LoanLedgerService::maxPaymentForNextLine(1000.0, 12.0, '2026-05-01', '2026-04-17', '2026-04-01')
+            LoanLedgerService::maxPaymentForNextLine(
+                1000.0,
+                12.0,
+                '2026-05-01',
+                '2026-04-17',
+                '2026-04-01',
+                LoanInterestBasis::REDUCING_BALANCE,
+                5000.0
+            )
+        );
+    }
+
+    public function testMaxPaymentFlatMonthlyUsesOriginalPrincipalForInterest(): void
+    {
+        $this->assertSame(
+            1600.0,
+            LoanLedgerService::maxPaymentForNextLine(
+                1000.0,
+                12.0,
+                '2026-05-01',
+                '2026-04-17',
+                '2026-04-01',
+                LoanInterestBasis::FLAT_MONTHLY,
+                5000.0
+            )
         );
     }
 }

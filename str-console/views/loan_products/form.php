@@ -10,6 +10,12 @@ $name = $isEdit ? (string) ($product['name'] ?? '') : '';
 $rate = $isEdit ? (string) ($product['rate_percent'] ?? '') : '';
 $pm = $isEdit ? (int) ($product['period_months'] ?? 1) : 1;
 $active = !$isEdit || (int) ($product['is_active'] ?? 1);
+$defBasis = $isEdit ? (string) ($product['default_interest_basis'] ?? '') : LoanInterestBasis::REDUCING_BALANCE;
+if (!in_array($defBasis, LoanInterestBasis::all(), true)) {
+    $defBasis = LoanInterestBasis::REDUCING_BALANCE;
+}
+$allowR = !$isEdit || (int) ($product['allow_reducing_balance'] ?? 1) === 1;
+$allowF = !$isEdit || (int) ($product['allow_flat_monthly'] ?? 1) === 1;
 ?>
 <div class="container" style="padding:0; max-width:520px;">
   <h1 style="font-size: var(--h2); margin: 0 0 8px;"><?= $isEdit ? 'Edit product' : 'New product' ?></h1>
@@ -28,11 +34,29 @@ $active = !$isEdit || (int) ($product['is_active'] ?? 1);
           style="padding:12px 14px; border-radius:14px; border:1px solid var(--line); background:#fff;" />
       </label>
       <label style="display:grid; gap:6px; font-size:13px; font-weight:650; color:var(--muted);">
-        Rate (% per month on outstanding balance)
+        Suggested monthly rate (%)
         <input name="rate_percent" type="number" step="0.0001" min="0.0001" required value="<?= htmlspecialchars($rate, ENT_QUOTES, 'UTF-8') ?>"
           style="padding:12px 14px; border-radius:14px; border:1px solid var(--line); background:#fff;" />
       </label>
-      <p style="margin:-6px 0 0; font-size:12px; color:var(--muted2);">Interest is charged at most once per <strong>30-day period</strong> from loan disbursement (same period as the last ledger line: payments reduce balance only; next period: one full rate charge on the balance).</p>
+      <p style="margin:-6px 0 0; font-size:12px; color:var(--muted2);">Staff negotiate the actual rate on each loan. This value pre-fills new loans. Charges apply at most once per <strong>30-day period</strong> from disbursement when a period advances.</p>
+      <fieldset style="border:1px solid var(--line2); border-radius:14px; padding:14px 16px; margin:0;">
+        <legend style="font-size:13px; font-weight:650; color:var(--muted); padding:0 6px;">Interest types offered</legend>
+        <label style="display:flex; align-items:center; gap:10px; font-size:14px; margin-bottom:10px;">
+          <input type="checkbox" name="allow_reducing_balance" value="1" <?= $allowR ? 'checked' : '' ?> />
+          Reducing balance (rate × current balance each charge)
+        </label>
+        <label style="display:flex; align-items:center; gap:10px; font-size:14px; margin-bottom:12px;">
+          <input type="checkbox" name="allow_flat_monthly" value="1" <?= $allowF ? 'checked' : '' ?> />
+          Flat monthly (rate × original principal each charge)
+        </label>
+        <label style="display:grid; gap:6px; font-size:13px; font-weight:650; color:var(--muted);">
+          Default when booking a loan
+          <select name="default_interest_basis" style="padding:12px 14px; border-radius:14px; border:1px solid var(--line); background:#fff;">
+            <option value="<?= htmlspecialchars(LoanInterestBasis::REDUCING_BALANCE, ENT_QUOTES, 'UTF-8') ?>" <?= $defBasis === LoanInterestBasis::REDUCING_BALANCE ? 'selected' : '' ?>><?= htmlspecialchars(LoanInterestBasis::label(LoanInterestBasis::REDUCING_BALANCE), ENT_QUOTES, 'UTF-8') ?></option>
+            <option value="<?= htmlspecialchars(LoanInterestBasis::FLAT_MONTHLY, ENT_QUOTES, 'UTF-8') ?>" <?= $defBasis === LoanInterestBasis::FLAT_MONTHLY ? 'selected' : '' ?>><?= htmlspecialchars(LoanInterestBasis::label(LoanInterestBasis::FLAT_MONTHLY), ENT_QUOTES, 'UTF-8') ?></option>
+          </select>
+        </label>
+      </fieldset>
       <label style="display:grid; gap:6px; font-size:13px; font-weight:650; color:var(--muted);">
         Period (months, informational)
         <input name="period_months" type="number" min="1" required value="<?= (int) $pm ?>"
