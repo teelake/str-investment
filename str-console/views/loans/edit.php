@@ -34,6 +34,7 @@ $st = (string) ($loan['status'] ?? '');
 
   <div style="background: var(--card); border: 1px solid var(--line2); border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow2);">
     <form method="post" action="<?= htmlspecialchars($basePath . '/loans/' . $lid . '/update', ENT_QUOTES, 'UTF-8') ?>" style="display:grid; gap:14px;">
+      <?php require STR_CONSOLE_ROOT . '/views/partials/csrf.php'; ?>
       <label style="display:grid; gap:6px; font-size:13px; font-weight:650; color:var(--muted);">
         Customer
         <select name="customer_id" required style="padding:12px 14px; border-radius:14px; border:1px solid var(--line); background:#fff;" <?= count($customers) === 0 ? 'disabled' : '' ?>>

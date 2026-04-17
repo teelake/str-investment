@@ -286,4 +286,91 @@ final class LoanRepository
 
         return ['active_loans' => $active, 'outstanding' => round($out, 2)];
     }
+
+    /**
+     * Loan counts by status within the user’s customer/loan scope.
+     *
+     * @return array{draft: int, pending_approval: int, approved: int, active: int, closed: int, rejected: int}
+     */
+    public function dashboardCountsByStatus(?int $consoleUserId, array $grants): array
+    {
+        $wide = PolicyService::loansWideAccess($grants);
+        $pdo = Database::pdo();
+        $out = [
+            'draft' => 0,
+            'pending_approval' => 0,
+            'approved' => 0,
+            'active' => 0,
+            'closed' => 0,
+            'rejected' => 0,
+        ];
+        if (!$wide && $consoleUserId === null) {
+            return $out;
+        }
+        $join = 'FROM loans l INNER JOIN customers c ON c.id = l.customer_id WHERE 1=1';
+        $params = [];
+        if (!$wide) {
+            $join .= ' AND (l.assigned_user_id <=> :uid OR c.assigned_user_id <=> :uid2)';
+            $params[':uid'] = $consoleUserId;
+            $params[':uid2'] = $consoleUserId;
+        }
+        $stmt = $pdo->prepare('SELECT l.status AS st, COUNT(*) AS c ' . $join . ' GROUP BY l.status');
+        $stmt->execute($params);
+        while ($row = $stmt->fetch()) {
+            $st = (string) ($row['st'] ?? '');
+            if (array_key_exists($st, $out)) {
+                $out[$st] = (int) ($row['c'] ?? 0);
+            }
+        }
+        return $out;
+    }
+
+    public function dashboardActiveBookedPrincipal(?int $consoleUserId, array $grants): float
+    {
+        $wide = PolicyService::loansWideAccess($grants);
+        $pdo = Database::pdo();
+        if (!$wide && $consoleUserId === null) {
+            return 0.0;
+        }
+        $sql = 'SELECT COALESCE(SUM(l.principal_amount), 0) AS s FROM loans l INNER JOIN customers c ON c.id = l.customer_id WHERE l.status = \'active\'';
+        $params = [];
+        if (!$wide) {
+            $sql .= ' AND (l.assigned_user_id <=> :uid OR c.assigned_user_id <=> :uid2)';
+            $params[':uid'] = $consoleUserId;
+            $params[':uid2'] = $consoleUserId;
+        }
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($params);
+        return round((float) ($stmt->fetch()['s'] ?? 0), 2);
+    }
+
+    /**
+     * @return list<array<string, mixed>>
+     */
+    public function dashboardRecentLoans(?int $consoleUserId, array $grants, int $limit = 8): array
+    {
+        $limit = max(1, min(20, $limit));
+        $wide = PolicyService::loansWideAccess($grants);
+        $pdo = Database::pdo();
+        if (!$wide && $consoleUserId === null) {
+            return [];
+        }
+        $sel = 'SELECT l.id, l.status, l.principal_amount, l.rate_percent, l.updated_at, c.full_name AS customer_name
+                FROM loans l INNER JOIN customers c ON c.id = l.customer_id';
+        if ($wide) {
+            $stmt = $pdo->prepare($sel . ' ORDER BY l.updated_at DESC, l.id DESC LIMIT :lim');
+            $stmt->bindValue(':lim', $limit, PDO::PARAM_INT);
+            $stmt->execute();
+        } else {
+            $stmt = $pdo->prepare(
+                $sel . ' WHERE (l.assigned_user_id <=> :uid OR c.assigned_user_id <=> :uid2) ORDER BY l.updated_at DESC, l.id DESC LIMIT :lim'
+            );
+            $stmt->bindValue(':uid', $consoleUserId, PDO::PARAM_INT);
+            $stmt->bindValue(':uid2', $consoleUserId, PDO::PARAM_INT);
+            $stmt->bindValue(':lim', $limit, PDO::PARAM_INT);
+            $stmt->execute();
+        }
+        /** @var list<array<string, mixed>> */
+        return $stmt->fetchAll() ?: [];
+    }
 }

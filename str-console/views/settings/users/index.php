@@ -22,8 +22,7 @@ $err = is_string($qerr) ? $qerr : '';
 
   <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:flex-end; gap:16px; margin-bottom:20px;">
     <div>
-      <h1 style="font-size: var(--h2); margin: 0 0 6px;">Console users</h1>
-      <p style="color: var(--muted); margin: 0; font-size: 14px;">Sign-in accounts for STR Console. Effective permissions for each role come from <strong>Settings → Roles</strong> (stored in the database), with code defaults as a fallback. If you change <strong>another user’s</strong> role, they must sign out and sign in again. When you update <strong>your own</strong> profile here, your session is refreshed so email and permission overrides apply without logging out.</p>
+      <h1 style="font-size: var(--h2); margin: 0;">Console users</h1>
     </div>
     <a class="btn primary" style="font-size: 14px;" href="<?= htmlspecialchars($basePath . '/settings/users/create', ENT_QUOTES, 'UTF-8') ?>">Add user</a>
   </div>

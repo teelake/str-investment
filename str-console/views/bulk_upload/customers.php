@@ -41,6 +41,7 @@ $err = is_string($error) ? $error : '';
 
   <div style="background: var(--card); border: 1px solid var(--line2); border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow2);">
     <form method="post" action="<?= htmlspecialchars($basePath . '/bulk-upload/customers', ENT_QUOTES, 'UTF-8') ?>" enctype="multipart/form-data" style="display:grid; gap: 14px;">
+      <?php require STR_CONSOLE_ROOT . '/views/partials/csrf.php'; ?>
       <label style="font-size: 13px; font-weight: 650; color: var(--muted);">
         CSV file (max 2 MB)
         <input type="file" name="csv" accept=".csv,text/csv" required style="margin-top: 6px; width: 100%;" />

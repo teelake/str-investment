@@ -50,6 +50,7 @@ $dbError = $dbError ?? null;
                 <?php endif; ?>
                 <?php if (str_console_authorize_route(ConsoleAuth::grants(), 'loan_products.retire') && (int) ($p['is_active'] ?? 0)): ?>
                   <form method="post" action="<?= htmlspecialchars($basePath . '/loan-products/' . (int) $p['id'] . '/retire', ENT_QUOTES, 'UTF-8') ?>" style="display:inline;" onsubmit="return confirm('Retire this product?');">
+                    <?php require STR_CONSOLE_ROOT . '/views/partials/csrf.php'; ?>
                     <button type="submit" class="btn ghost" style="font-size:13px; padding:8px 12px;">Retire</button>
                   </form>
                 <?php endif; ?>

@@ -85,25 +85,29 @@ $today = (new DateTimeImmutable('now'))->format('Y-m-d');
     <?php endif; ?>
     <?php if ($canSubmit): ?>
       <form method="post" action="<?= htmlspecialchars($basePath . '/loans/' . $id . '/submit', ENT_QUOTES, 'UTF-8') ?>">
+        <?php require STR_CONSOLE_ROOT . '/views/partials/csrf.php'; ?>
         <button type="submit" class="btn primary">Submit for approval</button>
       </form>
     <?php endif; ?>
     <?php if ($canApprove): ?>
       <form method="post" action="<?= htmlspecialchars($basePath . '/loans/' . $id . '/approve', ENT_QUOTES, 'UTF-8') ?>">
+        <?php require STR_CONSOLE_ROOT . '/views/partials/csrf.php'; ?>
         <button type="submit" class="btn primary">Approve</button>
       </form>
     <?php endif; ?>
     <?php if ($canReject): ?>
       <form method="post" action="<?= htmlspecialchars($basePath . '/loans/' . $id . '/reject', ENT_QUOTES, 'UTF-8') ?>" style="display:flex; flex-wrap:wrap; gap:8px; align-items:flex-end;">
+        <?php require STR_CONSOLE_ROOT . '/views/partials/csrf.php'; ?>
         <label style="display:grid; gap:4px; font-size:12px; font-weight:650; color:var(--muted);">
           Rejection reason
-          <input name="reason" required maxlength="500" style="padding:10px 12px; border-radius:12px; border:1px solid var(--line); min-width:220px;" />
+          <input name="reason" required maxlength="<?= (int) InputValidate::REJECTION_REASON_MAX ?>" style="padding:10px 12px; border-radius:12px; border:1px solid var(--line); min-width:220px;" />
         </label>
         <button type="submit" class="btn ghost" style="color:#7f1d1d;">Reject</button>
       </form>
     <?php endif; ?>
     <?php if ($canDisburse): ?>
       <form method="post" action="<?= htmlspecialchars($basePath . '/loans/' . $id . '/disburse', ENT_QUOTES, 'UTF-8') ?>" style="display:flex; flex-wrap:wrap; gap:8px; align-items:flex-end;">
+        <?php require STR_CONSOLE_ROOT . '/views/partials/csrf.php'; ?>
         <label style="display:grid; gap:4px; font-size:12px; font-weight:650; color:var(--muted);">
           Disbursement date
           <input type="date" name="disbursed_on" value="<?= htmlspecialchars($today, ENT_QUOTES, 'UTF-8') ?>" required style="padding:10px 12px; border-radius:12px; border:1px solid var(--line);" />
@@ -113,6 +117,7 @@ $today = (new DateTimeImmutable('now'))->format('Y-m-d');
     <?php endif; ?>
     <?php if ($canClose): ?>
       <form method="post" action="<?= htmlspecialchars($basePath . '/loans/' . $id . '/close', ENT_QUOTES, 'UTF-8') ?>" style="display:inline;" onsubmit="return confirm('Close this loan? It must have zero outstanding balance.');">
+        <?php require STR_CONSOLE_ROOT . '/views/partials/csrf.php'; ?>
         <button type="submit" class="btn ghost" style="border-color:rgba(15,106,74,.35); color:var(--green2);">Close loan</button>
       </form>
     <?php endif; ?>
@@ -122,6 +127,7 @@ $today = (new DateTimeImmutable('now'))->format('Y-m-d');
     <div style="background: var(--card); border: 1px solid var(--line2); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow2); margin-bottom: 28px;">
       <h2 style="font-size: 15px; margin: 0 0 14px; font-weight: 800;">Record payment</h2>
       <form method="post" action="<?= htmlspecialchars($basePath . '/loans/' . $id . '/payment', ENT_QUOTES, 'UTF-8') ?>" style="display:flex; flex-wrap:wrap; gap:12px; align-items:flex-end;">
+        <?php require STR_CONSOLE_ROOT . '/views/partials/csrf.php'; ?>
         <label style="display:grid; gap:4px; font-size:12px; font-weight:650; color:var(--muted);">
           Amount (₦)
           <input name="amount" type="number" step="0.01" min="0.01" required style="padding:10px 12px; border-radius:12px; border:1px solid var(--line); width:140px;" />
@@ -143,11 +149,13 @@ $today = (new DateTimeImmutable('now'))->format('Y-m-d');
       <div style="display:flex; flex-wrap:wrap; gap: 20px; align-items:flex-end;">
         <?php if ($canVoidPayment): ?>
           <form method="post" action="<?= htmlspecialchars($basePath . '/loans/' . $id . '/payment-void', ENT_QUOTES, 'UTF-8') ?>" style="display:inline;" onsubmit="return confirm('Remove the last payment line from the ledger?');">
+            <?php require STR_CONSOLE_ROOT . '/views/partials/csrf.php'; ?>
             <button type="submit" class="btn ghost" style="color:#7f1d1d;">Void last payment line</button>
           </form>
         <?php endif; ?>
         <?php if ($canAdjustPayment): ?>
           <form method="post" action="<?= htmlspecialchars($basePath . '/loans/' . $id . '/payment-adjust', ENT_QUOTES, 'UTF-8') ?>" style="display:flex; flex-wrap:wrap; gap:10px; align-items:flex-end;">
+            <?php require STR_CONSOLE_ROOT . '/views/partials/csrf.php'; ?>
             <label style="display:grid; gap:4px; font-size:12px; font-weight:650; color:var(--muted);">
               Adjusted payment (₦)
               <input name="adjusted_amount" type="number" step="0.01" min="0" max="<?= htmlspecialchars((string) $lastLineAmountDue, ENT_QUOTES, 'UTF-8') ?>" required

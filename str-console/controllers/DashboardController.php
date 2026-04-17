@@ -10,15 +10,26 @@ final class DashboardController extends BaseController
         $dbError = null;
 
         $loanStats = null;
+        $loanByStatus = null;
+        $bookedPrincipal = null;
+        $recentLoans = null;
         if (str_console_database_ready()) {
             try {
+                $uid = ConsoleAuth::userId();
+                $grants = ConsoleAuth::grants();
                 $repo = new CustomerRepository();
-                $customerCount = $repo->countScoped(ConsoleAuth::userId(), ConsoleAuth::grants());
+                $customerCount = $repo->countScoped($uid, $grants);
                 $loanRepo = new LoanRepository();
-                $loanStats = $loanRepo->dashboardTotals(ConsoleAuth::userId(), ConsoleAuth::grants());
+                $loanStats = $loanRepo->dashboardTotals($uid, $grants);
+                $loanByStatus = $loanRepo->dashboardCountsByStatus($uid, $grants);
+                $bookedPrincipal = $loanRepo->dashboardActiveBookedPrincipal($uid, $grants);
+                $recentLoans = $loanRepo->dashboardRecentLoans($uid, $grants, 8);
             } catch (Throwable) {
                 $customerCount = null;
                 $loanStats = null;
+                $loanByStatus = null;
+                $bookedPrincipal = null;
+                $recentLoans = null;
                 $dbError = 'Database unreachable. Check credentials and that schema is installed.';
             }
         } else {
@@ -26,9 +37,11 @@ final class DashboardController extends BaseController
         }
 
         $this->render('dashboard/index', [
-            'user' => ConsoleAuth::user(),
             'customerCount' => $customerCount,
             'loanStats' => $loanStats,
+            'loanByStatus' => $loanByStatus,
+            'bookedPrincipal' => $bookedPrincipal,
+            'recentLoans' => $recentLoans,
             'dbError' => $dbError,
         ]);
     }

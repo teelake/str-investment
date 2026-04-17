@@ -21,9 +21,10 @@ $active = !$isEdit || (int) ($product['is_active'] ?? 1);
 
   <div style="background: var(--card); border: 1px solid var(--line2); border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow2);">
     <form method="post" action="<?= htmlspecialchars($isEdit ? $basePath . '/loan-products/' . $id . '/update' : $basePath . '/loan-products', ENT_QUOTES, 'UTF-8') ?>" style="display:grid; gap:14px;">
+      <?php require STR_CONSOLE_ROOT . '/views/partials/csrf.php'; ?>
       <label style="display:grid; gap:6px; font-size:13px; font-weight:650; color:var(--muted);">
         Name
-        <input name="name" required maxlength="190" value="<?= htmlspecialchars($name, ENT_QUOTES, 'UTF-8') ?>"
+        <input name="name" required maxlength="<?= (int) InputValidate::PERSON_NAME_MAX ?>" value="<?= htmlspecialchars($name, ENT_QUOTES, 'UTF-8') ?>"
           style="padding:12px 14px; border-radius:14px; border:1px solid var(--line); background:#fff;" />
       </label>
       <label style="display:grid; gap:6px; font-size:13px; font-weight:650; color:var(--muted);">

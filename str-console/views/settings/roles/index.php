@@ -32,12 +32,7 @@ foreach ($catalog as $key => $desc) {
   <?php endif; ?>
 
   <div style="margin-bottom: 20px;">
-    <h1 style="font-size: var(--h2); margin: 0 0 8px;">Role permissions</h1>
-    <p style="color: var(--muted); margin: 0; font-size: 14px; max-width: 720px;">
-      Customize bundles for <strong>admin</strong>, <strong>manager</strong>, and <strong>credit officer</strong>. Values are stored in the database; sign-in always loads the latest bundle for that role.
-      <strong>system_admin</strong> always has full access (*) and is not listed here.
-      The <code style="background: rgba(13,15,18,.06); padding: 2px 6px; border-radius: 8px;">auth.session</code> key is always included automatically.
-    </p>
+    <h1 style="font-size: var(--h2); margin: 0;">Role permissions</h1>
   </div>
 
   <form method="post" action="<?= htmlspecialchars($basePath . '/settings/roles', ENT_QUOTES, 'UTF-8') ?>" style="margin-bottom: 24px;">

@@ -1597,3 +1597,135 @@ footer{
   border-radius: 8px;
 }
 
+/* Console dashboard — scoped overview */
+.console-dash{
+  padding: 0;
+}
+.console-dash__head{
+  margin-bottom: 28px;
+  padding-bottom: 22px;
+  border-bottom: 1px solid var(--line2);
+  background: linear-gradient(135deg, rgba(15,106,74,.06) 0%, transparent 55%);
+  border-radius: 0 0 var(--radius) var(--radius);
+  margin-left: -4px;
+  margin-right: -4px;
+  padding-left: 4px;
+  padding-right: 4px;
+  padding-top: 4px;
+}
+.console-dash__title{
+  font-size: var(--h2);
+  margin: 0 0 6px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.console-dash__sub{
+  margin: 0;
+  font-size: 14px;
+  color: var(--muted);
+  font-weight: 500;
+}
+.console-dash__kpis{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 14px;
+  margin-bottom: 28px;
+}
+.console-dash__kpi{
+  background: var(--card);
+  border: 1px solid var(--line2);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  box-shadow: var(--shadow2);
+  position: relative;
+  overflow: hidden;
+}
+.console-dash__kpi::before{
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--green), rgba(15,106,74,.35));
+  opacity: .85;
+}
+.console-dash__kpi-label{
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.console-dash__kpi-value{
+  font-size: clamp(26px, 4vw, 32px);
+  font-weight: 800;
+  margin-top: 10px;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+.console-dash__kpi-meta{
+  margin-top: 8px;
+  font-size: 13px;
+  color: var(--muted2);
+  font-weight: 500;
+}
+.console-dash__grid2{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  align-items: start;
+}
+.console-dash__panel{
+  background: var(--card);
+  border: 1px solid var(--line2);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow2);
+  overflow: hidden;
+}
+.console-dash__panel-h{
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--line2);
+  font-size: 13px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+.console-dash__table{
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+.console-dash__table th{
+  text-align: left;
+  padding: 10px 16px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  border-bottom: 1px solid var(--line2);
+  background: rgba(13,15,18,.02);
+}
+.console-dash__table td{
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--line2);
+  vertical-align: top;
+}
+.console-dash__table tr:last-child td{
+  border-bottom: none;
+}
+.console-dash__table a{
+  color: inherit;
+  font-weight: 650;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.console-dash__muted{
+  color: var(--muted);
+  font-size: 13px;
+}
+.console-dash__zero{
+  color: var(--muted2);
+  font-weight: 500;
+}
+

@@ -155,9 +155,6 @@ $docTitle = match (true) {
           <?php if (str_console_authorize_route($g, 'dashboard.index')): ?>
             <a href="<?= htmlspecialchars($basePath . '/', ENT_QUOTES, 'UTF-8') ?>" <?= $path === '/' ? 'aria-current="page"' : '' ?>>Dashboard</a>
           <?php endif; ?>
-          <?php if ($canSearch): ?>
-            <a href="<?= htmlspecialchars($basePath . '/search', ENT_QUOTES, 'UTF-8') ?>" <?= str_starts_with($path, '/search') ? 'aria-current="page"' : '' ?>>Search</a>
-          <?php endif; ?>
           <?php if (str_console_authorize_route($g, 'customers.index')): ?>
             <a href="<?= htmlspecialchars($basePath . '/customers', ENT_QUOTES, 'UTF-8') ?>" <?= str_starts_with($path, '/customers') ? 'aria-current="page"' : '' ?>>Customers</a>
           <?php endif; ?>
@@ -169,12 +166,6 @@ $docTitle = match (true) {
           <?php endif; ?>
           <?php if (str_console_authorize_route($g, 'reports.index')): ?>
             <a href="<?= htmlspecialchars($basePath . '/reports', ENT_QUOTES, 'UTF-8') ?>" <?= str_starts_with($path, '/reports') ? 'aria-current="page"' : '' ?>>Reports</a>
-          <?php endif; ?>
-          <?php if (str_console_authorize_route($g, 'bulk_upload.customers')): ?>
-            <a href="<?= htmlspecialchars($basePath . '/bulk-upload/customers', ENT_QUOTES, 'UTF-8') ?>" <?= str_starts_with($path, '/bulk-upload/customers') ? 'aria-current="page"' : '' ?>>Import customers</a>
-          <?php endif; ?>
-          <?php if (str_console_authorize_route($g, 'bulk_upload.loans')): ?>
-            <a href="<?= htmlspecialchars($basePath . '/bulk-upload/loans', ENT_QUOTES, 'UTF-8') ?>" <?= str_starts_with($path, '/bulk-upload/loans') ? 'aria-current="page"' : '' ?>>Import loans</a>
           <?php endif; ?>
           <?php if (str_console_authorize_route($g, 'settings.users')): ?>
             <a href="<?= htmlspecialchars($basePath . '/settings/users', ENT_QUOTES, 'UTF-8') ?>" <?= str_starts_with($path, '/settings/users') ? 'aria-current="page"' : '' ?>>Users</a>
@@ -214,6 +205,7 @@ $docTitle = match (true) {
                 <a href="<?= htmlspecialchars($basePath . '/account/profile', ENT_QUOTES, 'UTF-8') ?>">Edit profile</a>
                 <a href="<?= htmlspecialchars($basePath . '/account/password', ENT_QUOTES, 'UTF-8') ?>">Password settings</a>
                 <form method="post" action="<?= htmlspecialchars($basePath . '/logout', ENT_QUOTES, 'UTF-8') ?>">
+                  <?php require STR_CONSOLE_ROOT . '/views/partials/csrf.php'; ?>
                   <button type="submit">Log out</button>
                 </form>
               </div>
