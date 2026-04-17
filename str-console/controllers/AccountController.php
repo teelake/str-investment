@@ -55,7 +55,7 @@ final class AccountController extends BaseController
         }
         $phoneNorm = UserRepository::normalizeOptionalPhone($phoneRaw);
         if ($phoneRaw !== '' && $phoneNorm === null) {
-            $this->redirect('/account/profile?error=' . rawurlencode('Enter a valid phone number (at least 8 digits), or leave blank.'));
+            $this->redirect('/account/profile?error=' . rawurlencode('Phone must be 11 digits, local number only—no country code (e.g. 08012345678), or leave blank.'));
             return;
         }
         if ($repo->emailTakenByOther($email, $uid)) {
@@ -130,8 +130,8 @@ final class AccountController extends BaseController
             $this->redirect('/account/password?error=' . rawurlencode('New passwords do not match.'));
             return;
         }
-        if (strlen($new) < 10) {
-            $this->redirect('/account/password?error=' . rawurlencode('New password must be at least 10 characters.'));
+        if (strlen($new) < InputValidate::PASSWORD_MIN_LENGTH) {
+            $this->redirect('/account/password?error=' . rawurlencode('New password must be at least ' . (string) InputValidate::PASSWORD_MIN_LENGTH . ' characters.'));
             return;
         }
         if (!password_verify($current, (string) ($row['password_hash'] ?? ''))) {

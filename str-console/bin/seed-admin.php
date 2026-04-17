@@ -41,6 +41,11 @@ $email = isset($argv[1]) ? mb_strtolower(trim((string) $argv[1])) : 'admin@strin
 $password = isset($argv[2]) ? (string) $argv[2] : 'ChangeMe!123';
 $roleKey = isset($argv[3]) ? trim((string) $argv[3]) : 'system_admin';
 
+if (strlen($password) < InputValidate::PASSWORD_MIN_LENGTH) {
+    fwrite(STDERR, 'Password must be at least ' . (string) InputValidate::PASSWORD_MIN_LENGTH . " characters.\n");
+    exit(1);
+}
+
 $defaults = str_console_default_role_grants();
 if (!isset($defaults[$roleKey])) {
     fwrite(STDERR, "Unknown role_key: {$roleKey}. Use one of: " . implode(', ', array_keys($defaults)) . "\n");

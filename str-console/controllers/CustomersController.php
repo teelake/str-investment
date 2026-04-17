@@ -72,10 +72,12 @@ final class CustomersController extends BaseController
             $this->redirect('/customers/create?error=' . rawurlencode('Name is too long.'));
             return;
         }
-        if (strlen($phone) > 32) {
-            $this->redirect('/customers/create?error=' . rawurlencode('Phone is too long.'));
+        $phoneNorm = InputValidate::requiredPhone11($phone);
+        if ($phoneNorm === false) {
+            $this->redirect('/customers/create?error=' . rawurlencode('Phone must be 11 digits, local number only—do not enter country code (e.g. 08012345678).'));
             return;
         }
+        $phone = $phoneNorm;
 
         $addrVal = $address === '' ? null : $address;
         $ninVal = $ninNorm;
@@ -228,10 +230,12 @@ final class CustomersController extends BaseController
             $this->redirect('/customers/' . $customerId . '/edit?error=' . rawurlencode('Name is too long.'));
             return;
         }
-        if (strlen($phone) > 32) {
-            $this->redirect('/customers/' . $customerId . '/edit?error=' . rawurlencode('Phone is too long.'));
+        $phoneNorm = InputValidate::requiredPhone11($phone);
+        if ($phoneNorm === false) {
+            $this->redirect('/customers/' . $customerId . '/edit?error=' . rawurlencode('Phone must be 11 digits, local number only—do not enter country code (e.g. 08012345678).'));
             return;
         }
+        $phone = $phoneNorm;
 
         $addrVal = $address === '' ? null : $address;
         $ninVal = $ninNorm;

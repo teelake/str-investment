@@ -29,11 +29,11 @@ $invalid = !empty($invalid);
 
     <div class="auth-field">
       <label for="reset-pw">New password</label>
-      <input id="reset-pw" name="new_password" type="password" required minlength="10" maxlength="<?= (int) InputValidate::PASSWORD_MAX_BYTES ?>" autocomplete="new-password" />
+      <input id="reset-pw" name="new_password" type="password" required minlength="<?= (int) InputValidate::PASSWORD_MIN_LENGTH ?>" maxlength="<?= (int) InputValidate::PASSWORD_MAX_BYTES ?>" autocomplete="new-password" />
     </div>
     <div class="auth-field">
       <label for="reset-pw2">Confirm password</label>
-      <input id="reset-pw2" name="confirm_password" type="password" required minlength="10" maxlength="<?= (int) InputValidate::PASSWORD_MAX_BYTES ?>" autocomplete="new-password" />
+      <input id="reset-pw2" name="confirm_password" type="password" required minlength="<?= (int) InputValidate::PASSWORD_MIN_LENGTH ?>" maxlength="<?= (int) InputValidate::PASSWORD_MAX_BYTES ?>" autocomplete="new-password" />
     </div>
     <div class="auth-actions">
       <button type="submit" class="btn primary">Save new password</button>

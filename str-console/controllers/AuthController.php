@@ -283,8 +283,8 @@ final class AuthController extends BaseController
             $this->redirect('/reset-password?token=' . rawurlencode($token) . '&error=' . rawurlencode('Password is too long.'));
             return;
         }
-        if (strlen($new) < 10) {
-            $this->redirect('/reset-password?token=' . rawurlencode($token) . '&error=' . rawurlencode('Password must be at least 10 characters.'));
+        if (strlen($new) < InputValidate::PASSWORD_MIN_LENGTH) {
+            $this->redirect('/reset-password?token=' . rawurlencode($token) . '&error=' . rawurlencode('Password must be at least ' . (string) InputValidate::PASSWORD_MIN_LENGTH . ' characters.'));
             return;
         }
         if ($new !== $confirm) {

@@ -20,7 +20,7 @@ final class BulkUploadController extends BaseController
             return;
         }
         fputcsv($out, ['full_name', 'phone', 'address', 'nin', 'bvn']);
-        fputcsv($out, ['Ada Okafor', '+2348012345678', '12 Sample Street, Lagos', '', '']);
+        fputcsv($out, ['Ada Okafor', '08012345678', '12 Sample Street, Lagos', '', '']);
         fclose($out);
         exit;
     }
@@ -112,6 +112,13 @@ final class BulkUploadController extends BaseController
                 continue;
             }
 
+            $phoneNorm = InputValidate::requiredPhone11($phone);
+            if ($phoneNorm === false) {
+                $errors[] = ['line' => $lineNo, 'message' => 'Phone must be 11 digits, local number only—no country code (e.g. 08012345678).'];
+                continue;
+            }
+            $phone = $phoneNorm;
+
             $ninNorm = InputValidate::optionalNinBvn($nin);
             if ($ninNorm === false) {
                 $errors[] = ['line' => $lineNo, 'message' => 'NIN must be blank or exactly 11 digits (Nigeria NIMC).'];
@@ -123,14 +130,12 @@ final class BulkUploadController extends BaseController
                 continue;
             }
 
-            $phoneDigits = preg_replace('/\D/', '', $phone) ?? '';
-            if ($phoneDigits !== '') {
-                if (isset($seenPhoneDigits[$phoneDigits])) {
-                    $errors[] = ['line' => $lineNo, 'message' => 'Duplicate phone in this file (same number as line ' . $seenPhoneDigits[$phoneDigits] . ').'];
-                    continue;
-                }
-                $seenPhoneDigits[$phoneDigits] = $lineNo;
+            $phoneDigits = $phone;
+            if (isset($seenPhoneDigits[$phoneDigits])) {
+                $errors[] = ['line' => $lineNo, 'message' => 'Duplicate phone in this file (same number as line ' . $seenPhoneDigits[$phoneDigits] . ').'];
+                continue;
             }
+            $seenPhoneDigits[$phoneDigits] = $lineNo;
             if ($ninNorm !== null) {
                 if (isset($seenNins[$ninNorm])) {
                     $errors[] = ['line' => $lineNo, 'message' => 'Duplicate NIN in this file (same as line ' . $seenNins[$ninNorm] . ').'];

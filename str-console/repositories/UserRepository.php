@@ -65,22 +65,16 @@ final class UserRepository
     }
 
     /**
-     * Optional profile phone: empty string → null; otherwise trim and cap length; require ≥8 digits.
+     * Optional profile phone: empty → null; otherwise 11-digit local number only (no country code), digits-only canonical stored.
      */
     public static function normalizeOptionalPhone(string $raw): ?string
     {
-        $t = trim($raw);
+        $t = trim(str_replace(["\0", "\r"], '', $raw));
         if ($t === '') {
             return null;
         }
-        if (strlen($t) > 32) {
-            return null;
-        }
-        $digits = preg_replace('/\D/', '', $t) ?? '';
-        if (strlen($digits) < 8) {
-            return null;
-        }
-        return $t;
+        $v = InputValidate::optionalPhone11($t);
+        return $v === false ? null : $v;
     }
 
     public function findActiveByEmail(string $email): ?array

@@ -36,10 +36,10 @@ $id = (int) ($user['id'] ?? 0);
         </label>
         <label style="display:grid; gap:6px; font-size: 13px; font-weight: 650; color: var(--muted);">
           Phone (optional)
-          <input name="phone" type="tel" maxlength="32" autocomplete="tel" value="<?= htmlspecialchars((string) ($user['phone'] ?? ''), ENT_QUOTES, 'UTF-8') ?>"
+          <input name="phone" type="tel" inputmode="tel" maxlength="18" autocomplete="tel" value="<?= htmlspecialchars((string) ($user['phone'] ?? ''), ENT_QUOTES, 'UTF-8') ?>"
             style="padding: 12px 14px; border-radius: 14px; border: 1px solid var(--line); background: #fff; color: var(--ink);" />
         </label>
-        <p style="margin: 0; font-size: 12px; color: var(--muted2); line-height: 1.45;">If set, use at least 8 digits (spaces and symbols are allowed).</p>
+        <p style="margin: 0; font-size: 12px; color: var(--muted2); line-height: 1.45;">If set: local mobile, 11 digits only—no country code (e.g. 08012345678). Leave blank to clear. Spaces or dashes are ignored.</p>
         <button type="submit" class="btn primary">Save profile</button>
       </form>
       <p style="margin: 16px 0 0; font-size: 13px; color: var(--muted2);">Role changes and org-wide access are managed by an administrator under <strong>Users</strong>.</p>

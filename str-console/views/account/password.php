@@ -9,7 +9,7 @@ $ok = is_string($flash) ? $flash : '';
 <div class="container" style="padding:0; max-width: 520px;">
   <a href="<?= htmlspecialchars($basePath . '/account/profile', ENT_QUOTES, 'UTF-8') ?>" style="font-size: 13px; font-weight: 650; color: var(--muted); text-decoration: none;">← Your profile</a>
   <h1 style="font-size: var(--h2); margin: 12px 0 8px;">Password</h1>
-  <p style="color: var(--muted); margin: 0 0 22px;">Use at least 10 characters.</p>
+  <p style="color: var(--muted); margin: 0 0 22px;">Use at least <?= (int) InputValidate::PASSWORD_MIN_LENGTH ?> characters.</p>
 
   <?php if ($ok !== ''): ?>
     <div style="background: var(--green-soft); border: 1px solid rgba(15,106,74,.2); color: var(--green2); padding: 12px 14px; border-radius: 14px; margin-bottom: 16px; font-size: 14px;"><?= htmlspecialchars($ok, ENT_QUOTES, 'UTF-8') ?></div>
@@ -28,12 +28,12 @@ $ok = is_string($flash) ? $flash : '';
       </label>
       <label style="display:grid; gap:6px; font-size: 13px; font-weight: 650; color: var(--muted);">
         New password
-        <input name="new_password" type="password" required minlength="10" maxlength="<?= (int) InputValidate::PASSWORD_MAX_BYTES ?>" autocomplete="new-password"
+        <input name="new_password" type="password" required minlength="<?= (int) InputValidate::PASSWORD_MIN_LENGTH ?>" maxlength="<?= (int) InputValidate::PASSWORD_MAX_BYTES ?>" autocomplete="new-password"
           style="padding: 12px 14px; border-radius: 14px; border: 1px solid var(--line); background: #fff; color: var(--ink);" />
       </label>
       <label style="display:grid; gap:6px; font-size: 13px; font-weight: 650; color: var(--muted);">
         Confirm new password
-        <input name="confirm_password" type="password" required minlength="10" maxlength="<?= (int) InputValidate::PASSWORD_MAX_BYTES ?>" autocomplete="new-password"
+        <input name="confirm_password" type="password" required minlength="<?= (int) InputValidate::PASSWORD_MIN_LENGTH ?>" maxlength="<?= (int) InputValidate::PASSWORD_MAX_BYTES ?>" autocomplete="new-password"
           style="padding: 12px 14px; border-radius: 14px; border: 1px solid var(--line); background: #fff; color: var(--ink);" />
       </label>
       <button type="submit" class="btn primary">Update password</button>

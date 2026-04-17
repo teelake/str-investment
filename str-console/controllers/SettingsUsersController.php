@@ -88,8 +88,8 @@ final class SettingsUsersController extends BaseController
             $this->redirect('/settings/users/create?error=' . rawurlencode('Full name is too long (max ' . InputValidate::PERSON_NAME_MAX . ' characters).'));
             return;
         }
-        if (strlen($password) < 10) {
-            $this->redirect('/settings/users/create?error=' . rawurlencode('Password must be at least 10 characters.'));
+        if (strlen($password) < InputValidate::PASSWORD_MIN_LENGTH) {
+            $this->redirect('/settings/users/create?error=' . rawurlencode('Password must be at least ' . (string) InputValidate::PASSWORD_MIN_LENGTH . ' characters.'));
             return;
         }
         if (strlen($password) > InputValidate::PASSWORD_MAX_BYTES) {
@@ -102,7 +102,7 @@ final class SettingsUsersController extends BaseController
         }
         $phoneNorm = UserRepository::normalizeOptionalPhone($phoneRaw);
         if ($phoneRaw !== '' && $phoneNorm === null) {
-            $this->redirect('/settings/users/create?error=' . rawurlencode('Enter a valid phone (at least 8 digits), or leave blank.'));
+            $this->redirect('/settings/users/create?error=' . rawurlencode('Phone must be 11 digits, local number only—no country code (e.g. 08012345678), or leave blank.'));
             return;
         }
 
@@ -221,7 +221,7 @@ final class SettingsUsersController extends BaseController
         }
         $phoneNorm = UserRepository::normalizeOptionalPhone($phoneRaw);
         if ($phoneRaw !== '' && $phoneNorm === null) {
-            $this->redirect('/settings/users/' . $userId . '/edit?error=' . rawurlencode('Enter a valid phone (at least 8 digits), or leave blank.'));
+            $this->redirect('/settings/users/' . $userId . '/edit?error=' . rawurlencode('Phone must be 11 digits, local number only—no country code (e.g. 08012345678), or leave blank.'));
             return;
         }
 
@@ -244,8 +244,8 @@ final class SettingsUsersController extends BaseController
 
         $newHash = null;
         if ($password !== '') {
-            if (strlen($password) < 10) {
-                $this->redirect('/settings/users/' . $userId . '/edit?error=' . rawurlencode('Password must be at least 10 characters or leave blank.'));
+            if (strlen($password) < InputValidate::PASSWORD_MIN_LENGTH) {
+                $this->redirect('/settings/users/' . $userId . '/edit?error=' . rawurlencode('Password must be at least ' . (string) InputValidate::PASSWORD_MIN_LENGTH . ' characters or leave blank.'));
                 return;
             }
             if (strlen($password) > InputValidate::PASSWORD_MAX_BYTES) {

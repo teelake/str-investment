@@ -39,10 +39,10 @@ $active = (int) ($user['is_active'] ?? 0) === 1;
       </label>
       <label style="display:grid; gap:6px; font-size: 13px; font-weight: 650; color: var(--muted);">
         Phone (optional)
-        <input name="phone" type="tel" maxlength="32" autocomplete="tel" value="<?= htmlspecialchars((string) ($user['phone'] ?? ''), ENT_QUOTES, 'UTF-8') ?>"
+        <input name="phone" type="tel" inputmode="tel" maxlength="18" autocomplete="tel" value="<?= htmlspecialchars((string) ($user['phone'] ?? ''), ENT_QUOTES, 'UTF-8') ?>"
           style="padding: 12px 14px; border-radius: 14px; border: 1px solid var(--line); background: #fff; color: var(--ink);" />
       </label>
-      <p style="margin: -6px 0 0; font-size: 12px; color: var(--muted2); line-height: 1.45;">At least 8 digits if provided.</p>
+      <p style="margin: -6px 0 0; font-size: 12px; color: var(--muted2); line-height: 1.45;">If provided: local mobile, 11 digits only—no country code (e.g. 08012345678). Leave blank otherwise.</p>
       <label style="display:grid; gap:6px; font-size: 13px; font-weight: 650; color: var(--muted);">
         Role
         <select name="role_key" required style="padding: 12px 14px; border-radius: 14px; border: 1px solid var(--line); background: #fff; font-size: 14px;">
@@ -57,7 +57,7 @@ $active = (int) ($user['is_active'] ?? 0) === 1;
       </label>
       <label style="display:grid; gap:6px; font-size: 13px; font-weight: 650; color: var(--muted);">
         New password (optional)
-        <input name="password" type="password" minlength="10" maxlength="<?= (int) InputValidate::PASSWORD_MAX_BYTES ?>" autocomplete="new-password" placeholder="Leave blank to keep current"
+        <input name="password" type="password" minlength="<?= (int) InputValidate::PASSWORD_MIN_LENGTH ?>" maxlength="<?= (int) InputValidate::PASSWORD_MAX_BYTES ?>" autocomplete="new-password" placeholder="Leave blank to keep current"
           style="padding: 12px 14px; border-radius: 14px; border: 1px solid var(--line); background: #fff; color: var(--ink);" />
       </label>
       <?php if ($canEditExtraGrants): ?>

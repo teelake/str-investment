@@ -11,6 +11,8 @@ final class InputValidate
 
     public const PERSON_NAME_MAX = 190;
 
+    public const PASSWORD_MIN_LENGTH = 8;
+
     public const PASSWORD_MAX_BYTES = 128;
 
     public const REJECTION_REASON_MAX = 500;
@@ -31,6 +33,29 @@ final class InputValidate
             return false;
         }
         return $digits;
+    }
+
+    /**
+     * Nigeria mobile stored as local MSISDN only: 11 digits, no country code (+234).
+     * Non-digits are stripped; same digit-length rules as NIN/BVN.
+     *
+     * @return null Empty / whitespace-only after strip. non-empty-string 11 digits. false Invalid length.
+     */
+    public static function optionalPhone11(string $raw): null|string|false
+    {
+        return self::optionalNinBvn($raw);
+    }
+
+    /**
+     * @return string Exactly 11 local digits (no country code), or false if empty or invalid.
+     */
+    public static function requiredPhone11(string $raw): string|false
+    {
+        $v = self::optionalNinBvn($raw);
+        if ($v === null || $v === false) {
+            return false;
+        }
+        return $v;
     }
 
     /** Strip NUL / CR; trim. Returns null if empty after trim. */

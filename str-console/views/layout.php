@@ -286,7 +286,7 @@ $docTitle = match (true) {
             <p class="auth-masthead__sub">We’ll email you a secure link to choose a new password.</p>
           <?php else: ?>
             <h1 class="auth-masthead__title">Set a new password</h1>
-            <p class="auth-masthead__sub">Choose a strong password you don’t use elsewhere.</p>
+            <p class="auth-masthead__sub">Use at least <?= (int) InputValidate::PASSWORD_MIN_LENGTH ?> characters. Choose one you don’t use elsewhere.</p>
           <?php endif; ?>
         </header>
         <div class="auth-card">

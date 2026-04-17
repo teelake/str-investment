@@ -32,8 +32,11 @@ $aidVal = $aid === null || $aid === '' ? '' : (string) (int) $aid;
       </label>
       <label style="display:grid; gap:6px; font-size: 13px; font-weight: 650; color: var(--muted);">
         Phone
-        <input name="phone" required maxlength="32" value="<?= htmlspecialchars((string) ($customer['phone'] ?? ''), ENT_QUOTES, 'UTF-8') ?>"
+        <input name="phone" type="tel" required inputmode="tel" autocomplete="tel" maxlength="18"
+          title="11-digit local number, no country code"
+          value="<?= htmlspecialchars((string) ($customer['phone'] ?? ''), ENT_QUOTES, 'UTF-8') ?>"
           style="padding: 12px 14px; border-radius: 14px; border: 1px solid var(--line); background: #fff; color: var(--ink);" />
+        <span style="font-size: 12px; font-weight: 500; color: var(--muted2);">Local mobile: 11 digits only—do not enter country code (e.g. 08012345678). Spaces or dashes are ignored.</span>
       </label>
       <label style="display:grid; gap:6px; font-size: 13px; font-weight: 650; color: var(--muted);">
         Address
