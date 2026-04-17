@@ -1,9 +1,15 @@
 <?php
 declare(strict_types=1);
-/** @var list<array<string, mixed>> $products */
+/** @var array{rows: list<array<string, mixed>>, total: int, page: int, per_page: int} $pagination */
+/** @var string $filterActivity */
 /** @var string|null $dbError */
 $basePath = Request::basePath();
 $dbError = $dbError ?? null;
+$filterActivity = $filterActivity ?? '';
+$rows = $pagination['rows'];
+$total = (int) $pagination['total'];
+$page = (int) $pagination['page'];
+$perPage = (int) $pagination['per_page'];
 ?>
 <div class="container" style="padding:0">
   <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:flex-end; gap:16px; margin-bottom:20px;">
@@ -20,6 +26,21 @@ $dbError = $dbError ?? null;
     <div style="background: rgba(180, 120, 20, .1); border: 1px solid rgba(180, 120, 20, .25); color: #7a4a00; padding: 14px 16px; border-radius: 14px; margin-bottom: 16px;"><?= htmlspecialchars($dbError, ENT_QUOTES, 'UTF-8') ?></div>
   <?php endif; ?>
 
+  <form method="get" action="<?= htmlspecialchars($basePath . '/loan-products', ENT_QUOTES, 'UTF-8') ?>" style="display:flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; margin-bottom: 16px;">
+    <label style="display:grid; gap: 6px; font-size: 13px; font-weight: 650; color: var(--muted);">
+      Activity
+      <select name="status" style="padding: 10px 12px; border-radius: 14px; border: 1px solid var(--line2); background: var(--card); color: inherit; min-width: 160px; font-size: 14px;">
+        <option value=""<?= $filterActivity === '' ? ' selected' : '' ?>>All</option>
+        <option value="active"<?= $filterActivity === 'active' ? ' selected' : '' ?>>Active</option>
+        <option value="retired"<?= $filterActivity === 'retired' ? ' selected' : '' ?>>Retired</option>
+      </select>
+    </label>
+    <button type="submit" class="btn primary" style="font-size: 14px;">Apply</button>
+    <?php if ($filterActivity !== ''): ?>
+      <a class="btn ghost" style="font-size: 14px;" href="<?= htmlspecialchars($basePath . '/loan-products', ENT_QUOTES, 'UTF-8') ?>">Clear</a>
+    <?php endif; ?>
+  </form>
+
   <div style="overflow:auto; border: 1px solid var(--line2); border-radius: var(--radius); background: var(--card); box-shadow: var(--shadow2);">
     <table style="width:100%; border-collapse:collapse; font-size:14px;">
       <thead>
@@ -33,10 +54,10 @@ $dbError = $dbError ?? null;
         </tr>
       </thead>
       <tbody>
-        <?php if (count($products) === 0): ?>
-          <tr><td colspan="6" style="padding:28px 14px; color:var(--muted);">No products yet.</td></tr>
+        <?php if (count($rows) === 0): ?>
+          <tr><td colspan="6" style="padding:28px 14px; color:var(--muted);"><?= $filterActivity !== '' ? 'No products match this filter.' : 'No products yet.' ?></td></tr>
         <?php else: ?>
-          <?php foreach ($products as $p): ?>
+          <?php foreach ($rows as $p): ?>
             <tr style="border-bottom:1px solid var(--line2);">
               <td style="padding:12px 14px; font-family:ui-monospace,monospace; color:var(--muted);"><?= (int) ($p['id'] ?? 0) ?></td>
               <td style="padding:12px 14px; font-weight:650;"><?= htmlspecialchars((string) ($p['name'] ?? ''), ENT_QUOTES, 'UTF-8') ?></td>
@@ -63,4 +84,11 @@ $dbError = $dbError ?? null;
       </tbody>
     </table>
   </div>
+
+  <?php
+  $path = '/loan-products';
+  $pageParam = 'page';
+  $query = $filterActivity !== '' ? ['status' => $filterActivity] : [];
+  require STR_CONSOLE_ROOT . '/views/partials/pagination.php';
+  ?>
 </div>

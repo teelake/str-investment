@@ -121,18 +121,18 @@ $docTitle = match (true) {
       color: #7a4a00; font-size: 14px; text-align: center;
     }
     .console-main {
-      flex: 1; width: min(var(--container), calc(100% - (var(--gutter) * 2)));
-      margin: 0 auto; padding: 28px 0 48px;
+      flex: 1; width: 100%; max-width: none; margin: 0; padding: 28px var(--gutter) 48px;
+      align-self: stretch; text-align: left;
     }
-    .console-main--guest { width: min(520px, calc(100% - (var(--gutter) * 2))); padding-top: 48px; }
-    /* Centered content column: frame is centered; labels and fields stay left-aligned (readable admin pattern). */
+    .console-main .container {
+      width: 100%; max-width: none; margin: 0;
+    }
+    .console-main--guest { width: min(520px, calc(100% - (var(--gutter) * 2))); margin-inline: auto; padding-top: 48px; }
     .console-form-page {
-      max-width: 640px;
-      margin-inline: auto;
-      text-align: left;
+      max-width: min(1100px, 100%); width: 100%; margin: 0; text-align: left;
     }
     .console-form-page--wide {
-      max-width: min(1100px, 100%);
+      max-width: none;
     }
 
     @media (max-width: 900px) {

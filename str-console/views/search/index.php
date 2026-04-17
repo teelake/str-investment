@@ -3,10 +3,20 @@ declare(strict_types=1);
 /** @var string $q */
 /** @var list<array<string, mixed>> $customers */
 /** @var list<array<string, mixed>> $loans */
+/** @var int $customers_total */
+/** @var int $loans_total */
+/** @var int $customers_page */
+/** @var int $loans_page */
+/** @var int $per_page */
 /** @var string|null $dbError */
 /** @var string|null $error */
 $dbError = $dbError ?? null;
 $error = $error ?? null;
+$customers_total = (int) ($customers_total ?? 0);
+$loans_total = (int) ($loans_total ?? 0);
+$customers_page = (int) ($customers_page ?? 1);
+$loans_page = (int) ($loans_page ?? 1);
+$per_page = (int) ($per_page ?? SearchRepository::PER_PAGE);
 $basePath = Request::basePath();
 $hasQuery = trim($q) !== '';
 ?>
@@ -77,6 +87,15 @@ $hasQuery = trim($q) !== '';
             </tbody>
           </table>
         </div>
+        <?php
+        $path = '/search';
+        $pageParam = 'pc';
+        $query = ['q' => $q, 'pl' => $loans_page];
+        $page = $customers_page;
+        $total = $customers_total;
+        $perPage = $per_page;
+        require STR_CONSOLE_ROOT . '/views/partials/pagination.php';
+        ?>
       </section>
 
       <section>
@@ -117,6 +136,15 @@ $hasQuery = trim($q) !== '';
             </tbody>
           </table>
         </div>
+        <?php
+        $path = '/search';
+        $pageParam = 'pl';
+        $query = ['q' => $q, 'pc' => $customers_page];
+        $page = $loans_page;
+        $total = $loans_total;
+        $perPage = $per_page;
+        require STR_CONSOLE_ROOT . '/views/partials/pagination.php';
+        ?>
       </section>
     </div>
   <?php endif; ?>

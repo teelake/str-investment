@@ -1,16 +1,20 @@
 <?php
 declare(strict_types=1);
 /** @var array{rows: list<array<string, mixed>>, total: int, page: int, per_page: int} $pagination */
+/** @var string $filterStatus */
+/** @var bool $statusInvalid */
 /** @var string|null $dbError */
 $basePath = Request::basePath();
 $rows = $pagination['rows'];
 $total = (int) $pagination['total'];
 $page = (int) $pagination['page'];
 $perPage = (int) $pagination['per_page'];
-$pages = $perPage > 0 ? (int) ceil($total / $perPage) : 1;
 $dbError = $dbError ?? null;
+$filterStatus = $filterStatus ?? '';
+$statusInvalid = $statusInvalid ?? false;
 $g = ConsoleAuth::grants();
 $canBulkLoans = str_console_authorize_route($g, 'bulk_upload.loans');
+$hasStatusFilter = trim($filterStatus) !== '';
 
 $statusLabel = static function (string $s): string {
     return match ($s) {
@@ -29,7 +33,7 @@ $fmt = static fn (float $n): string => '₦' . number_format($n, 2);
   <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:flex-end; gap:16px; margin-bottom:20px;">
     <div>
       <h1 style="font-size: var(--h2); margin: 0 0 6px;">Loans</h1>
-      <p style="color: var(--muted); margin: 0; font-size: 14px;"><?= (int) $total ?> in your scope · page <?= (int) $page ?> of <?= max(1, $pages) ?></p>
+      <p style="color: var(--muted); margin: 0; font-size: 14px;">Loans in your scope<?= ($hasStatusFilter && !$statusInvalid) ? ' (filtered by status)' : '' ?>.</p>
     </div>
     <div style="display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:flex-end;">
       <?php if ($canBulkLoans): ?>
@@ -46,6 +50,28 @@ $fmt = static fn (float $n): string => '₦' . number_format($n, 2);
     <div style="background: rgba(180, 120, 20, .1); border: 1px solid rgba(180, 120, 20, .25); color: #7a4a00; padding: 14px 16px; border-radius: 14px; margin-bottom: 16px;"><?= htmlspecialchars($dbError, ENT_QUOTES, 'UTF-8') ?></div>
   <?php endif; ?>
 
+  <?php if ($statusInvalid): ?>
+    <div style="background: rgba(180, 120, 20, .1); border: 1px solid rgba(180, 120, 20, .25); color: #7a4a00; padding: 14px 16px; border-radius: 14px; margin-bottom: 16px; font-size: 14px;">
+      Unknown status filter was ignored; showing all statuses.
+    </div>
+  <?php endif; ?>
+
+  <form method="get" action="<?= htmlspecialchars($basePath . '/loans', ENT_QUOTES, 'UTF-8') ?>" style="display:flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; margin-bottom: 16px;">
+    <label style="display:grid; gap: 6px; font-size: 13px; font-weight: 650; color: var(--muted);">
+      Status
+      <select name="status" style="padding: 10px 12px; border-radius: 14px; border: 1px solid var(--line2); background: var(--card); color: inherit; min-width: 200px; font-size: 14px;">
+        <option value=""<?= !$hasStatusFilter || $statusInvalid ? ' selected' : '' ?>>All</option>
+        <?php foreach (ReportRepository::LOAN_STATUSES as $st): ?>
+          <option value="<?= htmlspecialchars($st, ENT_QUOTES, 'UTF-8') ?>"<?= !$statusInvalid && $filterStatus === $st ? ' selected' : '' ?>><?= htmlspecialchars($statusLabel($st), ENT_QUOTES, 'UTF-8') ?></option>
+        <?php endforeach; ?>
+      </select>
+    </label>
+    <button type="submit" class="btn primary" style="font-size: 14px;">Apply</button>
+    <?php if ($hasStatusFilter && !$statusInvalid): ?>
+      <a class="btn ghost" style="font-size: 14px;" href="<?= htmlspecialchars($basePath . '/loans', ENT_QUOTES, 'UTF-8') ?>">Clear</a>
+    <?php endif; ?>
+  </form>
+
   <div style="overflow:auto; border: 1px solid var(--line2); border-radius: var(--radius); background: var(--card); box-shadow: var(--shadow2);">
     <table style="width:100%; border-collapse:collapse; font-size:14px;">
       <thead>
@@ -59,7 +85,7 @@ $fmt = static fn (float $n): string => '₦' . number_format($n, 2);
       </thead>
       <tbody>
         <?php if (count($rows) === 0): ?>
-          <tr><td colspan="5" style="padding:28px 14px; color:var(--muted);">No loans yet.</td></tr>
+          <tr><td colspan="5" style="padding:28px 14px; color:var(--muted);"><?= ($hasStatusFilter && !$statusInvalid) ? 'No loans match this status.' : 'No loans yet.' ?></td></tr>
         <?php else: ?>
           <?php foreach ($rows as $r): ?>
             <?php
@@ -81,10 +107,10 @@ $fmt = static fn (float $n): string => '₦' . number_format($n, 2);
     </table>
   </div>
 
-  <?php if ($pages > 1): ?>
-    <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:16px;">
-      <a class="btn ghost" style="font-size:13px;" href="<?= htmlspecialchars($basePath . '/loans?page=' . max(1, $page - 1), ENT_QUOTES, 'UTF-8') ?>">Previous</a>
-      <a class="btn ghost" style="font-size:13px;" href="<?= htmlspecialchars($basePath . '/loans?page=' . min($pages, $page + 1), ENT_QUOTES, 'UTF-8') ?>">Next</a>
-    </div>
-  <?php endif; ?>
+  <?php
+  $path = '/loans';
+  $pageParam = 'page';
+  $query = ($hasStatusFilter && !$statusInvalid) ? ['status' => $filterStatus] : [];
+  require STR_CONSOLE_ROOT . '/views/partials/pagination.php';
+  ?>
 </div>

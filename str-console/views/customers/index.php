@@ -1,16 +1,18 @@
 <?php
 declare(strict_types=1);
 /** @var array{rows: list<array<string, mixed>>, total: int, page: int, per_page: int} $pagination */
+/** @var string $filterQ */
 /** @var string|null $dbError */
 $dbError = $dbError ?? null;
+$filterQ = $filterQ ?? '';
 $basePath = Request::basePath();
 $rows = $pagination['rows'];
 $total = (int) $pagination['total'];
 $page = (int) $pagination['page'];
 $perPage = (int) $pagination['per_page'];
-$pages = $perPage > 0 ? (int) ceil($total / $perPage) : 1;
 $g = ConsoleAuth::grants();
 $canBulkCustomers = str_console_authorize_route($g, 'bulk_upload.customers');
+$hasFilter = trim($filterQ) !== '';
 ?>
 <div class="container" style="padding:0">
   <?php if (is_string($dbError) && $dbError !== ''): ?>
@@ -22,7 +24,7 @@ $canBulkCustomers = str_console_authorize_route($g, 'bulk_upload.customers');
   <div style="display:flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 20px;">
     <div>
       <h1 style="font-size: var(--h2); margin: 0 0 6px;">Customers</h1>
-      <p style="color: var(--muted); margin: 0; font-size: 14px;"><?= (int) $total ?> total · page <?= (int) $page ?> of <?= max(1, $pages) ?></p>
+      <p style="color: var(--muted); margin: 0; font-size: 14px;">Customers in your scope<?= $hasFilter ? ' (filtered)' : '' ?>.</p>
     </div>
     <div style="display:flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: flex-end;">
       <?php if ($canBulkCustomers): ?>
@@ -34,6 +36,17 @@ $canBulkCustomers = str_console_authorize_route($g, 'bulk_upload.customers');
       <?php endif; ?>
     </div>
   </div>
+
+  <form method="get" action="<?= htmlspecialchars($basePath . '/customers', ENT_QUOTES, 'UTF-8') ?>" style="display:flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; margin-bottom: 16px;">
+    <label style="display:grid; gap: 6px; font-size: 13px; font-weight: 650; color: var(--muted); flex: 1; min-width: 200px;">
+      Search
+      <input type="search" name="q" value="<?= htmlspecialchars($filterQ, ENT_QUOTES, 'UTF-8') ?>" placeholder="Name, phone, NIN, BVN, id…" autocomplete="off" style="padding: 10px 12px; border: 1px solid var(--line2); border-radius: var(--radius); font-size: 14px; background: var(--card); color: inherit; width: 100%;">
+    </label>
+    <button type="submit" class="btn primary" style="font-size: 14px;">Apply</button>
+    <?php if ($hasFilter): ?>
+      <a class="btn ghost" style="font-size: 14px;" href="<?= htmlspecialchars($basePath . '/customers', ENT_QUOTES, 'UTF-8') ?>">Clear</a>
+    <?php endif; ?>
+  </form>
 
   <div style="overflow:auto; border: 1px solid var(--line2); border-radius: var(--radius); background: var(--card); box-shadow: var(--shadow2);">
     <table style="width:100%; border-collapse: collapse; font-size: 14px;">
@@ -49,7 +62,7 @@ $canBulkCustomers = str_console_authorize_route($g, 'bulk_upload.customers');
       <tbody>
         <?php if (count($rows) === 0): ?>
           <tr>
-            <td colspan="5" style="padding: 28px 14px; color: var(--muted);">No customers in your scope yet.</td>
+            <td colspan="5" style="padding: 28px 14px; color: var(--muted);"><?= $hasFilter ? 'No customers match your search.' : 'No customers in your scope yet.' ?></td>
           </tr>
         <?php else: ?>
           <?php foreach ($rows as $r): ?>
@@ -79,14 +92,10 @@ $canBulkCustomers = str_console_authorize_route($g, 'bulk_upload.customers');
     </table>
   </div>
 
-  <?php if ($pages > 1): ?>
-    <div style="display:flex; gap: 10px; justify-content: flex-end; margin-top: 16px; flex-wrap: wrap;">
-      <?php
-      $prev = max(1, $page - 1);
-      $next = min($pages, $page + 1);
-      ?>
-      <a class="btn ghost" style="font-size: 13px; padding: 10px 14px;" href="<?= htmlspecialchars($basePath . '/customers?page=' . $prev, ENT_QUOTES, 'UTF-8') ?>">Previous</a>
-      <a class="btn ghost" style="font-size: 13px; padding: 10px 14px;" href="<?= htmlspecialchars($basePath . '/customers?page=' . $next, ENT_QUOTES, 'UTF-8') ?>">Next</a>
-    </div>
-  <?php endif; ?>
+  <?php
+  $path = '/customers';
+  $pageParam = 'page';
+  $query = $hasFilter ? ['q' => $filterQ] : [];
+  require STR_CONSOLE_ROOT . '/views/partials/pagination.php';
+  ?>
 </div>

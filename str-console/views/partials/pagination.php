@@ -6,14 +6,15 @@ declare(strict_types=1);
 /** @var int $page */
 /** @var int $total */
 /** @var int $perPage */
+$pageParam = $pageParam ?? 'page';
 $perPage = max(1, $perPage);
 $pages = $total > 0 ? (int) max(1, ceil($total / $perPage)) : 1;
 $page = min(max(1, $page), $pages);
 if ($total <= 0) {
     return;
 }
-$makeUrl = static function (int $p) use ($basePath, $path, $query): string {
-    $q = array_merge($query, ['page' => $p]);
+$makeUrl = static function (int $p) use ($basePath, $path, $query, $pageParam): string {
+    $q = array_merge($query, [$pageParam => $p]);
     $q = array_filter(
         $q,
         static fn (mixed $v): bool => $v !== null && $v !== ''

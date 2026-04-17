@@ -4,6 +4,66 @@ declare(strict_types=1);
 
 final class UserRepository
 {
+    private const PER_PAGE = 25;
+
+    /**
+     * @param ''|'active'|'inactive' $status
+     * @return array{rows: list<array<string, mixed>>, total: int, page: int, per_page: int}
+     */
+    public function paginate(int $page, ?string $searchQ, string $status = ''): array
+    {
+        $page = Pagination::sanitizeRequestedPage($page);
+        $perPage = self::PER_PAGE;
+        $pdo = Database::pdo();
+
+        $where = ['1=1'];
+        $params = [];
+        if ($status === 'active') {
+            $where[] = 'is_active = 1';
+        } elseif ($status === 'inactive') {
+            $where[] = 'is_active = 0';
+        }
+
+        $t = trim((string) $searchQ);
+        if ($t !== '') {
+            if (mb_strlen($t) > 120) {
+                $t = mb_substr($t, 0, 120);
+            }
+            $like = '%' . addcslashes($t, '%_\\') . '%';
+            $parts = ['email LIKE :uq', 'full_name LIKE :uq', 'phone LIKE :uq'];
+            $params[':uq'] = $like;
+            if (ctype_digit($t) && (int) $t > 0) {
+                $parts[] = 'id = :uid';
+                $params[':uid'] = (int) $t;
+            }
+            $where[] = '(' . implode(' OR ', $parts) . ')';
+        }
+
+        $whereSql = implode(' AND ', $where);
+        $stmtCount = $pdo->prepare('SELECT COUNT(*) AS c FROM console_users WHERE ' . $whereSql);
+        $stmtCount->execute($params);
+        $total = (int) ($stmtCount->fetch()['c'] ?? 0);
+        $page = Pagination::normalizePage($page, $total, $perPage);
+        $offset = ($page - 1) * $perPage;
+
+        $stmt = $pdo->prepare(
+            'SELECT id, email, role_key, extra_grants_json, full_name, phone, is_active, created_at, updated_at
+             FROM console_users WHERE ' . $whereSql . '
+             ORDER BY is_active DESC, email ASC
+             LIMIT :lim OFFSET :off'
+        );
+        foreach ($params as $k => $v) {
+            $stmt->bindValue($k, $v, is_int($v) ? PDO::PARAM_INT : PDO::PARAM_STR);
+        }
+        $stmt->bindValue(':lim', $perPage, PDO::PARAM_INT);
+        $stmt->bindValue(':off', $offset, PDO::PARAM_INT);
+        $stmt->execute();
+        /** @var list<array<string, mixed>> */
+        $rows = $stmt->fetchAll();
+
+        return ['rows' => $rows, 'total' => $total, 'page' => $page, 'per_page' => $perPage];
+    }
+
     /**
      * Optional profile phone: empty string → null; otherwise trim and cap length; require ≥8 digits.
      */

@@ -4,6 +4,44 @@ declare(strict_types=1);
 
 final class LoanProductRepository
 {
+    private const PER_PAGE = 25;
+
+    /**
+     * @param ''|'active'|'retired' $activity
+     * @return array{rows: list<array<string, mixed>>, total: int, page: int, per_page: int}
+     */
+    public function paginate(int $page, string $activity = ''): array
+    {
+        $page = Pagination::sanitizeRequestedPage($page);
+        $perPage = self::PER_PAGE;
+        $pdo = Database::pdo();
+
+        $where = '1=1';
+        if ($activity === 'active') {
+            $where .= ' AND is_active = 1';
+        } elseif ($activity === 'retired') {
+            $where .= ' AND is_active = 0';
+        }
+
+        $total = (int) $pdo->query('SELECT COUNT(*) AS c FROM loan_products WHERE ' . $where)->fetch()['c'];
+        $page = Pagination::normalizePage($page, $total, $perPage);
+        $offset = ($page - 1) * $perPage;
+
+        $stmt = $pdo->prepare(
+            'SELECT id, name, rate_percent, period_months, is_active, created_at, updated_at
+             FROM loan_products WHERE ' . $where . '
+             ORDER BY is_active DESC, name ASC
+             LIMIT :lim OFFSET :off'
+        );
+        $stmt->bindValue(':lim', $perPage, PDO::PARAM_INT);
+        $stmt->bindValue(':off', $offset, PDO::PARAM_INT);
+        $stmt->execute();
+        /** @var list<array<string, mixed>> */
+        $rows = $stmt->fetchAll();
+
+        return ['rows' => $rows, 'total' => $total, 'page' => $page, 'per_page' => $perPage];
+    }
+
     /**
      * @return list<array<string, mixed>>
      */

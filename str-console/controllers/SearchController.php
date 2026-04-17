@@ -17,14 +17,26 @@ final class SearchController extends BaseController
                 'q' => '',
                 'customers' => [],
                 'loans' => [],
+                'customers_total' => 0,
+                'loans_total' => 0,
+                'customers_page' => 1,
+                'loans_page' => 1,
+                'per_page' => SearchRepository::PER_PAGE,
                 'dbError' => 'Database not configured.',
             ]);
             return;
         }
 
         $q = trim((string) Request::query('q', ''));
+        $pageC = Pagination::sanitizeRequestedPage(Request::query('pc', 1));
+        $pageL = Pagination::sanitizeRequestedPage(Request::query('pl', 1));
         $customers = [];
         $loans = [];
+        $customersTotal = 0;
+        $loansTotal = 0;
+        $customersPage = 1;
+        $loansPage = 1;
+        $perPage = SearchRepository::PER_PAGE;
         $error = null;
 
         if ($q !== '') {
@@ -33,9 +45,14 @@ final class SearchController extends BaseController
             } else {
                 try {
                     $repo = new SearchRepository();
-                    $res = $repo->run($q, ConsoleAuth::userId(), ConsoleAuth::grants());
+                    $res = $repo->run($q, ConsoleAuth::userId(), ConsoleAuth::grants(), $pageC, $pageL);
                     $customers = $res['customers'];
                     $loans = $res['loans'];
+                    $customersTotal = (int) $res['customers_total'];
+                    $loansTotal = (int) $res['loans_total'];
+                    $customersPage = (int) $res['customers_page'];
+                    $loansPage = (int) $res['loans_page'];
+                    $perPage = (int) $res['per_page'];
                 } catch (Throwable) {
                     $error = 'Search failed. Try again.';
                 }
@@ -46,6 +63,11 @@ final class SearchController extends BaseController
             'q' => $q,
             'customers' => $customers,
             'loans' => $loans,
+            'customers_total' => $customersTotal,
+            'loans_total' => $loansTotal,
+            'customers_page' => $customersPage,
+            'loans_page' => $loansPage,
+            'per_page' => $perPage,
             'dbError' => null,
             'error' => $error,
         ]);

@@ -86,7 +86,7 @@ final class LoanRepository
                  ORDER BY l.id DESC LIMIT :lim OFFSET :off'
             );
             foreach ($params as $k => $v) {
-                $stmt->bindValue($k, $v, PDO::PARAM_INT);
+                $stmt->bindValue($k, $v, is_int($v) ? PDO::PARAM_INT : PDO::PARAM_STR);
             }
             $stmt->bindValue(':lim', $perPage, PDO::PARAM_INT);
             $stmt->bindValue(':off', $offset, PDO::PARAM_INT);

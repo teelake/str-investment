@@ -28,19 +28,19 @@ final class ReportRepository
         int $page,
         ?string $status,
         ?string $dateFromYmd,
-        ?string $dateToYmd
+        ?string $dateToYmd,
+        ?string $searchQ = null
     ): array {
-        $page = max(1, $page);
+        $page = Pagination::sanitizeRequestedPage($page);
         $perPage = self::PER_PAGE;
-        $offset = ($page - 1) * $perPage;
         $wide = PolicyService::loansWideAccess($grants);
         $pdo = Database::pdo();
 
         if (!$wide && $consoleUserId === null) {
-            return ['rows' => [], 'total' => 0, 'page' => $page, 'per_page' => $perPage];
+            return ['rows' => [], 'total' => 0, 'page' => 1, 'per_page' => $perPage];
         }
 
-        [$filterSql, $filterParams] = self::loanFilterClause($status, $dateFromYmd, $dateToYmd);
+        [$filterSql, $filterParams] = self::loanFilterClause($status, $dateFromYmd, $dateToYmd, $searchQ);
         $baseFrom = 'FROM loans l INNER JOIN customers c ON c.id = l.customer_id';
 
         if ($wide) {
@@ -48,6 +48,8 @@ final class ReportRepository
             $stmtCount = $pdo->prepare($countSql);
             $stmtCount->execute($filterParams);
             $total = (int) ($stmtCount->fetch()['c'] ?? 0);
+            $page = Pagination::normalizePage($page, $total, $perPage);
+            $offset = ($page - 1) * $perPage;
             $stmt = $pdo->prepare(
                 'SELECT l.*, c.full_name AS customer_name, c.assigned_user_id AS customer_assigned_user_id
                  ' . $baseFrom . '
@@ -66,6 +68,8 @@ final class ReportRepository
             $stmtCount = $pdo->prepare('SELECT COUNT(*) AS c ' . $baseFrom . ' WHERE 1=1' . $scope . $filterSql);
             $stmtCount->execute($params);
             $total = (int) ($stmtCount->fetch()['c'] ?? 0);
+            $page = Pagination::normalizePage($page, $total, $perPage);
+            $offset = ($page - 1) * $perPage;
             $stmt = $pdo->prepare(
                 'SELECT l.*, c.full_name AS customer_name, c.assigned_user_id AS customer_assigned_user_id
                  ' . $baseFrom . '
@@ -73,7 +77,7 @@ final class ReportRepository
                  ORDER BY l.id DESC LIMIT :lim OFFSET :off'
             );
             foreach ($params as $k => $v) {
-                $stmt->bindValue($k, $v);
+                $stmt->bindValue($k, $v, is_int($v) ? PDO::PARAM_INT : PDO::PARAM_STR);
             }
             $stmt->bindValue(':lim', $perPage, PDO::PARAM_INT);
             $stmt->bindValue(':off', $offset, PDO::PARAM_INT);
@@ -94,14 +98,15 @@ final class ReportRepository
         array $grants,
         ?string $status,
         ?string $dateFromYmd,
-        ?string $dateToYmd
+        ?string $dateToYmd,
+        ?string $searchQ = null
     ): array {
         $wide = PolicyService::loansWideAccess($grants);
         $pdo = Database::pdo();
         if (!$wide && $consoleUserId === null) {
             return [];
         }
-        [$filterSql, $filterParams] = self::loanFilterClause($status, $dateFromYmd, $dateToYmd);
+        [$filterSql, $filterParams] = self::loanFilterClause($status, $dateFromYmd, $dateToYmd, $searchQ);
         $baseFrom = 'FROM loans l INNER JOIN customers c ON c.id = l.customer_id';
         $lim = self::EXPORT_MAX_ROWS;
 
@@ -140,24 +145,26 @@ final class ReportRepository
         array $grants,
         int $page,
         ?string $dateFromYmd,
-        ?string $dateToYmd
+        ?string $dateToYmd,
+        ?string $searchQ = null
     ): array {
-        $page = max(1, $page);
+        $page = Pagination::sanitizeRequestedPage($page);
         $perPage = self::PER_PAGE;
-        $offset = ($page - 1) * $perPage;
         $wide = PolicyService::customersWideAccess($grants);
         $pdo = Database::pdo();
 
         if (!$wide && $consoleUserId === null) {
-            return ['rows' => [], 'total' => 0, 'page' => $page, 'per_page' => $perPage];
+            return ['rows' => [], 'total' => 0, 'page' => 1, 'per_page' => $perPage];
         }
 
-        [$filterSql, $filterParams] = self::customerDateClause($dateFromYmd, $dateToYmd);
+        [$filterSql, $filterParams] = self::customerReportFilters($dateFromYmd, $dateToYmd, $searchQ);
 
         if ($wide) {
             $stmtCount = $pdo->prepare('SELECT COUNT(*) AS c FROM customers c WHERE 1=1' . $filterSql);
             $stmtCount->execute($filterParams);
             $total = (int) ($stmtCount->fetch()['c'] ?? 0);
+            $page = Pagination::normalizePage($page, $total, $perPage);
+            $offset = ($page - 1) * $perPage;
             $stmt = $pdo->prepare(
                 'SELECT c.id, c.full_name, c.phone, c.assigned_user_id, c.created_at, c.updated_at,
                         COALESCE(NULLIF(TRIM(cu.full_name), \'\'), cu.email) AS assigned_user_label
@@ -178,6 +185,8 @@ final class ReportRepository
             $stmtCount = $pdo->prepare('SELECT COUNT(*) AS c FROM customers c WHERE 1=1' . $scope . $filterSql);
             $stmtCount->execute($params);
             $total = (int) ($stmtCount->fetch()['c'] ?? 0);
+            $page = Pagination::normalizePage($page, $total, $perPage);
+            $offset = ($page - 1) * $perPage;
             $stmt = $pdo->prepare(
                 'SELECT c.id, c.full_name, c.phone, c.assigned_user_id, c.created_at, c.updated_at,
                         COALESCE(NULLIF(TRIM(cu.full_name), \'\'), cu.email) AS assigned_user_label
@@ -211,14 +220,15 @@ final class ReportRepository
         ?int $consoleUserId,
         array $grants,
         ?string $dateFromYmd,
-        ?string $dateToYmd
+        ?string $dateToYmd,
+        ?string $searchQ = null
     ): array {
         $wide = PolicyService::customersWideAccess($grants);
         $pdo = Database::pdo();
         if (!$wide && $consoleUserId === null) {
             return [];
         }
-        [$filterSql, $filterParams] = self::customerDateClause($dateFromYmd, $dateToYmd);
+        [$filterSql, $filterParams] = self::customerReportFilters($dateFromYmd, $dateToYmd, $searchQ);
         $lim = self::EXPORT_MAX_ROWS;
 
         if ($wide) {
@@ -277,7 +287,7 @@ final class ReportRepository
     /**
      * @return array{0: string, 1: array<string, mixed>}
      */
-    private static function loanFilterClause(?string $status, ?string $dateFromYmd, ?string $dateToYmd): array
+    private static function loanFilterClause(?string $status, ?string $dateFromYmd, ?string $dateToYmd, ?string $searchRaw = null): array
     {
         $conditions = [];
         $params = [];
@@ -292,6 +302,23 @@ final class ReportRepository
         if ($dateToYmd !== null) {
             $conditions[] = 'DATE(l.created_at) <= :dto';
             $params[':dto'] = $dateToYmd;
+        }
+        $t = trim((string) $searchRaw);
+        if ($t !== '' && mb_strlen($t) <= 200) {
+            $like = '%' . addcslashes($t, '%_\\') . '%';
+            $parts = ['c.full_name LIKE :rptq', 'c.phone LIKE :rptq', 'c.nin LIKE :rptq', 'c.bvn LIKE :rptq'];
+            $params[':rptq'] = $like;
+            if (ctype_digit($t) && (int) $t > 0) {
+                $nid = (int) $t;
+                $parts[] = '(l.id = :rpn OR l.customer_id = :rpn OR c.id = :rpn)';
+                $params[':rpn'] = $nid;
+            }
+            $dig = preg_replace('/\D/', '', $t) ?? '';
+            if (strlen($dig) >= 2) {
+                $parts[] = "REGEXP_REPLACE(c.phone, '[^0-9]', '') LIKE :rptqd";
+                $params[':rptqd'] = '%' . addcslashes($dig, '%_\\') . '%';
+            }
+            $conditions[] = '(' . implode(' OR ', $parts) . ')';
         }
         $sql = $conditions === [] ? '' : ' AND ' . implode(' AND ', $conditions);
         return [$sql, $params];
@@ -314,5 +341,34 @@ final class ReportRepository
         }
         $sql = $conditions === [] ? '' : ' AND ' . implode(' AND ', $conditions);
         return [$sql, $params];
+    }
+
+    /**
+     * Date range + optional name / phone / id search (reports — customers).
+     *
+     * @return array{0: string, 1: array<string, mixed>}
+     */
+    private static function customerReportFilters(?string $dateFromYmd, ?string $dateToYmd, ?string $searchRaw = null): array
+    {
+        [$sql, $params] = self::customerDateClause($dateFromYmd, $dateToYmd);
+        $t = trim((string) $searchRaw);
+        if ($t === '' || mb_strlen($t) > 200) {
+            return [$sql, $params];
+        }
+        $like = '%' . addcslashes($t, '%_\\') . '%';
+        $parts = ['c.full_name LIKE :crpq', 'c.phone LIKE :crpq', 'c.nin LIKE :crpq', 'c.bvn LIKE :crpq'];
+        $extra = [':crpq' => $like];
+        if (ctype_digit($t) && (int) $t > 0) {
+            $parts[] = 'c.id = :crpid';
+            $extra[':crpid'] = (int) $t;
+        }
+        $dig = preg_replace('/\D/', '', $t) ?? '';
+        if (strlen($dig) >= 2) {
+            $parts[] = "REGEXP_REPLACE(c.phone, '[^0-9]', '') LIKE :crpqd";
+            $extra[':crpqd'] = '%' . addcslashes($dig, '%_\\') . '%';
+        }
+        $sql .= ' AND (' . implode(' OR ', $parts) . ')';
+
+        return [$sql, array_merge($params, $extra)];
     }
 }

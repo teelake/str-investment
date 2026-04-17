@@ -9,37 +9,45 @@ final class AuditLogRepository
     /**
      * @return array{rows: list<array<string, mixed>>, total: int, page: int, per_page: int}
      */
-    public function paginate(int $page, ?string $entityType): array
+    public function paginate(int $page, ?string $entityType, ?string $dateFromYmd = null, ?string $dateToYmd = null): array
     {
-        $page = max(1, $page);
+        $page = Pagination::sanitizeRequestedPage($page);
         $perPage = self::PER_PAGE;
-        $offset = ($page - 1) * $perPage;
         $pdo = Database::pdo();
 
+        $conds = [];
+        $params = [];
         if ($entityType !== null && $entityType !== '') {
-            $stmtCount = $pdo->prepare('SELECT COUNT(*) AS c FROM audit_log WHERE entity_type = :t');
-            $stmtCount->execute([':t' => $entityType]);
-            $total = (int) ($stmtCount->fetch()['c'] ?? 0);
-            $stmt = $pdo->prepare(
-                'SELECT id, actor_user_id, action, entity_type, entity_id, payload_json, created_at
-                 FROM audit_log WHERE entity_type = :t
-                 ORDER BY id DESC LIMIT :lim OFFSET :off'
-            );
-            $stmt->bindValue(':t', $entityType);
-            $stmt->bindValue(':lim', $perPage, PDO::PARAM_INT);
-            $stmt->bindValue(':off', $offset, PDO::PARAM_INT);
-            $stmt->execute();
-        } else {
-            $total = (int) $pdo->query('SELECT COUNT(*) AS c FROM audit_log')->fetch()['c'];
-            $stmt = $pdo->prepare(
-                'SELECT id, actor_user_id, action, entity_type, entity_id, payload_json, created_at
-                 FROM audit_log
-                 ORDER BY id DESC LIMIT :lim OFFSET :off'
-            );
-            $stmt->bindValue(':lim', $perPage, PDO::PARAM_INT);
-            $stmt->bindValue(':off', $offset, PDO::PARAM_INT);
-            $stmt->execute();
+            $conds[] = 'entity_type = :t';
+            $params[':t'] = $entityType;
         }
+        if ($dateFromYmd !== null) {
+            $conds[] = 'DATE(created_at) >= :dfrom';
+            $params[':dfrom'] = $dateFromYmd;
+        }
+        if ($dateToYmd !== null) {
+            $conds[] = 'DATE(created_at) <= :dto';
+            $params[':dto'] = $dateToYmd;
+        }
+        $where = $conds === [] ? '1=1' : implode(' AND ', $conds);
+
+        $stmtCount = $pdo->prepare('SELECT COUNT(*) AS c FROM audit_log WHERE ' . $where);
+        $stmtCount->execute($params);
+        $total = (int) ($stmtCount->fetch()['c'] ?? 0);
+        $page = Pagination::normalizePage($page, $total, $perPage);
+        $offset = ($page - 1) * $perPage;
+
+        $stmt = $pdo->prepare(
+            'SELECT id, actor_user_id, action, entity_type, entity_id, payload_json, created_at
+             FROM audit_log WHERE ' . $where . '
+             ORDER BY id DESC LIMIT :lim OFFSET :off'
+        );
+        foreach ($params as $k => $v) {
+            $stmt->bindValue($k, $v);
+        }
+        $stmt->bindValue(':lim', $perPage, PDO::PARAM_INT);
+        $stmt->bindValue(':off', $offset, PDO::PARAM_INT);
+        $stmt->execute();
 
         /** @var list<array<string, mixed>> $rows */
         $rows = $stmt->fetchAll();

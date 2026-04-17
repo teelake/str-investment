@@ -3,22 +3,22 @@ declare(strict_types=1);
 /** @var array{rows: list<array<string, mixed>>, total: int, page: int, per_page: int} $pagination */
 /** @var list<string> $entityTypes */
 /** @var string $filterType */
+/** @var string $from */
+/** @var string $to */
+/** @var bool $dateFromInvalid */
+/** @var bool $dateToInvalid */
 /** @var string|null $dbError */
 $dbError = $dbError ?? null;
+$from = $from ?? '';
+$to = $to ?? '';
+$dateFromInvalid = $dateFromInvalid ?? false;
+$dateToInvalid = $dateToInvalid ?? false;
 $basePath = Request::basePath();
 $rows = $pagination['rows'];
 $total = (int) $pagination['total'];
 $page = (int) $pagination['page'];
 $perPage = (int) $pagination['per_page'];
-$pages = $perPage > 0 ? (int) ceil($total / $perPage) : 1;
-
-$auditQuery = static function (int $p, string $type): string {
-    $q = ['page' => (string) $p];
-    if ($type !== '') {
-        $q['type'] = $type;
-    }
-    return '?' . http_build_query($q);
-};
+$hasDateFilter = trim($from) !== '' || trim($to) !== '';
 ?>
 <div class="container" style="padding:0">
   <?php if (is_string($dbError) && $dbError !== ''): ?>
@@ -27,22 +27,49 @@ $auditQuery = static function (int $p, string $type): string {
     </div>
   <?php endif; ?>
 
-  <div style="display:flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 20px;">
-    <div>
-      <h1 style="font-size: var(--h2); margin: 0 0 6px;">Audit log</h1>
-      <p style="color: var(--muted); margin: 0; font-size: 14px;"><?= (int) $total ?> entries · page <?= (int) $page ?> of <?= max(1, $pages) ?></p>
+  <div style="margin-bottom: 16px;">
+    <h1 style="font-size: var(--h2); margin: 0 0 6px;">Audit log</h1>
+    <p style="color: var(--muted); margin: 0; font-size: 14px;">Immutable record of sensitive actions.</p>
+  </div>
+
+  <?php
+  $invalidParts = [];
+  if ($dateFromInvalid) {
+      $invalidParts[] = 'start date (use YYYY-MM-DD)';
+  }
+  if ($dateToInvalid) {
+      $invalidParts[] = 'end date (use YYYY-MM-DD)';
+  }
+  ?>
+  <?php if ($invalidParts !== []): ?>
+    <div style="background: rgba(180, 120, 20, .1); border: 1px solid rgba(180, 120, 20, .25); color: #7a4a00; padding: 14px 16px; border-radius: 14px; margin-bottom: 16px; font-size: 14px;">
+      Some filters were ignored (invalid <?= htmlspecialchars(implode(', ', $invalidParts), ENT_QUOTES, 'UTF-8') ?>).
     </div>
-    <form method="get" action="<?= htmlspecialchars($basePath . '/audit', ENT_QUOTES, 'UTF-8') ?>" style="display:flex; flex-wrap: wrap; gap: 10px; align-items: center;">
-      <label for="audit-type" style="font-size: 13px; color: var(--muted);">Entity type</label>
-      <select id="audit-type" name="type" onchange="this.form.submit()" style="padding: 10px 12px; border: 1px solid var(--line2); border-radius: var(--radius); font-size: 14px; background: var(--card); color: inherit; min-width: 180px;">
+  <?php endif; ?>
+
+  <form method="get" action="<?= htmlspecialchars($basePath . '/audit', ENT_QUOTES, 'UTF-8') ?>" style="background: var(--card); border: 1px solid var(--line2); border-radius: var(--radius); padding: 16px; margin-bottom: 20px; box-shadow: var(--shadow2); display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end;">
+    <label for="audit-type" style="display:grid; gap:6px; font-size: 13px; font-weight: 650; color: var(--muted);">
+      Entity type
+      <select id="audit-type" name="type" style="padding: 10px 12px; border: 1px solid var(--line2); border-radius: var(--radius); font-size: 14px; background: var(--card); color: inherit; min-width: 180px;">
         <option value="">All types</option>
         <?php foreach ($entityTypes as $t): ?>
           <option value="<?= htmlspecialchars($t, ENT_QUOTES, 'UTF-8') ?>" <?= $filterType === $t ? ' selected' : '' ?>><?= htmlspecialchars($t, ENT_QUOTES, 'UTF-8') ?></option>
         <?php endforeach; ?>
       </select>
-      <noscript><button type="submit" class="btn ghost" style="font-size: 13px;">Apply</button></noscript>
-    </form>
-  </div>
+    </label>
+    <label style="display:grid; gap:6px; font-size: 13px; font-weight: 650; color: var(--muted);">
+      From
+      <input type="date" name="from" value="<?= htmlspecialchars($from, ENT_QUOTES, 'UTF-8') ?>" style="padding: 10px 12px; border-radius: 14px; border: 1px solid var(--line2); background: var(--card); color: inherit;" />
+    </label>
+    <label style="display:grid; gap:6px; font-size: 13px; font-weight: 650; color: var(--muted);">
+      To
+      <input type="date" name="to" value="<?= htmlspecialchars($to, ENT_QUOTES, 'UTF-8') ?>" style="padding: 10px 12px; border-radius: 14px; border: 1px solid var(--line2); background: var(--card); color: inherit;" />
+    </label>
+    <button type="submit" class="btn primary" style="font-size: 14px;">Apply</button>
+    <?php if ($filterType !== '' || $hasDateFilter): ?>
+      <a class="btn ghost" style="font-size: 14px;" href="<?= htmlspecialchars($basePath . '/audit', ENT_QUOTES, 'UTF-8') ?>">Clear</a>
+    <?php endif; ?>
+  </form>
 
   <div style="overflow:auto; border: 1px solid var(--line2); border-radius: var(--radius); background: var(--card); box-shadow: var(--shadow2);">
     <table style="width:100%; border-collapse: collapse; font-size: 14px;">
@@ -58,7 +85,7 @@ $auditQuery = static function (int $p, string $type): string {
       <tbody>
         <?php if (count($rows) === 0): ?>
           <tr>
-            <td colspan="5" style="padding: 28px 14px; color: var(--muted);">No audit entries yet.</td>
+            <td colspan="5" style="padding: 28px 14px; color: var(--muted);"><?= ($filterType !== '' || $hasDateFilter) ? 'No entries match these filters.' : 'No audit entries yet.' ?></td>
           </tr>
         <?php else: ?>
           <?php foreach ($rows as $r): ?>
@@ -95,14 +122,21 @@ $auditQuery = static function (int $p, string $type): string {
     </table>
   </div>
 
-  <?php if ($pages > 1): ?>
-    <div style="display:flex; gap: 10px; justify-content: flex-end; margin-top: 16px; flex-wrap: wrap;">
-      <?php
-      $prev = max(1, $page - 1);
-      $next = min($pages, $page + 1);
-      ?>
-      <a class="btn ghost" style="font-size: 13px; padding: 10px 14px;" href="<?= htmlspecialchars($basePath . '/audit' . $auditQuery($prev, $filterType), ENT_QUOTES, 'UTF-8') ?>">Previous</a>
-      <a class="btn ghost" style="font-size: 13px; padding: 10px 14px;" href="<?= htmlspecialchars($basePath . '/audit' . $auditQuery($next, $filterType), ENT_QUOTES, 'UTF-8') ?>">Next</a>
-    </div>
-  <?php endif; ?>
+  <?php
+  $path = '/audit';
+  $pageParam = 'page';
+  $query = [];
+  if ($filterType !== '') {
+      $query['type'] = $filterType;
+  }
+  $fromOk = trim($from) !== '' && !$dateFromInvalid;
+  $toOk = trim($to) !== '' && !$dateToInvalid;
+  if ($fromOk) {
+      $query['from'] = $from;
+  }
+  if ($toOk) {
+      $query['to'] = $to;
+  }
+  require STR_CONSOLE_ROOT . '/views/partials/pagination.php';
+  ?>
 </div>

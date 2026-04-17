@@ -6,15 +6,39 @@ final class SettingsUsersController extends BaseController
 {
     public function index(): void
     {
+        $page = Pagination::sanitizeRequestedPage(Request::query('page', 1));
+        $q = trim((string) Request::query('q', ''));
+        if (mb_strlen($q) > 120) {
+            $q = mb_substr($q, 0, 120);
+        }
+        $st = trim((string) Request::query('status', ''));
+        if (!in_array($st, ['', 'active', 'inactive'], true)) {
+            $st = '';
+        }
         if (!str_console_database_ready()) {
-            $this->render('settings/users/index', ['rows' => [], 'dbError' => 'Database not configured.']);
+            $this->render('settings/users/index', [
+                'pagination' => ['rows' => [], 'total' => 0, 'page' => 1, 'per_page' => 25],
+                'filterQ' => $q,
+                'filterStatus' => $st,
+                'dbError' => 'Database not configured.',
+            ]);
             return;
         }
         try {
-            $rows = (new UserRepository())->listAll();
-            $this->render('settings/users/index', ['rows' => $rows, 'dbError' => null]);
+            $data = (new UserRepository())->paginate($page, $q === '' ? null : $q, $st);
+            $this->render('settings/users/index', [
+                'pagination' => $data,
+                'filterQ' => $q,
+                'filterStatus' => $st,
+                'dbError' => null,
+            ]);
         } catch (Throwable) {
-            $this->render('settings/users/index', ['rows' => [], 'dbError' => 'Could not load users.']);
+            $this->render('settings/users/index', [
+                'pagination' => ['rows' => [], 'total' => 0, 'page' => 1, 'per_page' => 25],
+                'filterQ' => $q,
+                'filterStatus' => $st,
+                'dbError' => 'Could not load users.',
+            ]);
         }
     }
 

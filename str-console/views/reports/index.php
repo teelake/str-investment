@@ -7,6 +7,7 @@ declare(strict_types=1);
 /** @var string $status */
 /** @var string $from */
 /** @var string $to */
+/** @var string $q */
 /** @var bool $statusInvalid */
 /** @var bool $dateFromInvalid */
 /** @var bool $dateToInvalid */
@@ -15,20 +16,16 @@ declare(strict_types=1);
 /** @var bool $canExport */
 $basePath = Request::basePath();
 $dbError = $dbError ?? null;
+$q = $q ?? '';
 $rows = $pagination['rows'];
 $total = (int) $pagination['total'];
 $page = (int) $pagination['page'];
 $perPage = (int) $pagination['per_page'];
-$pages = $perPage > 0 ? (int) ceil($total / $perPage) : 1;
 
 $qp = [];
 if ($filterQuery !== '') {
     parse_str($filterQuery, $qp);
 }
-$reportHref = static function (int $p) use ($basePath, $qp): string {
-    $qp['page'] = $p;
-    return $basePath . '/reports?' . http_build_query($qp);
-};
 
 $statusLabel = static function (string $s): string {
     return match ($s) {
@@ -102,6 +99,10 @@ $statusLabel = static function (string $s): string {
       <label style="display:grid; gap:6px; font-size: 13px; font-weight: 650; color: var(--muted);">
         To (created)
         <input type="date" name="to" value="<?= htmlspecialchars($to, ENT_QUOTES, 'UTF-8') ?>" style="padding: 10px 12px; border-radius: 14px; border: 1px solid var(--line); background: #fff;" />
+      </label>
+      <label style="display:grid; gap:6px; font-size: 13px; font-weight: 650; color: var(--muted); flex: 1; min-width: 200px;">
+        Search
+        <input type="search" name="q" value="<?= htmlspecialchars($q, ENT_QUOTES, 'UTF-8') ?>" placeholder="<?= $kind === 'loans' ? 'Customer name, loan id…' : 'Name, phone, id…' ?>" autocomplete="off" style="padding: 10px 12px; border-radius: 14px; border: 1px solid var(--line); background: #fff; width: 100%;" />
       </label>
       <button type="submit" class="btn primary" style="font-size: 14px;">Apply</button>
       <?php if ($canExport && ($kind === 'loans' ? $canLoans : $canCustomers)): ?>
@@ -185,10 +186,12 @@ $statusLabel = static function (string $s): string {
     </div>
   <?php endif; ?>
 
-  <?php if ($pages > 1): ?>
-    <div style="display:flex; gap: 10px; justify-content: flex-end; margin-top: 16px;">
-      <a class="btn ghost" style="font-size: 13px;" href="<?= htmlspecialchars($reportHref(max(1, $page - 1)), ENT_QUOTES, 'UTF-8') ?>">Previous</a>
-      <a class="btn ghost" style="font-size: 13px;" href="<?= htmlspecialchars($reportHref(min($pages, $page + 1)), ENT_QUOTES, 'UTF-8') ?>">Next</a>
-    </div>
-  <?php endif; ?>
+  <?php
+  $reportQuery = $qp;
+  unset($reportQuery['page']);
+  $path = '/reports';
+  $pageParam = 'page';
+  $query = $reportQuery;
+  require STR_CONSOLE_ROOT . '/views/partials/pagination.php';
+  ?>
 </div>

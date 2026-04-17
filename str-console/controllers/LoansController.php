@@ -6,21 +6,35 @@ final class LoansController extends BaseController
 {
     public function index(): void
     {
-        $page = (int) Request::query('page', 1);
+        $page = Pagination::sanitizeRequestedPage(Request::query('page', 1));
+        $statusRaw = trim((string) Request::query('status', ''));
+        $statusNorm = ReportRepository::normalizeLoanStatus($statusRaw);
+        if ($statusRaw !== '' && $statusNorm === null) {
+            $statusNorm = null;
+        }
         if (!str_console_database_ready()) {
             $this->render('loans/index', [
                 'pagination' => ['rows' => [], 'total' => 0, 'page' => 1, 'per_page' => 20],
+                'filterStatus' => $statusRaw,
+                'statusInvalid' => $statusRaw !== '' && $statusNorm === null,
                 'dbError' => 'Database not configured.',
             ]);
             return;
         }
         try {
             $repo = new LoanRepository();
-            $data = $repo->paginateForConsoleUser(ConsoleAuth::userId(), ConsoleAuth::grants(), $page);
-            $this->render('loans/index', ['pagination' => $data, 'dbError' => null]);
+            $data = $repo->paginateForConsoleUser(ConsoleAuth::userId(), ConsoleAuth::grants(), $page, $statusNorm);
+            $this->render('loans/index', [
+                'pagination' => $data,
+                'filterStatus' => $statusRaw,
+                'statusInvalid' => $statusRaw !== '' && $statusNorm === null,
+                'dbError' => null,
+            ]);
         } catch (Throwable) {
             $this->render('loans/index', [
                 'pagination' => ['rows' => [], 'total' => 0, 'page' => 1, 'per_page' => 20],
+                'filterStatus' => $statusRaw,
+                'statusInvalid' => false,
                 'dbError' => 'Could not load loans.',
             ]);
         }

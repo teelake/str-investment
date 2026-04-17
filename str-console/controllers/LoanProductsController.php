@@ -6,15 +6,29 @@ final class LoanProductsController extends BaseController
 {
     public function index(): void
     {
+        $page = Pagination::sanitizeRequestedPage(Request::query('page', 1));
+        $activity = trim((string) Request::query('status', ''));
+        if (!in_array($activity, ['', 'active', 'retired'], true)) {
+            $activity = '';
+        }
         if (!str_console_database_ready()) {
-            $this->render('loan_products/index', ['products' => [], 'dbError' => 'Database not configured.']);
+            $this->render('loan_products/index', [
+                'pagination' => ['rows' => [], 'total' => 0, 'page' => 1, 'per_page' => 25],
+                'filterActivity' => $activity,
+                'dbError' => 'Database not configured.',
+            ]);
             return;
         }
         try {
             $repo = new LoanProductRepository();
-            $this->render('loan_products/index', ['products' => $repo->listAll(), 'dbError' => null]);
+            $data = $repo->paginate($page, $activity);
+            $this->render('loan_products/index', ['pagination' => $data, 'filterActivity' => $activity, 'dbError' => null]);
         } catch (Throwable) {
-            $this->render('loan_products/index', ['products' => [], 'dbError' => 'Could not load products.']);
+            $this->render('loan_products/index', [
+                'pagination' => ['rows' => [], 'total' => 0, 'page' => 1, 'per_page' => 25],
+                'filterActivity' => $activity,
+                'dbError' => 'Could not load products.',
+            ]);
         }
     }
 

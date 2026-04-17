@@ -6,10 +6,15 @@ final class CustomersController extends BaseController
 {
     public function index(): void
     {
-        $page = (int) Request::query('page', 1);
+        $page = Pagination::sanitizeRequestedPage(Request::query('page', 1));
+        $q = trim((string) Request::query('q', ''));
+        if (mb_strlen($q) > 120) {
+            $q = mb_substr($q, 0, 120);
+        }
         if (!str_console_database_ready()) {
             $this->render('customers/index', [
                 'pagination' => ['rows' => [], 'total' => 0, 'page' => 1, 'per_page' => 20],
+                'filterQ' => $q,
                 'dbError' => 'Database not configured.',
             ]);
             return;
@@ -17,11 +22,12 @@ final class CustomersController extends BaseController
 
         try {
             $repo = new CustomerRepository();
-            $data = $repo->paginateForConsoleUser(ConsoleAuth::userId(), ConsoleAuth::grants(), $page);
-            $this->render('customers/index', ['pagination' => $data, 'dbError' => null]);
+            $data = $repo->paginateForConsoleUser(ConsoleAuth::userId(), ConsoleAuth::grants(), $page, $q === '' ? null : $q);
+            $this->render('customers/index', ['pagination' => $data, 'filterQ' => $q, 'dbError' => null]);
         } catch (Throwable) {
             $this->render('customers/index', [
                 'pagination' => ['rows' => [], 'total' => 0, 'page' => 1, 'per_page' => 20],
+                'filterQ' => $q,
                 'dbError' => 'Could not load customers. Check the database connection and schema.',
             ]);
         }
