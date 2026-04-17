@@ -65,6 +65,7 @@ require_once STR_CONSOLE_ROOT . '/controllers/CustomersController.php';
 require_once STR_CONSOLE_ROOT . '/controllers/LoanProductsController.php';
 require_once STR_CONSOLE_ROOT . '/controllers/LoansController.php';
 require_once STR_CONSOLE_ROOT . '/controllers/SettingsController.php';
+require_once STR_CONSOLE_ROOT . '/controllers/SettingsUsersController.php';
 require_once STR_CONSOLE_ROOT . '/controllers/SearchController.php';
 require_once STR_CONSOLE_ROOT . '/controllers/AuditController.php';
 require_once STR_CONSOLE_ROOT . '/controllers/ReportsController.php';

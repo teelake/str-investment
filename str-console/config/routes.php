@@ -47,6 +47,12 @@ function str_console_routes(): array
         ['GET', '/settings/policies', SettingsController::class, 'policies', 'settings.policies'],
         ['POST', '/settings/policies', SettingsController::class, 'savePolicies', 'settings.policies'],
 
+        ['GET', '/settings/users', SettingsUsersController::class, 'index', 'settings.users'],
+        ['GET', '/settings/users/create', SettingsUsersController::class, 'create', 'settings.users'],
+        ['POST', '/settings/users', SettingsUsersController::class, 'store', 'settings.users'],
+        ['GET', '#^/settings/users/(\d+)/edit$#', SettingsUsersController::class, 'edit', 'settings.users'],
+        ['POST', '#^/settings/users/(\d+)/update$#', SettingsUsersController::class, 'update', 'settings.users'],
+
         ['GET', '/search', SearchController::class, 'index', 'search.index'],
         ['GET', '/audit', AuditController::class, 'index', 'audit.index'],
 

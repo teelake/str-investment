@@ -36,7 +36,7 @@ final class SettingsUsersController extends BaseController
     public function store(): void
     {
         if (!str_console_database_ready()) {
-            $this->redirect('/settings/users?error=' . rawurlencode('Database not configured.'));
+            $this->redirect('/settings/users/create?error=' . rawurlencode('Database not configured.'));
             return;
         }
 
