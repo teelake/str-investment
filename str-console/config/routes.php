@@ -22,6 +22,9 @@ function str_console_routes(): array
         ['GET', '/customers/create', CustomersController::class, 'create', 'customers.create'],
         ['POST', '/customers', CustomersController::class, 'store', 'customers.store'],
 
+        ['GET', '#^/customers/(\d+)/edit$#', CustomersController::class, 'edit', 'customers.edit'],
+        ['POST', '#^/customers/(\d+)/update$#', CustomersController::class, 'update', 'customers.update'],
+
         ['GET', '/loans', LoansController::class, 'index', 'loans.index'],
         ['GET', '/loans/create', LoansController::class, 'create', 'loans.create'],
         ['POST', '/loans', LoansController::class, 'store', 'loans.store'],

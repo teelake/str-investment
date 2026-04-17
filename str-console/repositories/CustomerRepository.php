@@ -163,4 +163,48 @@ final class CustomerRepository
         ]);
         return (int) $pdo->lastInsertId();
     }
+
+    /**
+     * When $setAssignee is false, assigned_user_id is left unchanged.
+     */
+    public function update(
+        int $id,
+        string $fullName,
+        string $phone,
+        ?string $address,
+        ?string $nin,
+        ?string $bvn,
+        bool $setAssignee,
+        ?int $assignedUserId
+    ): void {
+        $pdo = Database::pdo();
+        if ($setAssignee) {
+            $stmt = $pdo->prepare(
+                'UPDATE customers SET full_name = :name, phone = :phone, address = :addr, nin = :nin, bvn = :bvn,
+                 assigned_user_id = :aid, updated_at = NOW() WHERE id = :id'
+            );
+            $stmt->execute([
+                ':name' => $fullName,
+                ':phone' => $phone,
+                ':addr' => $address,
+                ':nin' => $nin,
+                ':bvn' => $bvn,
+                ':aid' => $assignedUserId,
+                ':id' => $id,
+            ]);
+            return;
+        }
+        $stmt = $pdo->prepare(
+            'UPDATE customers SET full_name = :name, phone = :phone, address = :addr, nin = :nin, bvn = :bvn,
+             updated_at = NOW() WHERE id = :id'
+        );
+        $stmt->execute([
+            ':name' => $fullName,
+            ':phone' => $phone,
+            ':addr' => $address,
+            ':nin' => $nin,
+            ':bvn' => $bvn,
+            ':id' => $id,
+        ]);
+    }
 }

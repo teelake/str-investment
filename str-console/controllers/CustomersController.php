@@ -104,11 +104,115 @@ final class CustomersController extends BaseController
                 'showSensitiveIds' => str_console_authorize($grants, ['customers.view_sensitive_ids']),
                 'canUpload' => str_console_authorize($grants, ['documents.upload']),
                 'canDeleteDocs' => str_console_authorize($grants, ['documents.delete']),
+                'canEdit' => str_console_authorize($grants, ['customers.edit']),
                 'docError' => Request::query('doc_error'),
                 'docOk' => Request::query('doc_ok'),
+                'editOk' => Request::query('edit_ok'),
+                'editError' => Request::query('edit_error'),
             ]);
         } catch (Throwable) {
             $this->redirect('/customers');
+        }
+    }
+
+    public function edit(int $customerId): void
+    {
+        if (!str_console_database_ready()) {
+            $this->redirect('/customers');
+            return;
+        }
+
+        try {
+            $repo = new CustomerRepository();
+            $customer = $repo->find($customerId, ConsoleAuth::userId(), ConsoleAuth::grants());
+            if ($customer === null) {
+                http_response_code(404);
+                header('Content-Type: text/html; charset=UTF-8');
+                echo '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Not found</title></head><body><p>Customer not found.</p></body></html>';
+                return;
+            }
+
+            $grants = ConsoleAuth::grants();
+            $assignUsers = [];
+            if (str_console_authorize($grants, ['customers.assign'])) {
+                try {
+                    $assignUsers = (new UserRepository())->listActiveForAssign();
+                } catch (Throwable) {
+                    $assignUsers = [];
+                }
+            }
+
+            $this->render('customers/edit', [
+                'customer' => $customer,
+                'assignUsers' => $assignUsers,
+                'canAssign' => str_console_authorize($grants, ['customers.assign']),
+                'error' => Request::query('error'),
+            ]);
+        } catch (Throwable) {
+            $this->redirect('/customers');
+        }
+    }
+
+    public function update(int $customerId): void
+    {
+        if (!str_console_database_ready()) {
+            $this->redirect('/customers/' . $customerId . '?edit_error=' . rawurlencode('Database not configured.'));
+            return;
+        }
+
+        $repo = new CustomerRepository();
+        $customer = $repo->find($customerId, ConsoleAuth::userId(), ConsoleAuth::grants());
+        if ($customer === null) {
+            $this->redirect('/customers');
+            return;
+        }
+
+        $name = trim((string) Request::post('full_name', ''));
+        $phone = trim((string) Request::post('phone', ''));
+        $address = trim((string) Request::post('address', ''));
+        $nin = trim((string) Request::post('nin', ''));
+        $bvn = trim((string) Request::post('bvn', ''));
+
+        if ($name === '' || $phone === '') {
+            $this->redirect('/customers/' . $customerId . '/edit?error=' . rawurlencode('Name and phone are required.'));
+            return;
+        }
+
+        $addrVal = $address === '' ? null : $address;
+        $ninVal = $nin === '' ? null : $nin;
+        $bvnVal = $bvn === '' ? null : $bvn;
+
+        $grants = ConsoleAuth::grants();
+        $setAssignee = str_console_authorize($grants, ['customers.assign']);
+        $assignedUserId = null;
+        if ($setAssignee) {
+            $raw = trim((string) Request::post('assigned_user_id', ''));
+            if ($raw === '') {
+                $assignedUserId = null;
+            } elseif (ctype_digit($raw)) {
+                $uid = (int) $raw;
+                $userRepo = new UserRepository();
+                if (!$userRepo->existsActiveUser($uid)) {
+                    $this->redirect('/customers/' . $customerId . '/edit?error=' . rawurlencode('Choose a valid console user for assignment.'));
+                    return;
+                }
+                $assignedUserId = $uid;
+            } else {
+                $this->redirect('/customers/' . $customerId . '/edit?error=' . rawurlencode('Invalid assignment value.'));
+                return;
+            }
+        }
+
+        try {
+            $repo->update($customerId, $name, $phone, $addrVal, $ninVal, $bvnVal, $setAssignee, $assignedUserId);
+            AuditLogger::log(ConsoleAuth::userId(), 'customer.update', 'customer', $customerId, [
+                'full_name' => $name,
+                'phone' => $phone,
+                'assigned_changed' => $setAssignee,
+            ]);
+            $this->redirect('/customers/' . $customerId . '?edit_ok=1');
+        } catch (Throwable) {
+            $this->redirect('/customers/' . $customerId . '/edit?error=' . rawurlencode('Could not save changes. Try again.'));
         }
     }
 

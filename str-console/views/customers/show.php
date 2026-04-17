@@ -5,8 +5,11 @@ declare(strict_types=1);
 /** @var bool $showSensitiveIds */
 /** @var bool $canUpload */
 /** @var bool $canDeleteDocs */
+/** @var bool $canEdit */
 /** @var mixed $docError */
 /** @var mixed $docOk */
+/** @var mixed $editOk */
+/** @var mixed $editError */
 $basePath = Request::basePath();
 $id = (int) ($customer['id'] ?? 0);
 $name = (string) ($customer['full_name'] ?? '');
@@ -32,19 +35,31 @@ $bvnHtml = $showSensitiveIds
     : htmlspecialchars($mask($bvn !== null ? (string) $bvn : null), ENT_QUOTES, 'UTF-8');
 $err = is_string($docError) ? $docError : '';
 $ok = $docOk === '1' || $docOk === 1;
+$canEdit = $canEdit ?? false;
+$editErr = is_string($editError ?? null) ? (string) $editError : '';
+$editDone = $editOk === '1' || $editOk === 1;
 ?>
 <div class="container" style="padding:0">
   <div style="margin-bottom: 20px;">
     <a href="<?= htmlspecialchars($basePath . '/customers', ENT_QUOTES, 'UTF-8') ?>" style="font-size: 13px; font-weight: 650; color: var(--muted); text-decoration: none;">← Customers</a>
     <h1 style="font-size: var(--h2); margin: 12px 0 6px;"><?= htmlspecialchars($name, ENT_QUOTES, 'UTF-8') ?></h1>
     <p style="color: var(--muted); margin: 0; font-size: 14px;">Customer #<?= (int) $id ?></p>
-    <?php if (str_console_authorize_route(ConsoleAuth::grants(), 'loans.create')): ?>
-      <p style="margin: 12px 0 0;">
+    <p style="margin: 12px 0 0; display:flex; flex-wrap: wrap; gap: 10px; align-items: center;">
+      <?php if ($canEdit): ?>
+        <a class="btn ghost" style="font-size: 14px;" href="<?= htmlspecialchars($basePath . '/customers/' . $id . '/edit', ENT_QUOTES, 'UTF-8') ?>">Edit profile</a>
+      <?php endif; ?>
+      <?php if (str_console_authorize_route(ConsoleAuth::grants(), 'loans.create')): ?>
         <a class="btn primary" style="font-size: 14px;" href="<?= htmlspecialchars($basePath . '/loans/create?customer_id=' . $id, ENT_QUOTES, 'UTF-8') ?>">New loan</a>
-      </p>
-    <?php endif; ?>
+      <?php endif; ?>
+    </p>
   </div>
 
+  <?php if ($editDone): ?>
+    <div style="background: var(--green-soft); border: 1px solid rgba(15,106,74,.2); color: var(--green2); padding: 12px 14px; border-radius: 14px; margin-bottom: 16px; font-size: 14px;">Profile updated.</div>
+  <?php endif; ?>
+  <?php if ($editErr !== ''): ?>
+    <div style="background: rgba(180, 40, 40, .08); border: 1px solid rgba(180, 40, 40, .2); color: #7f1d1d; padding: 12px 14px; border-radius: 14px; margin-bottom: 16px; font-size: 14px;"><?= htmlspecialchars($editErr, ENT_QUOTES, 'UTF-8') ?></div>
+  <?php endif; ?>
   <?php if ($ok): ?>
     <div style="background: var(--green-soft); border: 1px solid rgba(15,106,74,.2); color: var(--green2); padding: 12px 14px; border-radius: 14px; margin-bottom: 16px; font-size: 14px;">Document uploaded.</div>
   <?php endif; ?>
