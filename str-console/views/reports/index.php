@@ -15,6 +15,7 @@ declare(strict_types=1);
 /** @var string|null $dbError */
 /** @var bool $canExport */
 $basePath = Request::basePath();
+$g = ConsoleAuth::grants();
 $dbError = $dbError ?? null;
 $q = $q ?? '';
 $rows = $pagination['rows'];
@@ -122,22 +123,51 @@ $statusLabel = static function (string $s): string {
             <th style="padding: 12px 14px;">Status</th>
             <th style="padding: 12px 14px; text-align:right;">Principal</th>
             <th style="padding: 12px 14px;">Created</th>
+            <th style="padding: 12px 14px; width: 1%; white-space: nowrap; text-align: right;">Actions</th>
           </tr>
         </thead>
         <tbody>
           <?php if (count($rows) === 0): ?>
-            <tr><td colspan="6" style="padding: 28px 14px; color: var(--muted);">No rows match.</td></tr>
+            <tr><td colspan="7" style="padding: 28px 14px; color: var(--muted);">No rows match.</td></tr>
           <?php else: ?>
-            <?php foreach ($rows as $r): ?>
+            <?php foreach ($rows as $i => $r): ?>
+              <?php
+              $rowNum = ($page - 1) * $perPage + $i + 1;
+              $rlid = (int) ($r['id'] ?? 0);
+              $rst = (string) ($r['status'] ?? '');
+              $canViewLoanRp = str_console_authorize_route($g, 'loans.show');
+              $canEditLoanRp = str_console_authorize_route($g, 'loans.edit') && ($rst === 'draft' || $rst === 'rejected');
+              $canCloseLoanRp = str_console_authorize_route($g, 'loans.close') && $rst === 'active';
+              ?>
               <tr style="border-bottom: 1px solid var(--line2);">
-                <td style="padding: 12px 14px; font-family: ui-monospace, monospace; color: var(--muted);"><?= (int) ($r['id'] ?? 0) ?></td>
+                <td style="padding: 12px 14px; font-family: ui-monospace, monospace; color: var(--muted);"><?= $rowNum ?></td>
                 <td style="padding: 12px 14px; font-weight: 650;">
-                  <a href="<?= htmlspecialchars($basePath . '/loans/' . (int) ($r['id'] ?? 0), ENT_QUOTES, 'UTF-8') ?>" style="color: inherit;">#<?= (int) ($r['id'] ?? 0) ?></a>
+                  <?php if ($canViewLoanRp): ?>
+                    <a href="<?= htmlspecialchars($basePath . '/loans/' . $rlid, ENT_QUOTES, 'UTF-8') ?>" style="color: inherit; text-decoration: none;">Open</a>
+                  <?php else: ?>
+                    —
+                  <?php endif; ?>
                 </td>
                 <td style="padding: 12px 14px;"><?= htmlspecialchars((string) ($r['customer_name'] ?? ''), ENT_QUOTES, 'UTF-8') ?></td>
-                <td style="padding: 12px 14px;"><?= htmlspecialchars($statusLabel((string) ($r['status'] ?? '')), ENT_QUOTES, 'UTF-8') ?></td>
+                <td style="padding: 12px 14px;"><?= htmlspecialchars($statusLabel($rst), ENT_QUOTES, 'UTF-8') ?></td>
                 <td style="padding: 12px 14px; text-align:right;"><?= htmlspecialchars(number_format((float) ($r['principal_amount'] ?? 0), 2), ENT_QUOTES, 'UTF-8') ?></td>
                 <td style="padding: 12px 14px; color: var(--muted);"><?= htmlspecialchars((string) ($r['created_at'] ?? ''), ENT_QUOTES, 'UTF-8') ?></td>
+                <td style="padding: 12px 14px; text-align: right;">
+                  <?php
+                  if ($canViewLoanRp) {
+                      $viewHref = $basePath . '/loans/' . $rlid;
+                      $editHref = $canEditLoanRp ? $basePath . '/loans/' . $rlid . '/edit' : null;
+                      $dangerPost = $canCloseLoanRp ? [
+                          'action' => $basePath . '/loans/' . $rlid . '/close',
+                          'title' => 'Close loan',
+                          'confirm' => 'Close this loan? It must have zero outstanding balance.',
+                      ] : null;
+                      require STR_CONSOLE_ROOT . '/views/partials/table_icon_actions.php';
+                  } else {
+                      echo '—';
+                  }
+                  ?>
+                </td>
               </tr>
             <?php endforeach; ?>
           <?php endif; ?>
@@ -154,17 +184,29 @@ $statusLabel = static function (string $s): string {
             <th style="padding: 12px 14px;">Phone</th>
             <th style="padding: 12px 14px;">Assigned</th>
             <th style="padding: 12px 14px;">Created</th>
+            <th style="padding: 12px 14px; width: 1%; white-space: nowrap; text-align: right;">Actions</th>
           </tr>
         </thead>
         <tbody>
           <?php if (count($rows) === 0): ?>
-            <tr><td colspan="5" style="padding: 28px 14px; color: var(--muted);">No rows match.</td></tr>
+            <tr><td colspan="6" style="padding: 28px 14px; color: var(--muted);">No rows match.</td></tr>
           <?php else: ?>
-            <?php foreach ($rows as $r): ?>
+            <?php foreach ($rows as $i => $r): ?>
+              <?php
+              $rowNum = ($page - 1) * $perPage + $i + 1;
+              $rcid = (int) ($r['id'] ?? 0);
+              $custActive = (int) ($r['is_active'] ?? 1) === 1;
+              $canViewCustRp = str_console_authorize_route($g, 'customers.show');
+              $canEditCustRp = str_console_authorize_route($g, 'customers.edit');
+              ?>
               <tr style="border-bottom: 1px solid var(--line2);">
-                <td style="padding: 12px 14px; font-family: ui-monospace, monospace; color: var(--muted);"><?= (int) ($r['id'] ?? 0) ?></td>
+                <td style="padding: 12px 14px; font-family: ui-monospace, monospace; color: var(--muted);"><?= $rowNum ?></td>
                 <td style="padding: 12px 14px; font-weight: 650;">
-                  <a href="<?= htmlspecialchars($basePath . '/customers/' . (int) ($r['id'] ?? 0), ENT_QUOTES, 'UTF-8') ?>" style="color: inherit;"><?= htmlspecialchars((string) ($r['full_name'] ?? ''), ENT_QUOTES, 'UTF-8') ?></a>
+                  <?php if ($canViewCustRp): ?>
+                    <a href="<?= htmlspecialchars($basePath . '/customers/' . $rcid, ENT_QUOTES, 'UTF-8') ?>" style="color: inherit; text-decoration: none;"><?= htmlspecialchars((string) ($r['full_name'] ?? ''), ENT_QUOTES, 'UTF-8') ?></a>
+                  <?php else: ?>
+                    <?= htmlspecialchars((string) ($r['full_name'] ?? ''), ENT_QUOTES, 'UTF-8') ?>
+                  <?php endif; ?>
                 </td>
                 <td style="padding: 12px 14px;"><?= htmlspecialchars((string) ($r['phone'] ?? ''), ENT_QUOTES, 'UTF-8') ?></td>
                 <td style="padding: 12px 14px; color: var(--muted);"><?php
@@ -178,6 +220,22 @@ $statusLabel = static function (string $s): string {
                 }
               ?></td>
                 <td style="padding: 12px 14px; color: var(--muted);"><?= htmlspecialchars((string) ($r['created_at'] ?? ''), ENT_QUOTES, 'UTF-8') ?></td>
+                <td style="padding: 12px 14px; text-align: right;">
+                  <?php
+                  if ($canViewCustRp) {
+                      $viewHref = $basePath . '/customers/' . $rcid;
+                      $editHref = $canEditCustRp ? $basePath . '/customers/' . $rcid . '/edit' : null;
+                      $dangerPost = ($canEditCustRp && $custActive) ? [
+                          'action' => $basePath . '/customers/' . $rcid . '/deactivate',
+                          'title' => 'Deactivate customer',
+                          'confirm' => 'Deactivate this customer? They will be removed from the main customer list.',
+                      ] : null;
+                      require STR_CONSOLE_ROOT . '/views/partials/table_icon_actions.php';
+                  } else {
+                      echo '—';
+                  }
+                  ?>
+                </td>
               </tr>
             <?php endforeach; ?>
           <?php endif; ?>

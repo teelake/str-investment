@@ -41,6 +41,7 @@ $docOkCount = ctype_digit($docOkStr) ? (int) $docOkStr : 0;
 $canEdit = $canEdit ?? false;
 $editErr = is_string($editError ?? null) ? (string) $editError : '';
 $editDone = $editOk === '1' || $editOk === 1;
+$custInactive = (int) ($customer['is_active'] ?? 1) !== 1;
 ?>
 <style>
   .customer-show-main-grid {
@@ -72,6 +73,9 @@ $editDone = $editOk === '1' || $editOk === 1;
     </p>
   </div>
 
+  <?php if ($custInactive): ?>
+    <div style="background: rgba(180, 120, 20, .1); border: 1px solid rgba(180, 120, 20, .25); color: #7a4a00; padding: 12px 14px; border-radius: 14px; margin-bottom: 16px; font-size: 14px;">This customer is <strong>deactivated</strong> and no longer appears on the main customer list.</div>
+  <?php endif; ?>
   <?php if ($editDone): ?>
     <div style="background: var(--green-soft); border: 1px solid rgba(15,106,74,.2); color: var(--green2); padding: 12px 14px; border-radius: 14px; margin-bottom: 16px; font-size: 14px;">Profile updated.</div>
   <?php endif; ?>

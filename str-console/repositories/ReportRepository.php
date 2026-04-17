@@ -188,12 +188,12 @@ final class ReportRepository
             $page = Pagination::normalizePage($page, $total, $perPage);
             $offset = ($page - 1) * $perPage;
             $stmt = $pdo->prepare(
-                'SELECT c.id, c.full_name, c.phone, c.assigned_user_id, c.created_at, c.updated_at,
+                'SELECT c.id, c.full_name, c.phone, c.assigned_user_id, c.is_active, c.created_at, c.updated_at,
                         COALESCE(NULLIF(TRIM(cu.full_name), \'\'), cu.email) AS assigned_user_label
                  FROM customers c
                  LEFT JOIN console_users cu ON cu.id = c.assigned_user_id
                  WHERE 1=1' . $scope . $filterSql . '
-                 ORDER BY c.id DESC LIMIT :lim OFFSET :off'
+                 ORDER BY c.id ASC LIMIT :lim OFFSET :off'
             );
             foreach ($params as $k => $v) {
                 $type = PDO::PARAM_STR;
