@@ -11,15 +11,12 @@ declare(strict_types=1);
 function str_console_customer_document_types(): array
 {
     return [
-        'national_id' => 'National ID / NIN slip',
-        'passport' => 'International passport',
-        'drivers_license' => 'Driver\'s license',
-        'voters_card' => 'Voter\'s card',
-        'utility_bill' => 'Utility bill (proof of address)',
-        'bank_statement' => 'Bank statement',
-        'employment_letter' => 'Employment letter',
-        'cac_document' => 'CAC / business registration',
-        'other' => 'Other',
+        'bill_of_sale' => 'Bill of sale',
+        'id_card' => 'ID card',
+        'cheque' => 'Cheque',
+        'guarantor_form' => 'Guarantor form',
+        'application_form' => 'Application form',
+        'kyc' => 'KYC',
     ];
 }
 

@@ -32,9 +32,11 @@ final class CustomerRepository
             $countStmt = $pdo->query('SELECT COUNT(*) AS c FROM customers');
             $total = (int) ($countStmt->fetch()['c'] ?? 0);
             $stmt = $pdo->prepare(
-                'SELECT id, full_name, phone, address, nin, bvn, assigned_user_id, created_at, updated_at
-                 FROM customers
-                 ORDER BY id DESC
+                'SELECT c.id, c.full_name, c.phone, c.address, c.nin, c.bvn, c.assigned_user_id, c.created_at, c.updated_at,
+                        COALESCE(NULLIF(TRIM(cu.full_name), \'\'), cu.email) AS assigned_user_label
+                 FROM customers c
+                 LEFT JOIN console_users cu ON cu.id = c.assigned_user_id
+                 ORDER BY c.id DESC
                  LIMIT :lim OFFSET :off'
             );
             $stmt->bindValue(':lim', $perPage, PDO::PARAM_INT);
@@ -45,10 +47,12 @@ final class CustomerRepository
             $stmtCount->execute([':uid' => $consoleUserId]);
             $total = (int) ($stmtCount->fetch()['c'] ?? 0);
             $stmt = $pdo->prepare(
-                'SELECT id, full_name, phone, address, nin, bvn, assigned_user_id, created_at, updated_at
-                 FROM customers
-                 WHERE assigned_user_id <=> :uid
-                 ORDER BY id DESC
+                'SELECT c.id, c.full_name, c.phone, c.address, c.nin, c.bvn, c.assigned_user_id, c.created_at, c.updated_at,
+                        COALESCE(NULLIF(TRIM(cu.full_name), \'\'), cu.email) AS assigned_user_label
+                 FROM customers c
+                 LEFT JOIN console_users cu ON cu.id = c.assigned_user_id
+                 WHERE c.assigned_user_id <=> :uid
+                 ORDER BY c.id DESC
                  LIMIT :lim OFFSET :off'
             );
             $stmt->bindValue(':uid', $consoleUserId, $consoleUserId === null ? PDO::PARAM_NULL : PDO::PARAM_INT);

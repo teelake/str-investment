@@ -24,6 +24,7 @@ $dbError = $dbError ?? null;
     <table style="width:100%; border-collapse:collapse; font-size:14px;">
       <thead>
         <tr style="text-align:left; border-bottom:1px solid var(--line2); color:var(--muted); font-size:12px; text-transform:uppercase; letter-spacing:0.04em;">
+          <th style="padding:12px 14px; width:1%; white-space:nowrap;">ID</th>
           <th style="padding:12px 14px;">Name</th>
           <th style="padding:12px 14px;">Rate %</th>
           <th style="padding:12px 14px;">Period (mo)</th>
@@ -33,10 +34,11 @@ $dbError = $dbError ?? null;
       </thead>
       <tbody>
         <?php if (count($products) === 0): ?>
-          <tr><td colspan="5" style="padding:28px 14px; color:var(--muted);">No products yet.</td></tr>
+          <tr><td colspan="6" style="padding:28px 14px; color:var(--muted);">No products yet.</td></tr>
         <?php else: ?>
           <?php foreach ($products as $p): ?>
             <tr style="border-bottom:1px solid var(--line2);">
+              <td style="padding:12px 14px; font-family:ui-monospace,monospace; color:var(--muted);"><?= (int) ($p['id'] ?? 0) ?></td>
               <td style="padding:12px 14px; font-weight:650;"><?= htmlspecialchars((string) ($p['name'] ?? ''), ENT_QUOTES, 'UTF-8') ?></td>
               <td style="padding:12px 14px;"><?= htmlspecialchars((string) ($p['rate_percent'] ?? ''), ENT_QUOTES, 'UTF-8') ?></td>
               <td style="padding:12px 14px;"><?= (int) ($p['period_months'] ?? 0) ?></td>

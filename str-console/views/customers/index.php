@@ -39,6 +39,7 @@ $canBulkCustomers = str_console_authorize_route($g, 'bulk_upload.customers');
     <table style="width:100%; border-collapse: collapse; font-size: 14px;">
       <thead>
         <tr style="text-align:left; border-bottom: 1px solid var(--line2); color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em;">
+          <th style="padding: 12px 14px; width: 1%; white-space: nowrap;">ID</th>
           <th style="padding: 12px 14px;">Name</th>
           <th style="padding: 12px 14px;">Phone</th>
           <th style="padding: 12px 14px;">Assigned</th>
@@ -48,18 +49,28 @@ $canBulkCustomers = str_console_authorize_route($g, 'bulk_upload.customers');
       <tbody>
         <?php if (count($rows) === 0): ?>
           <tr>
-            <td colspan="4" style="padding: 28px 14px; color: var(--muted);">No customers in your scope yet.</td>
+            <td colspan="5" style="padding: 28px 14px; color: var(--muted);">No customers in your scope yet.</td>
           </tr>
         <?php else: ?>
           <?php foreach ($rows as $r): ?>
             <tr style="border-bottom: 1px solid var(--line2);">
+              <td style="padding: 12px 14px; font-family: ui-monospace, monospace; color: var(--muted);"><?= (int) ($r['id'] ?? 0) ?></td>
               <td style="padding: 12px 14px; font-weight: 650;">
                 <a href="<?= htmlspecialchars($basePath . '/customers/' . (int) ($r['id'] ?? 0), ENT_QUOTES, 'UTF-8') ?>" style="color: inherit; text-decoration: underline; text-underline-offset: 4px;">
                   <?= htmlspecialchars((string) ($r['full_name'] ?? ''), ENT_QUOTES, 'UTF-8') ?>
                 </a>
               </td>
               <td style="padding: 12px 14px;"><?= htmlspecialchars((string) ($r['phone'] ?? ''), ENT_QUOTES, 'UTF-8') ?></td>
-              <td style="padding: 12px 14px; color: var(--muted);"><?= $r['assigned_user_id'] === null ? '—' : (string) (int) $r['assigned_user_id'] ?></td>
+              <td style="padding: 12px 14px; color: var(--muted);"><?php
+                $alabel = trim((string) ($r['assigned_user_label'] ?? ''));
+                if ($alabel !== '') {
+                    echo htmlspecialchars($alabel, ENT_QUOTES, 'UTF-8');
+                } elseif (($r['assigned_user_id'] ?? null) !== null && $r['assigned_user_id'] !== '') {
+                    echo 'Console user #' . (int) $r['assigned_user_id'];
+                } else {
+                    echo '—';
+                }
+              ?></td>
               <td style="padding: 12px 14px; color: var(--muted);"><?= htmlspecialchars((string) ($r['created_at'] ?? ''), ENT_QUOTES, 'UTF-8') ?></td>
             </tr>
           <?php endforeach; ?>

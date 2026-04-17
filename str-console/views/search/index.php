@@ -61,7 +61,16 @@ $hasQuery = trim($q) !== '';
                       </a>
                     </td>
                     <td style="padding: 12px 14px;"><?= htmlspecialchars((string) ($r['phone'] ?? ''), ENT_QUOTES, 'UTF-8') ?></td>
-                    <td style="padding: 12px 14px; color: var(--muted);"><?= $r['assigned_user_id'] === null ? '—' : (string) (int) $r['assigned_user_id'] ?></td>
+                    <td style="padding: 12px 14px; color: var(--muted);"><?php
+                $alabel = trim((string) ($r['assigned_user_label'] ?? ''));
+                if ($alabel !== '') {
+                    echo htmlspecialchars($alabel, ENT_QUOTES, 'UTF-8');
+                } elseif (($r['assigned_user_id'] ?? null) !== null && $r['assigned_user_id'] !== '') {
+                    echo 'Console user #' . (int) $r['assigned_user_id'];
+                } else {
+                    echo '—';
+                }
+              ?></td>
                   </tr>
                 <?php endforeach; ?>
               <?php endif; ?>

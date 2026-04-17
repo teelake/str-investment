@@ -28,33 +28,35 @@ final class SearchRepository
             if (!$custWide && $consoleUserId === null) {
                 $customers = [];
             } else {
-                $conds = ['full_name LIKE :q', 'phone LIKE :q', 'nin LIKE :q', 'bvn LIKE :q'];
+                $conds = ['c.full_name LIKE :q', 'c.phone LIKE :q', 'c.nin LIKE :q', 'c.bvn LIKE :q'];
                 $params = [':q' => $like];
                 $n = self::positiveIntId($query);
                 if ($n !== null) {
-                    $conds[] = 'id = :cid';
+                    $conds[] = 'c.id = :cid';
                     $params[':cid'] = $n;
                 }
                 $dig = preg_replace('/\D/', '', $query) ?? '';
                 if (strlen($dig) >= 2) {
-                    $conds[] = "REGEXP_REPLACE(phone, '[^0-9]', '') LIKE :qdig";
+                    $conds[] = "REGEXP_REPLACE(c.phone, '[^0-9]', '') LIKE :qdig";
                     $params[':qdig'] = '%' . addcslashes($dig, '%_\\') . '%';
                 }
                 $where = '(' . implode(' OR ', $conds) . ')';
+                $select = 'SELECT c.id, c.full_name, c.phone, c.assigned_user_id,
+                           COALESCE(NULLIF(TRIM(cu.full_name), \'\'), cu.email) AS assigned_user_label
+                           FROM customers c
+                           LEFT JOIN console_users cu ON cu.id = c.assigned_user_id';
                 if ($custWide) {
-                    $sql = 'SELECT id, full_name, phone, assigned_user_id
-                            FROM customers
+                    $sql = $select . '
                             WHERE ' . $where . '
-                            ORDER BY full_name ASC
+                            ORDER BY c.full_name ASC
                             LIMIT ' . self::LIMIT;
                     $stmt = $pdo->prepare($sql);
                     $stmt->execute($params);
                 } else {
-                    $sql = 'SELECT id, full_name, phone, assigned_user_id
-                            FROM customers
+                    $sql = $select . '
                             WHERE ' . $where . '
-                            AND assigned_user_id <=> :uid
-                            ORDER BY full_name ASC
+                            AND c.assigned_user_id <=> :uid
+                            ORDER BY c.full_name ASC
                             LIMIT ' . self::LIMIT;
                     $stmt = $pdo->prepare($sql);
                     $params[':uid'] = $consoleUserId;

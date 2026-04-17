@@ -138,7 +138,7 @@ final class ReportsController extends BaseController
                 $name = 'customers-report-' . date('Y-m-d') . '.csv';
                 self::sendCsv(
                     $name,
-                    ['id', 'full_name', 'phone', 'address', 'nin', 'bvn', 'assigned_user_id', 'created_at'],
+                    ['id', 'full_name', 'phone', 'address', 'nin', 'bvn', 'assigned_user_id', 'assigned_to', 'created_at'],
                     $rows
                 );
                 return;

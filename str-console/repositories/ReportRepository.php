@@ -159,8 +159,10 @@ final class ReportRepository
             $stmtCount->execute($filterParams);
             $total = (int) ($stmtCount->fetch()['c'] ?? 0);
             $stmt = $pdo->prepare(
-                'SELECT c.id, c.full_name, c.phone, c.assigned_user_id, c.created_at, c.updated_at
+                'SELECT c.id, c.full_name, c.phone, c.assigned_user_id, c.created_at, c.updated_at,
+                        COALESCE(NULLIF(TRIM(cu.full_name), \'\'), cu.email) AS assigned_user_label
                  FROM customers c
+                 LEFT JOIN console_users cu ON cu.id = c.assigned_user_id
                  WHERE 1=1' . $filterSql . '
                  ORDER BY c.id DESC LIMIT :lim OFFSET :off'
             );
@@ -177,8 +179,10 @@ final class ReportRepository
             $stmtCount->execute($params);
             $total = (int) ($stmtCount->fetch()['c'] ?? 0);
             $stmt = $pdo->prepare(
-                'SELECT c.id, c.full_name, c.phone, c.assigned_user_id, c.created_at, c.updated_at
+                'SELECT c.id, c.full_name, c.phone, c.assigned_user_id, c.created_at, c.updated_at,
+                        COALESCE(NULLIF(TRIM(cu.full_name), \'\'), cu.email) AS assigned_user_label
                  FROM customers c
+                 LEFT JOIN console_users cu ON cu.id = c.assigned_user_id
                  WHERE 1=1' . $scope . $filterSql . '
                  ORDER BY c.id DESC LIMIT :lim OFFSET :off'
             );
@@ -219,8 +223,10 @@ final class ReportRepository
 
         if ($wide) {
             $stmt = $pdo->prepare(
-                'SELECT c.id, c.full_name, c.phone, c.address, c.nin, c.bvn, c.assigned_user_id, c.created_at
+                'SELECT c.id, c.full_name, c.phone, c.address, c.nin, c.bvn, c.assigned_user_id, c.created_at,
+                        COALESCE(NULLIF(TRIM(cu.full_name), \'\'), cu.email) AS assigned_to
                  FROM customers c
+                 LEFT JOIN console_users cu ON cu.id = c.assigned_user_id
                  WHERE 1=1' . $filterSql . '
                  ORDER BY c.id DESC LIMIT ' . (string) (int) $lim
             );
@@ -229,8 +235,10 @@ final class ReportRepository
             $scope = ' AND c.assigned_user_id <=> :uid';
             $params = array_merge($filterParams, [':uid' => $consoleUserId]);
             $stmt = $pdo->prepare(
-                'SELECT c.id, c.full_name, c.phone, c.address, c.nin, c.bvn, c.assigned_user_id, c.created_at
+                'SELECT c.id, c.full_name, c.phone, c.address, c.nin, c.bvn, c.assigned_user_id, c.created_at,
+                        COALESCE(NULLIF(TRIM(cu.full_name), \'\'), cu.email) AS assigned_to
                  FROM customers c
+                 LEFT JOIN console_users cu ON cu.id = c.assigned_user_id
                  WHERE 1=1' . $scope . $filterSql . '
                  ORDER BY c.id DESC LIMIT ' . (string) (int) $lim
             );
