@@ -51,6 +51,7 @@ final class SettingsUsersController extends BaseController
         $password = (string) Request::post('password', '');
         $roleKey = trim((string) Request::post('role_key', ''));
         $fullName = trim((string) Request::post('full_name', ''));
+        $phoneRaw = trim((string) Request::post('phone', ''));
 
         if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $this->redirect('/settings/users/create?error=' . rawurlencode('Enter a valid email.'));
@@ -64,6 +65,11 @@ final class SettingsUsersController extends BaseController
             $this->redirect('/settings/users/create?error=' . rawurlencode('Invalid role.'));
             return;
         }
+        $phoneNorm = UserRepository::normalizeOptionalPhone($phoneRaw);
+        if ($phoneRaw !== '' && $phoneNorm === null) {
+            $this->redirect('/settings/users/create?error=' . rawurlencode('Enter a valid phone (at least 8 digits), or leave blank.'));
+            return;
+        }
 
         $repo = new UserRepository();
         if ($repo->emailExists($email)) {
@@ -73,7 +79,7 @@ final class SettingsUsersController extends BaseController
 
         try {
             $hash = password_hash($password, PASSWORD_DEFAULT);
-            $id = $repo->create($email, $hash, $roleKey, $fullName === '' ? null : $fullName);
+            $id = $repo->create($email, $hash, $roleKey, $fullName === '' ? null : $fullName, $phoneNorm);
             AuditLogger::log(ConsoleAuth::userId(), 'console_user.create', 'console_user', $id, [
                 'email' => $email,
                 'role_key' => $roleKey,
@@ -154,6 +160,7 @@ final class SettingsUsersController extends BaseController
         $email = trim((string) Request::post('email', ''));
         $roleKey = trim((string) Request::post('role_key', ''));
         $fullName = trim((string) Request::post('full_name', ''));
+        $phoneRaw = trim((string) Request::post('phone', ''));
         $isActive = isset($_POST['is_active']) && (string) $_POST['is_active'] === '1';
         $password = (string) Request::post('password', '');
 
@@ -168,6 +175,11 @@ final class SettingsUsersController extends BaseController
 
         if ($repo->emailTakenByOther($email, $userId)) {
             $this->redirect('/settings/users/' . $userId . '/edit?error=' . rawurlencode('That email is used by another account.'));
+            return;
+        }
+        $phoneNorm = UserRepository::normalizeOptionalPhone($phoneRaw);
+        if ($phoneRaw !== '' && $phoneNorm === null) {
+            $this->redirect('/settings/users/' . $userId . '/edit?error=' . rawurlencode('Enter a valid phone (at least 8 digits), or leave blank.'));
             return;
         }
 
@@ -203,6 +215,7 @@ final class SettingsUsersController extends BaseController
                 $email,
                 $roleKey,
                 $fullName === '' ? null : $fullName,
+                $phoneNorm,
                 $isActive,
                 $newHash
             );
@@ -234,12 +247,14 @@ final class SettingsUsersController extends BaseController
                 $fresh = $repo->findById($userId);
                 if ($fresh !== null) {
                     $fn = $fresh['full_name'] ?? null;
+                    $ph = $fresh['phone'] ?? null;
                     ConsoleAuth::login(
                         $userId,
                         $email,
                         $roleKey,
                         str_console_user_login_grants($roleKey, $fresh['extra_grants_json'] ?? null),
-                        is_string($fn) && $fn !== '' ? $fn : null
+                        is_string($fn) && $fn !== '' ? $fn : null,
+                        is_string($ph) && $ph !== '' ? $ph : null
                     );
                 }
             }

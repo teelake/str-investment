@@ -82,8 +82,10 @@ function str_console_routes(): array
 
         ['GET', '/bulk-upload/customers', BulkUploadController::class, 'customersForm', 'bulk_upload.customers'],
         ['POST', '/bulk-upload/customers', BulkUploadController::class, 'customersImport', 'bulk_upload.customers'],
+        ['GET', '/downloads/customers-import-template.csv', BulkUploadController::class, 'downloadCustomersTemplateCsv', 'bulk_upload.customers'],
         ['GET', '/bulk-upload/loans', BulkUploadController::class, 'loansForm', 'bulk_upload.loans'],
         ['POST', '/bulk-upload/loans', BulkUploadController::class, 'loansImport', 'bulk_upload.loans'],
+        ['GET', '/downloads/loans-import-template.csv', BulkUploadController::class, 'downloadLoansTemplateCsv', 'bulk_upload.loans'],
 
         ['GET', '#^/customers/(\d+)$#', CustomersController::class, 'show', 'customers.show'],
         ['POST', '#^/customers/(\d+)/documents$#', CustomersController::class, 'documentStore', 'customers.documents.store'],

@@ -8,6 +8,40 @@ final class BulkUploadController extends BaseController
 
     private const MAX_CSV_BYTES = 2_097_152;
 
+    public function downloadCustomersTemplateCsv(): void
+    {
+        $name = 'customers-import-template.csv';
+        header('Content-Type: text/csv; charset=UTF-8');
+        header('Content-Disposition: attachment; filename="' . $name . '"');
+        $out = fopen('php://output', 'w');
+        if ($out === false) {
+            http_response_code(500);
+            echo 'Could not build file.';
+            return;
+        }
+        fputcsv($out, ['full_name', 'phone', 'address', 'nin', 'bvn']);
+        fputcsv($out, ['Ada Okafor', '+2348012345678', '12 Sample Street, Lagos', '', '']);
+        fclose($out);
+        exit;
+    }
+
+    public function downloadLoansTemplateCsv(): void
+    {
+        $name = 'loans-import-template.csv';
+        header('Content-Type: text/csv; charset=UTF-8');
+        header('Content-Disposition: attachment; filename="' . $name . '"');
+        $out = fopen('php://output', 'w');
+        if ($out === false) {
+            http_response_code(500);
+            echo 'Could not build file.';
+            return;
+        }
+        fputcsv($out, ['customer_id', 'loan_product_id', 'principal_amount']);
+        fputcsv($out, ['1', '1', '50000.00']);
+        fclose($out);
+        exit;
+    }
+
     public function customersForm(): void
     {
         $this->render('bulk_upload/customers', [

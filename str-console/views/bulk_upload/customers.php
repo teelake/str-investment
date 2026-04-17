@@ -34,6 +34,9 @@ $err = is_string($error) ? $error : '';
     <strong style="display:block; margin-bottom:8px;">Expected columns</strong>
     <code style="display:block; white-space: pre-wrap; word-break: break-all;">full_name,name,phone,address,nin,bvn</code>
     <p style="margin: 10px 0 0; color: var(--muted2);"><code>full_name</code> (or <code>name</code>) and <code>phone</code> are required per row.</p>
+    <p style="margin: 12px 0 0;">
+      <a class="btn ghost" style="font-size: 13px; padding: 10px 14px;" href="<?= htmlspecialchars($basePath . '/downloads/customers-import-template.csv', ENT_QUOTES, 'UTF-8') ?>" download>Download CSV template</a>
+    </p>
   </div>
 
   <div style="background: var(--card); border: 1px solid var(--line2); border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow2);">

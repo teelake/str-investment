@@ -80,6 +80,13 @@ i.bx, i.fa, i.fa-solid, i.fa-regular, i.fa-brands{
   margin-inline:auto;
 }
 
+/* Console: narrow forms sit in a centered column; labels and inputs stay left-aligned for scanability. */
+.console-form-page{
+  width: min(520px, calc(100% - (var(--gutter) * 2)));
+  margin-inline: auto;
+  text-align: left;
+}
+
 /* Header */
 .topbar{
   position:sticky;

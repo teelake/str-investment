@@ -9,6 +9,8 @@ $total = (int) $pagination['total'];
 $page = (int) $pagination['page'];
 $perPage = (int) $pagination['per_page'];
 $pages = $perPage > 0 ? (int) ceil($total / $perPage) : 1;
+$g = ConsoleAuth::grants();
+$canBulkCustomers = str_console_authorize_route($g, 'bulk_upload.customers');
 ?>
 <div class="container" style="padding:0">
   <?php if (is_string($dbError) && $dbError !== ''): ?>
@@ -22,9 +24,15 @@ $pages = $perPage > 0 ? (int) ceil($total / $perPage) : 1;
       <h1 style="font-size: var(--h2); margin: 0 0 6px;">Customers</h1>
       <p style="color: var(--muted); margin: 0; font-size: 14px;"><?= (int) $total ?> total · page <?= (int) $page ?> of <?= max(1, $pages) ?></p>
     </div>
-    <?php if (str_console_authorize_route(ConsoleAuth::grants(), 'customers.create')): ?>
-      <a class="btn primary" href="<?= htmlspecialchars($basePath . '/customers/create', ENT_QUOTES, 'UTF-8') ?>" style="font-size: 14px;">Register customer</a>
-    <?php endif; ?>
+    <div style="display:flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: flex-end;">
+      <?php if ($canBulkCustomers): ?>
+        <a class="btn ghost" href="<?= htmlspecialchars($basePath . '/bulk-upload/customers', ENT_QUOTES, 'UTF-8') ?>" style="font-size: 14px;">Import CSV</a>
+        <a class="btn ghost" href="<?= htmlspecialchars($basePath . '/downloads/customers-import-template.csv', ENT_QUOTES, 'UTF-8') ?>" download style="font-size: 14px;">Download template</a>
+      <?php endif; ?>
+      <?php if (str_console_authorize_route($g, 'customers.create')): ?>
+        <a class="btn primary" href="<?= htmlspecialchars($basePath . '/customers/create', ENT_QUOTES, 'UTF-8') ?>" style="font-size: 14px;">Register customer</a>
+      <?php endif; ?>
+    </div>
   </div>
 
   <div style="overflow:auto; border: 1px solid var(--line2); border-radius: var(--radius); background: var(--card); box-shadow: var(--shadow2);">

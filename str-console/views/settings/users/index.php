@@ -34,6 +34,7 @@ $err = is_string($qerr) ? $qerr : '';
         <tr style="text-align:left; border-bottom: 1px solid var(--line2); color: var(--muted); font-size: 12px; text-transform: uppercase;">
           <th style="padding: 12px 14px;">Email</th>
           <th style="padding: 12px 14px;">Name</th>
+          <th style="padding: 12px 14px;">Phone</th>
           <th style="padding: 12px 14px;">Role</th>
           <th style="padding: 12px 14px;">Status</th>
           <th style="padding: 12px 14px;"></th>
@@ -41,7 +42,7 @@ $err = is_string($qerr) ? $qerr : '';
       </thead>
       <tbody>
         <?php if (count($rows) === 0): ?>
-          <tr><td colspan="5" style="padding: 28px 14px; color: var(--muted);">No users yet. Use the seed script or Add user.</td></tr>
+          <tr><td colspan="6" style="padding: 28px 14px; color: var(--muted);">No users yet. Use the seed script or Add user.</td></tr>
         <?php else: ?>
           <?php foreach ($rows as $r): ?>
             <?php
@@ -51,6 +52,7 @@ $err = is_string($qerr) ? $qerr : '';
             <tr style="border-bottom: 1px solid var(--line2);">
               <td style="padding: 12px 14px; font-weight: 650;"><?= htmlspecialchars((string) ($r['email'] ?? ''), ENT_QUOTES, 'UTF-8') ?></td>
               <td style="padding: 12px 14px;"><?= htmlspecialchars((string) ($r['full_name'] ?? ''), ENT_QUOTES, 'UTF-8') ?></td>
+              <td style="padding: 12px 14px; color: var(--muted);"><?= htmlspecialchars((string) ($r['phone'] ?? ''), ENT_QUOTES, 'UTF-8') ?></td>
               <td style="padding: 12px 14px;"><code style="font-size: 12px;"><?= htmlspecialchars((string) ($r['role_key'] ?? ''), ENT_QUOTES, 'UTF-8') ?></code></td>
               <td style="padding: 12px 14px;"><?= $active ? '<span style="color:var(--green2); font-weight:650;">Active</span>' : '<span style="color:var(--muted);">Inactive</span>' ?></td>
               <td style="padding: 12px 14px;">

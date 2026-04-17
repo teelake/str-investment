@@ -9,6 +9,8 @@ $page = (int) $pagination['page'];
 $perPage = (int) $pagination['per_page'];
 $pages = $perPage > 0 ? (int) ceil($total / $perPage) : 1;
 $dbError = $dbError ?? null;
+$g = ConsoleAuth::grants();
+$canBulkLoans = str_console_authorize_route($g, 'bulk_upload.loans');
 
 $statusLabel = static function (string $s): string {
     return match ($s) {
@@ -29,9 +31,15 @@ $fmt = static fn (float $n): string => '₦' . number_format($n, 2);
       <h1 style="font-size: var(--h2); margin: 0 0 6px;">Loans</h1>
       <p style="color: var(--muted); margin: 0; font-size: 14px;"><?= (int) $total ?> in your scope · page <?= (int) $page ?> of <?= max(1, $pages) ?></p>
     </div>
-    <?php if (str_console_authorize_route(ConsoleAuth::grants(), 'loans.create')): ?>
-      <a class="btn primary" href="<?= htmlspecialchars($basePath . '/loans/create', ENT_QUOTES, 'UTF-8') ?>">New loan</a>
-    <?php endif; ?>
+    <div style="display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:flex-end;">
+      <?php if ($canBulkLoans): ?>
+        <a class="btn ghost" href="<?= htmlspecialchars($basePath . '/bulk-upload/loans', ENT_QUOTES, 'UTF-8') ?>" style="font-size:14px;">Import CSV</a>
+        <a class="btn ghost" href="<?= htmlspecialchars($basePath . '/downloads/loans-import-template.csv', ENT_QUOTES, 'UTF-8') ?>" download style="font-size:14px;">Download template</a>
+      <?php endif; ?>
+      <?php if (str_console_authorize_route($g, 'loans.create')): ?>
+        <a class="btn primary" href="<?= htmlspecialchars($basePath . '/loans/create', ENT_QUOTES, 'UTF-8') ?>">New loan</a>
+      <?php endif; ?>
+    </div>
   </div>
 
   <?php if (is_string($dbError) && $dbError !== ''): ?>

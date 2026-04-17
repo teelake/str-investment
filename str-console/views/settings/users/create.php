@@ -27,6 +27,12 @@ $err = is_string($error) ? $error : '';
           style="padding: 12px 14px; border-radius: 14px; border: 1px solid var(--line); background: #fff; color: var(--ink);" />
       </label>
       <label style="display:grid; gap:6px; font-size: 13px; font-weight: 650; color: var(--muted);">
+        Phone (optional)
+        <input name="phone" type="tel" maxlength="32" autocomplete="tel"
+          style="padding: 12px 14px; border-radius: 14px; border: 1px solid var(--line); background: #fff; color: var(--ink);" />
+      </label>
+      <p style="margin: -6px 0 0; font-size: 12px; color: var(--muted2); line-height: 1.45;">At least 8 digits if provided.</p>
+      <label style="display:grid; gap:6px; font-size: 13px; font-weight: 650; color: var(--muted);">
         Role
         <select name="role_key" required style="padding: 12px 14px; border-radius: 14px; border: 1px solid var(--line); background: #fff; font-size: 14px;">
           <?php foreach ($assignableRoles as $rk): ?>
