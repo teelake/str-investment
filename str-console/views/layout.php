@@ -10,7 +10,9 @@ $fullName = is_array($u) ? trim((string) ($u['full_name'] ?? '')) : '';
 $authed = ConsoleAuth::check();
 $g = ConsoleAuth::grants();
 $path = Request::path();
-$canSearch = str_console_authorize_route($g, 'search.index');
+$canSearch = $authed && (
+    str_console_authorize($g, ['customers.list']) || str_console_authorize($g, ['loans.list'])
+);
 $maintenanceNotice = $authed ? PolicyService::maintenanceNotice() : '';
 $profileInitial = $fullName !== '' ? strtoupper(mb_substr($fullName, 0, 1)) : strtoupper(mb_substr($email, 0, 1));
 if ($profileInitial === '') {

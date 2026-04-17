@@ -107,9 +107,8 @@ function str_console_route_permissions(): array
         // Dashboard
         'dashboard.index' => [...$auth, 'dashboard.view'],
 
-        // Global search (customers/loans unified)
-        'search.index' => [...$auth, 'customers.list', 'loans.list'],
-        'search.query' => [...$auth, 'customers.list', 'loans.list'],
+        // Global search: any logged-in user may open the route; results are filtered by customers.list / loans.list inside SearchController + SearchRepository.
+        'search.index' => [...$auth],
 
         // Customers
         'customers.index' => [...$auth, 'customers.list'],

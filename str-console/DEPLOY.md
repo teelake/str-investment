@@ -27,6 +27,15 @@ Run SQL migrations in `database/migrations/` in **numeric filename order** again
 | `006_password_resets.sql` | Password reset tokens table |
 | `007_console_users_phone.sql` | **`console_users.phone`** |
 | `008_customer_documents_document_type.sql` | **`customer_documents.document_type`** — KYC category per file; required for current upload code |
+| `009_customers_uniques_settings_serial.sql` | **`customers.phone_digits`** (generated), **unique** phone digits / NIN / BVN; **`console_settings.id`** auto-increment surrogate |
+
+Before **`009`**, resolve duplicate customer phones (after stripping non-digits), NINs, or BVNs or the migration will fail. Example checks:
+
+```sql
+SELECT phone_digits, COUNT(*) c FROM customers GROUP BY phone_digits HAVING c > 1;
+SELECT nin, COUNT(*) c FROM customers WHERE nin IS NOT NULL GROUP BY nin HAVING c > 1;
+SELECT bvn, COUNT(*) c FROM customers WHERE bvn IS NOT NULL GROUP BY bvn HAVING c > 1;
+```
 
 If you see **Unknown column 'extra_grants_json'** in PHP logs, **`005` was not applied** on that database. Run it (and any later migrations you have not run) via phpMyAdmin, MySQL client, or your host’s SQL tool.
 

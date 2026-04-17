@@ -6,6 +6,12 @@ final class SearchController extends BaseController
 {
     public function index(): void
     {
+        $grants = ConsoleAuth::grants();
+        if (!str_console_authorize($grants, ['customers.list']) && !str_console_authorize($grants, ['loans.list'])) {
+            ErrorPage::respond(403, 'Access denied', 'You need permission to view customers or loans to use search.');
+            return;
+        }
+
         if (!str_console_database_ready()) {
             $this->render('search/index', [
                 'q' => '',

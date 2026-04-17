@@ -23,6 +23,7 @@ CREATE TABLE IF NOT EXISTS customers (
   id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   full_name VARCHAR(190) NOT NULL,
   phone VARCHAR(32) NOT NULL,
+  phone_digits VARCHAR(32) GENERATED ALWAYS AS (REGEXP_REPLACE(phone, '[^0-9]', '')) STORED,
   address TEXT NULL,
   nin VARCHAR(32) NULL,
   bvn VARCHAR(32) NULL,
@@ -30,6 +31,9 @@ CREATE TABLE IF NOT EXISTS customers (
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (id),
+  UNIQUE KEY uq_customers_phone_digits (phone_digits),
+  UNIQUE KEY uq_customers_nin (nin),
+  UNIQUE KEY uq_customers_bvn (bvn),
   KEY idx_customers_phone (phone),
   KEY idx_customers_assigned (assigned_user_id),
   KEY idx_customers_created (created_at)
@@ -123,11 +127,13 @@ CREATE TABLE IF NOT EXISTS loan_ledger_lines (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS console_settings (
+  id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   setting_key VARCHAR(64) NOT NULL,
   setting_value TEXT NOT NULL,
   updated_by_user_id BIGINT UNSIGNED NULL,
   updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (setting_key)
+  PRIMARY KEY (setting_key),
+  UNIQUE KEY uq_console_settings_id (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS console_password_resets (

@@ -75,8 +75,14 @@ final class CustomersController extends BaseController
         $ninVal = $ninNorm;
         $bvnVal = $bvnNorm;
 
+        $repo = new CustomerRepository();
+        $dupMsg = $repo->validateOnboardingUniqueness($phone, $ninVal, $bvnVal, null);
+        if ($dupMsg !== null) {
+            $this->redirect('/customers/create?error=' . rawurlencode($dupMsg));
+            return;
+        }
+
         try {
-            $repo = new CustomerRepository();
             $assignee = ConsoleAuth::userId();
             $id = $repo->create($name, $phone, $addrVal, $ninVal, $bvnVal, $assignee);
 
@@ -86,6 +92,12 @@ final class CustomersController extends BaseController
             ]);
 
             $this->redirect('/customers/' . $id);
+        } catch (PDOException $e) {
+            if ((int) ($e->errorInfo[1] ?? 0) === 1062) {
+                $this->redirect('/customers/create?error=' . rawurlencode('Another customer already uses this phone, NIN, or BVN.'));
+                return;
+            }
+            $this->redirect('/customers/create?error=' . rawurlencode('Could not save customer. Try again.'));
         } catch (Throwable) {
             $this->redirect('/customers/create?error=' . rawurlencode('Could not save customer. Try again.'));
         }
@@ -219,6 +231,12 @@ final class CustomersController extends BaseController
         $ninVal = $ninNorm;
         $bvnVal = $bvnNorm;
 
+        $dupMsg = $repo->validateOnboardingUniqueness($phone, $ninVal, $bvnVal, $customerId);
+        if ($dupMsg !== null) {
+            $this->redirect('/customers/' . $customerId . '/edit?error=' . rawurlencode($dupMsg));
+            return;
+        }
+
         $grants = ConsoleAuth::grants();
         $setAssignee = str_console_authorize($grants, ['customers.assign']);
         $assignedUserId = null;
@@ -248,6 +266,12 @@ final class CustomersController extends BaseController
                 'assigned_changed' => $setAssignee,
             ]);
             $this->redirect('/customers/' . $customerId . '?edit_ok=1');
+        } catch (PDOException $e) {
+            if ((int) ($e->errorInfo[1] ?? 0) === 1062) {
+                $this->redirect('/customers/' . $customerId . '/edit?error=' . rawurlencode('Another customer already uses this phone, NIN, or BVN.'));
+                return;
+            }
+            $this->redirect('/customers/' . $customerId . '/edit?error=' . rawurlencode('Could not save changes. Try again.'));
         } catch (Throwable) {
             $this->redirect('/customers/' . $customerId . '/edit?error=' . rawurlencode('Could not save changes. Try again.'));
         }

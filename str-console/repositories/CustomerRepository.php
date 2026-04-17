@@ -140,6 +140,67 @@ final class CustomerRepository
         return $stmt->fetchAll();
     }
 
+    /**
+     * Block duplicate phone (digits-only match), NIN, or BVN vs other customers.
+     *
+     * @return non-empty-string|null Error message, or null if OK
+     */
+    public function validateOnboardingUniqueness(
+        string $phone,
+        ?string $nin,
+        ?string $bvn,
+        ?int $exceptCustomerId
+    ): ?string {
+        $pdo = Database::pdo();
+        $digits = preg_replace('/\D/', '', $phone) ?? '';
+        if ($digits !== '') {
+            $sql = 'SELECT id FROM customers WHERE phone_digits = :d';
+            $params = [':d' => $digits];
+            if ($exceptCustomerId !== null) {
+                $sql .= ' AND id != :e';
+                $params[':e'] = $exceptCustomerId;
+            }
+            $sql .= ' LIMIT 1';
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute($params);
+            $row = $stmt->fetch();
+            if (is_array($row)) {
+                return 'This phone number is already registered for customer #' . (int) ($row['id'] ?? 0) . '.';
+            }
+        }
+        if ($nin !== null && $nin !== '') {
+            $sql = 'SELECT id FROM customers WHERE nin = :n';
+            $params = [':n' => $nin];
+            if ($exceptCustomerId !== null) {
+                $sql .= ' AND id != :e';
+                $params[':e'] = $exceptCustomerId;
+            }
+            $sql .= ' LIMIT 1';
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute($params);
+            $row = $stmt->fetch();
+            if (is_array($row)) {
+                return 'This NIN is already registered for customer #' . (int) ($row['id'] ?? 0) . '.';
+            }
+        }
+        if ($bvn !== null && $bvn !== '') {
+            $sql = 'SELECT id FROM customers WHERE bvn = :b';
+            $params = [':b' => $bvn];
+            if ($exceptCustomerId !== null) {
+                $sql .= ' AND id != :e';
+                $params[':e'] = $exceptCustomerId;
+            }
+            $sql .= ' LIMIT 1';
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute($params);
+            $row = $stmt->fetch();
+            if (is_array($row)) {
+                return 'This BVN is already registered for customer #' . (int) ($row['id'] ?? 0) . '.';
+            }
+        }
+        return null;
+    }
+
     public function create(
         string $fullName,
         string $phone,

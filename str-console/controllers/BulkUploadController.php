@@ -88,6 +88,12 @@ final class BulkUploadController extends BaseController
         $imported = 0;
         /** @var list<array{line: int, message: string}> $errors */
         $errors = [];
+        /** @var array<string, int> */
+        $seenPhoneDigits = [];
+        /** @var array<string, int> */
+        $seenNins = [];
+        /** @var array<string, int> */
+        $seenBvns = [];
         $lineNo = 1;
 
         foreach ($rows as $row) {
@@ -117,6 +123,35 @@ final class BulkUploadController extends BaseController
                 continue;
             }
 
+            $phoneDigits = preg_replace('/\D/', '', $phone) ?? '';
+            if ($phoneDigits !== '') {
+                if (isset($seenPhoneDigits[$phoneDigits])) {
+                    $errors[] = ['line' => $lineNo, 'message' => 'Duplicate phone in this file (same number as line ' . $seenPhoneDigits[$phoneDigits] . ').'];
+                    continue;
+                }
+                $seenPhoneDigits[$phoneDigits] = $lineNo;
+            }
+            if ($ninNorm !== null) {
+                if (isset($seenNins[$ninNorm])) {
+                    $errors[] = ['line' => $lineNo, 'message' => 'Duplicate NIN in this file (same as line ' . $seenNins[$ninNorm] . ').'];
+                    continue;
+                }
+                $seenNins[$ninNorm] = $lineNo;
+            }
+            if ($bvnNorm !== null) {
+                if (isset($seenBvns[$bvnNorm])) {
+                    $errors[] = ['line' => $lineNo, 'message' => 'Duplicate BVN in this file (same as line ' . $seenBvns[$bvnNorm] . ').'];
+                    continue;
+                }
+                $seenBvns[$bvnNorm] = $lineNo;
+            }
+
+            $dupMsg = $repo->validateOnboardingUniqueness($phone, $ninNorm, $bvnNorm, null);
+            if ($dupMsg !== null) {
+                $errors[] = ['line' => $lineNo, 'message' => $dupMsg];
+                continue;
+            }
+
             try {
                 $newId = $repo->create(
                     $name,
@@ -131,6 +166,12 @@ final class BulkUploadController extends BaseController
                     'source' => 'bulk_csv',
                     'full_name' => $name,
                 ]);
+            } catch (PDOException $e) {
+                if ((int) ($e->errorInfo[1] ?? 0) === 1062) {
+                    $errors[] = ['line' => $lineNo, 'message' => 'Phone, NIN, or BVN already exists for another customer.'];
+                } else {
+                    $errors[] = ['line' => $lineNo, 'message' => 'Save failed.'];
+                }
             } catch (Throwable) {
                 $errors[] = ['line' => $lineNo, 'message' => 'Save failed.'];
             }
