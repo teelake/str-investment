@@ -9,8 +9,21 @@ final class Router
         $method = Request::method();
         $path = Request::path();
 
-        foreach (str_console_routes() as [$m, $p, $class, $action, $routeId]) {
-            if ($m !== $method || $p !== $path) {
+        foreach (str_console_routes() as $route) {
+            [$m, $p, $class, $action, $routeId] = $route;
+            if ($m !== $method) {
+                continue;
+            }
+
+            $params = [];
+            if (is_string($p) && strlen($p) >= 2 && $p[0] === '#' && str_ends_with($p, '#')) {
+                if (!preg_match($p, $path, $matches)) {
+                    continue;
+                }
+                /** @var list<string> $captured */
+                $captured = array_slice($matches, 1);
+                $params = array_map(static fn (string $v): int => (int) $v, $captured);
+            } elseif ($p !== $path) {
                 continue;
             }
 
@@ -20,7 +33,11 @@ final class Router
 
             /** @var BaseController $controller */
             $controller = new $class();
-            $controller->{$action}();
+            if ($params !== []) {
+                $controller->{$action}(...$params);
+            } else {
+                $controller->{$action}();
+            }
             return;
         }
 

@@ -45,7 +45,11 @@ $pages = $perPage > 0 ? (int) ceil($total / $perPage) : 1;
         <?php else: ?>
           <?php foreach ($rows as $r): ?>
             <tr style="border-bottom: 1px solid var(--line2);">
-              <td style="padding: 12px 14px; font-weight: 650;"><?= htmlspecialchars((string) ($r['full_name'] ?? ''), ENT_QUOTES, 'UTF-8') ?></td>
+              <td style="padding: 12px 14px; font-weight: 650;">
+                <a href="<?= htmlspecialchars($basePath . '/customers/' . (int) ($r['id'] ?? 0), ENT_QUOTES, 'UTF-8') ?>" style="color: inherit; text-decoration: underline; text-underline-offset: 4px;">
+                  <?= htmlspecialchars((string) ($r['full_name'] ?? ''), ENT_QUOTES, 'UTF-8') ?>
+                </a>
+              </td>
               <td style="padding: 12px 14px;"><?= htmlspecialchars((string) ($r['phone'] ?? ''), ENT_QUOTES, 'UTF-8') ?></td>
               <td style="padding: 12px 14px; color: var(--muted);"><?= $r['assigned_user_id'] === null ? '—' : (string) (int) $r['assigned_user_id'] ?></td>
               <td style="padding: 12px 14px; color: var(--muted);"><?= htmlspecialchars((string) ($r['created_at'] ?? ''), ENT_QUOTES, 'UTF-8') ?></td>

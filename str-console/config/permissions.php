@@ -146,6 +146,10 @@ function str_console_route_permissions(): array
         'documents.store' => [...$auth, 'documents.upload'],
         'documents.destroy' => [...$auth, 'documents.delete'],
 
+        'customers.documents.store' => [...$auth, 'documents.upload'],
+        'customers.documents.download' => [...$auth, 'documents.view'],
+        'customers.documents.destroy' => [...$auth, 'documents.delete'],
+
         // Bulk upload
         'bulk_upload.customers' => [...$auth, 'bulk_upload.customers'],
         'bulk_upload.loans' => [...$auth, 'bulk_upload.loans'],

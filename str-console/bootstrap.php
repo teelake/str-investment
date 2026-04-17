@@ -45,8 +45,10 @@ require_once STR_CONSOLE_ROOT . '/core/BaseController.php';
 require_once STR_CONSOLE_ROOT . '/core/Database.php';
 
 require_once STR_CONSOLE_ROOT . '/services/AuditLogger.php';
+require_once STR_CONSOLE_ROOT . '/services/CustomerDocumentStorage.php';
 require_once STR_CONSOLE_ROOT . '/repositories/UserRepository.php';
 require_once STR_CONSOLE_ROOT . '/repositories/CustomerRepository.php';
+require_once STR_CONSOLE_ROOT . '/repositories/CustomerDocumentRepository.php';
 
 require_once STR_CONSOLE_ROOT . '/controllers/AuthController.php';
 require_once STR_CONSOLE_ROOT . '/controllers/DashboardController.php';

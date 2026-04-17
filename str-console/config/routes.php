@@ -6,9 +6,7 @@ declare(strict_types=1);
  * HTTP routes for str-console.
  *
  * Each entry: [ METHOD, path, ControllerClass::class, actionMethod, routeId ]
- * routeId must exist in str_console_route_permissions().
- *
- * Controllers must be loaded before str_console_routes() is evaluated (see bootstrap order).
+ * If path is a PCRE pattern (starts and ends with #), captures are passed as int args to the action.
  *
  * @return list<array{0: string, 1: string, 2: class-string<BaseController>, 3: string, 4: string}>
  */
@@ -23,5 +21,10 @@ function str_console_routes(): array
         ['GET', '/customers', CustomersController::class, 'index', 'customers.index'],
         ['GET', '/customers/create', CustomersController::class, 'create', 'customers.create'],
         ['POST', '/customers', CustomersController::class, 'store', 'customers.store'],
+
+        ['GET', '#^/customers/(\d+)$#', CustomersController::class, 'show', 'customers.show'],
+        ['POST', '#^/customers/(\d+)/documents$#', CustomersController::class, 'documentStore', 'customers.documents.store'],
+        ['GET', '#^/customers/(\d+)/documents/(\d+)/file$#', CustomersController::class, 'documentDownload', 'customers.documents.download'],
+        ['POST', '#^/customers/(\d+)/documents/(\d+)/delete$#', CustomersController::class, 'documentDestroy', 'customers.documents.destroy'],
     ];
 }
