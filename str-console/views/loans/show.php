@@ -9,6 +9,7 @@ declare(strict_types=1);
 /** @var bool $canDisburse */
 /** @var bool $canPay */
 /** @var bool $canAccrue */
+/** @var bool $canEditLoan */
 /** @var mixed $flash */
 /** @var mixed $flashError */
 $basePath = Request::basePath();
@@ -29,6 +30,7 @@ $statusLabel = match ($st) {
 $flashOk = is_string($flash) ? $flash : '';
 $err = is_string($flashError) ? $flashError : '';
 $canAccrue = $canAccrue ?? false;
+$canEditLoan = $canEditLoan ?? false;
 $today = (new DateTimeImmutable('now'))->format('Y-m-d');
 ?>
 <div class="container" style="padding:0">
@@ -68,6 +70,9 @@ $today = (new DateTimeImmutable('now'))->format('Y-m-d');
   </div>
 
   <div style="display:flex; flex-wrap:wrap; gap: 10px; margin-bottom: 28px;">
+    <?php if ($canEditLoan): ?>
+      <a class="btn ghost" href="<?= htmlspecialchars($basePath . '/loans/' . $id . '/edit', ENT_QUOTES, 'UTF-8') ?>">Edit loan</a>
+    <?php endif; ?>
     <?php if ($canSubmit): ?>
       <form method="post" action="<?= htmlspecialchars($basePath . '/loans/' . $id . '/submit', ENT_QUOTES, 'UTF-8') ?>">
         <button type="submit" class="btn primary">Submit for approval</button>

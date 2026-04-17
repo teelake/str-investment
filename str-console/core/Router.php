@@ -41,18 +41,14 @@ final class Router
             return;
         }
 
-        http_response_code(404);
-        header('Content-Type: text/html; charset=UTF-8');
-        echo '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Not found</title></head><body><p>Not found.</p></body></html>';
+        ErrorPage::respond(404, 'Page not found', 'That URL does not exist in STR Console.');
     }
 
     private static function authorizeRequest(string $routeId): bool
     {
         $map = str_console_route_permissions();
         if (!isset($map[$routeId])) {
-            http_response_code(500);
-            header('Content-Type: text/html; charset=UTF-8');
-            echo 'Route is not registered in permissions map.';
+            ErrorPage::respond(500, 'Configuration error', 'This route is not registered in the permissions map.');
             return false;
         }
 
@@ -67,9 +63,7 @@ final class Router
 
         $grants = ConsoleAuth::grants();
         if (!str_console_authorize_route($grants, $routeId)) {
-            http_response_code(403);
-            header('Content-Type: text/html; charset=UTF-8');
-            echo '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Forbidden</title></head><body><p>You do not have access to this action.</p></body></html>';
+            ErrorPage::respond(403, 'Access denied', 'You do not have permission for this action.');
             return false;
         }
 

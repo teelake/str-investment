@@ -120,6 +120,42 @@ final class LoanRepository
         return (int) $pdo->lastInsertId();
     }
 
+    /**
+     * Update core fields while loan is draft or rejected (rejected → draft, reason cleared).
+     */
+    public function updateDraftOrRejected(
+        int $loanId,
+        int $customerId,
+        int $loanProductId,
+        float $principal,
+        float $ratePercent,
+        int $periodMonths
+    ): bool {
+        $pdo = Database::pdo();
+        $stmt = $pdo->prepare(
+            'UPDATE loans SET
+                customer_id = :cid,
+                loan_product_id = :pid,
+                principal_amount = :principal,
+                rate_percent = :rate,
+                period_months = :pm,
+                status = IF(status = \'rejected\', \'draft\', status),
+                rejected_reason = NULL,
+                submitted_at = IF(status = \'rejected\', NULL, submitted_at),
+                updated_at = NOW()
+             WHERE id = :id AND (status = \'draft\' OR status = \'rejected\')'
+        );
+        $stmt->execute([
+            ':cid' => $customerId,
+            ':pid' => $loanProductId,
+            ':principal' => $principal,
+            ':rate' => $ratePercent,
+            ':pm' => $periodMonths,
+            ':id' => $loanId,
+        ]);
+        return $stmt->rowCount() > 0;
+    }
+
     public function setStatus(int $loanId, string $status): void
     {
         $pdo = Database::pdo();

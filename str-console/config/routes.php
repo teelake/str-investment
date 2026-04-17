@@ -36,6 +36,8 @@ function str_console_routes(): array
         ['POST', '#^/loan-products/(\d+)/update$#', LoanProductsController::class, 'update', 'loan_products.update'],
         ['POST', '#^/loan-products/(\d+)/retire$#', LoanProductsController::class, 'retire', 'loan_products.retire'],
 
+        ['GET', '#^/loans/(\d+)/edit$#', LoansController::class, 'edit', 'loans.edit'],
+        ['POST', '#^/loans/(\d+)/update$#', LoansController::class, 'update', 'loans.update'],
         ['GET', '#^/loans/(\d+)$#', LoansController::class, 'show', 'loans.show'],
         ['POST', '#^/loans/(\d+)/submit$#', LoansController::class, 'submit', 'loans.submit'],
         ['POST', '#^/loans/(\d+)/approve$#', LoansController::class, 'approve', 'loans.approve'],
@@ -52,6 +54,9 @@ function str_console_routes(): array
         ['POST', '/settings/users', SettingsUsersController::class, 'store', 'settings.users'],
         ['GET', '#^/settings/users/(\d+)/edit$#', SettingsUsersController::class, 'edit', 'settings.users'],
         ['POST', '#^/settings/users/(\d+)/update$#', SettingsUsersController::class, 'update', 'settings.users'],
+
+        ['GET', '/settings/roles', SettingsRolesController::class, 'index', 'settings.roles'],
+        ['POST', '/settings/roles', SettingsRolesController::class, 'save', 'settings.roles'],
 
         ['GET', '/search', SearchController::class, 'index', 'search.index'],
         ['GET', '/audit', AuditController::class, 'index', 'audit.index'],

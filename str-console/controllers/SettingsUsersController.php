@@ -209,6 +209,9 @@ final class SettingsUsersController extends BaseController
                 'is_active' => $isActive,
                 'password_changed' => $newHash !== null,
             ]);
+            if ($actorId !== null && $userId === $actorId) {
+                ConsoleAuth::login($userId, $email, $roleKey, str_console_role_grants_for($roleKey));
+            }
             $this->redirect('/settings/users?flash=' . rawurlencode('User updated.'));
         } catch (Throwable) {
             $this->redirect('/settings/users/' . $userId . '/edit?error=' . rawurlencode('Could not save changes.'));

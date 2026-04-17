@@ -105,6 +105,125 @@ final class LoansController extends BaseController
         }
     }
 
+    public function edit(int $loanId): void
+    {
+        if (!str_console_database_ready()) {
+            $this->redirect('/loans');
+            return;
+        }
+        $loanRepo = new LoanRepository();
+        $loan = $loanRepo->find($loanId);
+        if ($loan === null || !LoanRepository::canAccessRow($loan, ConsoleAuth::userId(), ConsoleAuth::grants())) {
+            ErrorPage::respond(404, 'Loan not found', 'This loan does not exist or is outside your access scope.');
+            return;
+        }
+        $st = (string) ($loan['status'] ?? '');
+        if ($st !== 'draft' && $st !== 'rejected') {
+            $this->redirect('/loans/' . $loanId);
+            return;
+        }
+        if (!str_console_authorize(ConsoleAuth::grants(), ['loans.edit'])) {
+            ErrorPage::respond(403, 'Access denied', 'You cannot edit this loan.');
+            return;
+        }
+
+        try {
+            $custRepo = new CustomerRepository();
+            $customers = $custRepo->listNamesForConsoleUser(ConsoleAuth::userId(), ConsoleAuth::grants());
+            $prodRepo = new LoanProductRepository();
+            $products = $prodRepo->listActive();
+            $curPid = (int) ($loan['loan_product_id'] ?? 0);
+            $found = false;
+            foreach ($products as $p) {
+                if ((int) ($p['id'] ?? 0) === $curPid) {
+                    $found = true;
+                    break;
+                }
+            }
+            if (!$found && $curPid > 0) {
+                $extra = $prodRepo->find($curPid);
+                if (is_array($extra)) {
+                    $products[] = $extra;
+                }
+            }
+            $this->render('loans/edit', [
+                'loan' => $loan,
+                'customers' => $customers,
+                'products' => $products,
+                'error' => Request::query('error'),
+            ]);
+        } catch (Throwable) {
+            $this->redirect('/loans/' . $loanId . '?error=' . rawurlencode('Could not open edit form.'));
+        }
+    }
+
+    public function update(int $loanId): void
+    {
+        if (!str_console_database_ready()) {
+            $this->redirect('/loans');
+            return;
+        }
+        $loanRepo = new LoanRepository();
+        $loan = $loanRepo->find($loanId);
+        if ($loan === null || !LoanRepository::canAccessRow($loan, ConsoleAuth::userId(), ConsoleAuth::grants())) {
+            $this->redirect('/loans');
+            return;
+        }
+        $st = (string) ($loan['status'] ?? '');
+        if ($st !== 'draft' && $st !== 'rejected') {
+            $this->redirect('/loans/' . $loanId);
+            return;
+        }
+        if (!str_console_authorize(ConsoleAuth::grants(), ['loans.edit'])) {
+            $this->redirect('/loans');
+            return;
+        }
+
+        $customerId = (int) Request::post('customer_id', 0);
+        $productId = (int) Request::post('loan_product_id', 0);
+        $principal = (float) Request::post('principal_amount', 0);
+        if ($customerId <= 0 || $productId <= 0 || $principal <= 0) {
+            $this->redirect('/loans/' . $loanId . '/edit?error=' . rawurlencode('Select customer and product, and enter principal.'));
+            return;
+        }
+
+        $custRepo = new CustomerRepository();
+        if ($custRepo->find($customerId, ConsoleAuth::userId(), ConsoleAuth::grants()) === null) {
+            $this->redirect('/loans/' . $loanId . '/edit?error=' . rawurlencode('Customer not available.'));
+            return;
+        }
+
+        $prodRepo = new LoanProductRepository();
+        $product = $prodRepo->find($productId);
+        if ($product === null) {
+            $this->redirect('/loans/' . $loanId . '/edit?error=' . rawurlencode('Invalid product.'));
+            return;
+        }
+        if (!(int) ($product['is_active'] ?? 0) && (int) ($loan['loan_product_id'] ?? 0) !== $productId) {
+            $this->redirect('/loans/' . $loanId . '/edit?error=' . rawurlencode('Choose an active product or keep the current one.'));
+            return;
+        }
+
+        $rate = (float) $product['rate_percent'];
+        $pm = (int) ($product['period_months'] ?? 1);
+
+        try {
+            if (!$loanRepo->updateDraftOrRejected($loanId, $customerId, $productId, $principal, $rate, $pm)) {
+                $this->redirect('/loans/' . $loanId . '/edit?error=' . rawurlencode('Loan could not be updated (wrong status?).'));
+                return;
+            }
+            AuditLogger::log(ConsoleAuth::userId(), 'loan.update', 'loan', $loanId, [
+                'customer_id' => $customerId,
+                'loan_product_id' => $productId,
+                'principal' => $principal,
+            ]);
+            $msg = $st === 'rejected' ? 'Loan updated and returned to draft. You can submit again.' : 'Loan updated.';
+            $this->redirect('/loans/' . $loanId . '?flash=' . rawurlencode($msg));
+        } catch (Throwable) {
+            $this->redirect('/loans/' . $loanId . '/edit?error=' . rawurlencode('Could not save loan.'));
+        }
+    }
+
     public function show(int $loanId): void
     {
         if (!str_console_database_ready()) {
@@ -114,8 +233,7 @@ final class LoansController extends BaseController
         $loanRepo = new LoanRepository();
         $loan = $loanRepo->find($loanId);
         if ($loan === null || !LoanRepository::canAccessRow($loan, ConsoleAuth::userId(), ConsoleAuth::grants())) {
-            http_response_code(404);
-            echo 'Not found';
+            ErrorPage::respond(404, 'Loan not found', 'This loan does not exist or is outside your access scope.');
             return;
         }
 
@@ -128,11 +246,15 @@ final class LoansController extends BaseController
         $outstanding = LoanLedgerService::outstandingForLoan($loanId);
         $grants = ConsoleAuth::grants();
         $active = ($loan['status'] ?? '') === 'active';
+        $st = (string) ($loan['status'] ?? '');
+        $canEditLoan = str_console_authorize($grants, ['loans.edit'])
+            && ($st === 'draft' || $st === 'rejected');
 
         $this->render('loans/show', [
             'loan' => $loan,
             'ledger' => $lines,
             'outstanding' => $outstanding,
+            'canEditLoan' => $canEditLoan,
             'canSubmit' => str_console_authorize($grants, ['loans.submit']) && ($loan['status'] ?? '') === 'draft',
             'canApprove' => str_console_authorize($grants, ['loans.approve']) && ($loan['status'] ?? '') === 'pending_approval',
             'canReject' => str_console_authorize($grants, ['loans.reject']) && ($loan['status'] ?? '') === 'pending_approval',

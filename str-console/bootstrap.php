@@ -40,6 +40,7 @@ function str_console_dev_login_enabled(): bool
 }
 
 require_once STR_CONSOLE_ROOT . '/core/Request.php';
+require_once STR_CONSOLE_ROOT . '/core/ErrorPage.php';
 require_once STR_CONSOLE_ROOT . '/core/ConsoleAuth.php';
 require_once STR_CONSOLE_ROOT . '/core/BaseController.php';
 require_once STR_CONSOLE_ROOT . '/core/Database.php';
@@ -66,6 +67,7 @@ require_once STR_CONSOLE_ROOT . '/controllers/LoanProductsController.php';
 require_once STR_CONSOLE_ROOT . '/controllers/LoansController.php';
 require_once STR_CONSOLE_ROOT . '/controllers/SettingsController.php';
 require_once STR_CONSOLE_ROOT . '/controllers/SettingsUsersController.php';
+require_once STR_CONSOLE_ROOT . '/controllers/SettingsRolesController.php';
 require_once STR_CONSOLE_ROOT . '/controllers/SearchController.php';
 require_once STR_CONSOLE_ROOT . '/controllers/AuditController.php';
 require_once STR_CONSOLE_ROOT . '/controllers/ReportsController.php';

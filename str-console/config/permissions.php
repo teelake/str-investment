@@ -239,6 +239,75 @@ function str_console_expand_grants(array $grants): array
 }
 
 /**
+ * Effective permission keys for a role at login: code defaults, optionally overridden in
+ * console_settings as JSON array under key roles.grants.{role_key}.
+ *
+ * @return list<string>
+ */
+function str_console_role_grants_for(string $roleKey): array
+{
+    $defaults = str_console_default_role_grants();
+    if ($roleKey === 'system_admin') {
+        return ['*'];
+    }
+    if (!isset($defaults[$roleKey])) {
+        return [];
+    }
+    $base = $defaults[$roleKey];
+    if (!class_exists('ConsoleSettingRepository', false)) {
+        return $base;
+    }
+    if (!function_exists('str_console_database_ready') || !str_console_database_ready()) {
+        return $base;
+    }
+
+    try {
+        $raw = ConsoleSettingRepository::get('roles.grants.' . $roleKey);
+        if ($raw === null || trim($raw) === '') {
+            return $base;
+        }
+        $decoded = json_decode($raw, true);
+        if (!is_array($decoded)) {
+            return $base;
+        }
+        $keys = [];
+        foreach ($decoded as $k) {
+            if (is_string($k) && $k !== '') {
+                $keys[] = $k;
+            }
+        }
+        $keys[] = 'auth.session';
+        return array_values(array_unique($keys));
+    } catch (Throwable) {
+        return $base;
+    }
+}
+
+/**
+ * @param list<string> $keys
+ */
+function str_console_validate_permission_keys(array $keys): bool
+{
+    $catalog = str_console_permission_catalog();
+    foreach ($keys as $k) {
+        if (!is_string($k) || $k === '' || !isset($catalog[$k])) {
+            return false;
+        }
+    }
+    return true;
+}
+
+/**
+ * Roles that may receive custom grant lists in the database (not system_admin).
+ *
+ * @return list<string>
+ */
+function str_console_roles_with_editable_grants(): array
+{
+    return ['admin', 'manager', 'credit_officer'];
+}
+
+/**
  * Role keys an actor may assign when creating or editing console users.
  *
  * @return list<string>
