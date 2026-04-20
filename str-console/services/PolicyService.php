@@ -76,4 +76,29 @@ final class PolicyService
         }
         return trim($raw);
     }
+
+    /** Automatic borrower payment reminder emails (server cron). Off by default until enabled in Settings. */
+    public static function paymentRemindersEnabled(): bool
+    {
+        return self::bool('payment_reminders.enabled', false);
+    }
+
+    /** Days before the scheduled payment to send the first reminder (0 = only send on the due date). */
+    public static function paymentReminderDaysBefore(): int
+    {
+        $raw = ConsoleSettingRepository::get('payment_reminders.days_before');
+        if ($raw === null || trim((string) $raw) === '') {
+            return 2;
+        }
+        if (!is_numeric($raw)) {
+            return 2;
+        }
+        $n = (int) $raw;
+        return max(0, min(60, $n));
+    }
+
+    public static function paymentRemindersSendOnDueDay(): bool
+    {
+        return self::bool('payment_reminders.send_on_due_day', true);
+    }
 }

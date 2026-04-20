@@ -187,6 +187,9 @@ $docTitle = match (true) {
           <?php if (str_console_authorize_route($g, 'settings.policies')): ?>
             <a href="<?= htmlspecialchars($basePath . '/settings/policies', ENT_QUOTES, 'UTF-8') ?>" <?= str_starts_with($path, '/settings/policies') ? 'aria-current="page"' : '' ?>>Policies</a>
           <?php endif; ?>
+          <?php if (str_console_authorize_route($g, 'settings.payment_reminders')): ?>
+            <a href="<?= htmlspecialchars($basePath . '/settings/payment-reminders', ENT_QUOTES, 'UTF-8') ?>" <?= str_starts_with($path, '/settings/payment-reminders') ? 'aria-current="page"' : '' ?>>Payment reminders</a>
+          <?php endif; ?>
           <?php if (str_console_authorize_route($g, 'settings.system')): ?>
             <a href="<?= htmlspecialchars($basePath . '/settings/system', ENT_QUOTES, 'UTF-8') ?>" <?= str_starts_with($path, '/settings/system') ? 'aria-current="page"' : '' ?>>System</a>
           <?php endif; ?>

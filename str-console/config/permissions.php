@@ -78,9 +78,13 @@ function str_console_permission_catalog(): array
 
         // Settings / governance
         'settings.policies' => 'Manage org-wide policy toggles (scopes, approvals, thresholds).',
+        'settings.payment_reminders' => 'Configure automatic borrower payment reminder emails (wording and schedule).',
         'settings.users' => 'Create/edit/deactivate console users (within allowed roles).',
         'settings.roles' => 'Edit role ↔ permission matrix (who can grant what).',
         'settings.system' => 'Platform-level settings reserved for system admin.',
+
+        // Loan reminders (per active loan)
+        'loans.reminder_installment' => 'Set optional installment amount shown in payment reminder emails.',
     ];
 }
 
@@ -136,6 +140,7 @@ function str_console_route_permissions(): array
         'loans.payment' => [...$auth, 'payments.record'],
         'loans.payment_void' => [...$auth, 'payments.void'],
         'loans.payment_adjust' => [...$auth, 'payments.adjust'],
+        'loans.reminder_installment' => [...$auth, 'loans.reminder_installment'],
 
         // Loan products
         'loan_products.index' => [...$auth, 'loan_products.list'],
@@ -170,6 +175,8 @@ function str_console_route_permissions(): array
 
         // Settings
         'settings.policies' => [...$auth, 'settings.policies'],
+        'settings.payment_reminders' => [...$auth, 'settings.payment_reminders'],
+        'settings.payment_reminders.save' => [...$auth, 'settings.payment_reminders'],
         'settings.users' => [...$auth, 'settings.users'],
         'settings.users.deactivate' => [...$auth, 'settings.users'],
         'settings.roles' => [...$auth, 'settings.roles'],
@@ -231,8 +238,13 @@ function str_console_default_role_grants(): array
             'bulk_upload.loans',
             'reports.export',
             'audit.view',
+            'settings.payment_reminders',
+            'loans.reminder_installment',
         ])),
-        'credit_officer' => $officerCore,
+        'credit_officer' => array_values(array_unique([
+            ...$officerCore,
+            'loans.reminder_installment',
+        ])),
     ];
 }
 

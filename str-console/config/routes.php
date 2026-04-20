@@ -54,9 +54,13 @@ function str_console_routes(): array
         ['POST', '#^/loans/(\d+)/close$#', LoansController::class, 'close', 'loans.close'],
         ['POST', '#^/loans/(\d+)/payment-void$#', LoansController::class, 'paymentVoid', 'loans.payment_void'],
         ['POST', '#^/loans/(\d+)/payment-adjust$#', LoansController::class, 'paymentAdjust', 'loans.payment_adjust'],
+        ['POST', '#^/loans/(\d+)/reminder-installment$#', LoansController::class, 'saveReminderInstallment', 'loans.reminder_installment'],
 
         ['GET', '/settings/policies', SettingsController::class, 'policies', 'settings.policies'],
         ['POST', '/settings/policies', SettingsController::class, 'savePolicies', 'settings.policies'],
+
+        ['GET', '/settings/payment-reminders', SettingsPaymentRemindersController::class, 'index', 'settings.payment_reminders'],
+        ['POST', '/settings/payment-reminders', SettingsPaymentRemindersController::class, 'save', 'settings.payment_reminders.save'],
 
         ['GET', '/settings/users', SettingsUsersController::class, 'index', 'settings.users'],
         ['GET', '/settings/users/create', SettingsUsersController::class, 'create', 'settings.users'],

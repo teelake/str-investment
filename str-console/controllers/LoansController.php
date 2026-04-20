@@ -334,11 +334,25 @@ final class LoansController extends BaseController
             }
         }
 
+        $canReminderInstallment = str_console_authorize($grants, ['loans.reminder_installment'])
+            && $active
+            && !empty($loan['disbursed_at']);
+        $reminderProjection = null;
+        if ($active && !empty($loan['disbursed_at'])) {
+            try {
+                $reminderProjection = LoanLedgerService::projectNextPaymentReminder($loanId);
+            } catch (Throwable) {
+                $reminderProjection = null;
+            }
+        }
+
         $this->render('loans/show', [
             'loan' => $loan,
             'ledger' => $lines,
             'outstanding' => $outstanding,
             'canEditLoan' => $canEditLoan,
+            'canReminderInstallment' => $canReminderInstallment,
+            'reminderProjection' => $reminderProjection,
             'canSubmit' => str_console_authorize($grants, ['loans.submit']) && ($loan['status'] ?? '') === 'draft',
             'canApprove' => str_console_authorize($grants, ['loans.approve']) && ($loan['status'] ?? '') === 'pending_approval',
             'canReject' => str_console_authorize($grants, ['loans.reject']) && ($loan['status'] ?? '') === 'pending_approval',
@@ -593,6 +607,59 @@ final class LoansController extends BaseController
             $this->redirect('/loans/' . $loanId . '?flash=' . rawurlencode('Payment recorded.'));
         } catch (Throwable $e) {
             $this->redirect('/loans/' . $loanId . '?error=' . rawurlencode($e->getMessage()));
+        }
+    }
+
+    public function saveReminderInstallment(int $loanId): void
+    {
+        $this->requirePostedCsrf('/loans/' . $loanId);
+        if (!str_console_database_ready()) {
+            $this->redirect('/loans');
+            return;
+        }
+        if (!str_console_authorize(ConsoleAuth::grants(), ['loans.reminder_installment'])) {
+            $this->redirect('/loans/' . $loanId);
+            return;
+        }
+        $loanRepo = new LoanRepository();
+        $loan = $loanRepo->find($loanId);
+        if ($loan === null || !LoanRepository::canAccessRow($loan, ConsoleAuth::userId(), ConsoleAuth::grants())) {
+            $this->redirect('/loans');
+            return;
+        }
+        if (($loan['status'] ?? '') !== 'active' || empty($loan['disbursed_at'])) {
+            $this->redirect('/loans/' . $loanId . '?error=' . rawurlencode('Reminders apply to active, disbursed loans only.'));
+            return;
+        }
+
+        $raw = trim(str_replace(["\0", "\r"], '', (string) Request::post('reminder_installment_amount', '')));
+        $amt = null;
+        if ($raw !== '') {
+            $normalized = str_replace(',', '', $raw);
+            if (!is_numeric($normalized)) {
+                $this->redirect('/loans/' . $loanId . '?error=' . rawurlencode('Enter a valid amount or leave blank.'));
+                return;
+            }
+            $amt = round((float) $normalized, 2);
+            if (!is_finite($amt) || $amt <= 0) {
+                $this->redirect('/loans/' . $loanId . '?error=' . rawurlencode('Amount must be positive, or leave blank to use the ledger amount only.'));
+                return;
+            }
+        }
+
+        try {
+            if (!$loanRepo->updateReminderInstallment($loanId, $amt)) {
+                $this->redirect('/loans/' . $loanId . '?error=' . rawurlencode('Could not update reminder amount.'));
+                return;
+            }
+            AuditLogger::log(ConsoleAuth::userId(), 'loan.reminder_installment', 'loan', $loanId, [
+                'reminder_installment_amount' => $amt,
+            ]);
+            $this->redirect('/loans/' . $loanId . '?flash=' . rawurlencode('Payment reminder amount saved.'));
+        } catch (InvalidArgumentException $e) {
+            $this->redirect('/loans/' . $loanId . '?error=' . rawurlencode($e->getMessage()));
+        } catch (Throwable) {
+            $this->redirect('/loans/' . $loanId . '?error=' . rawurlencode('Could not save.'));
         }
     }
 

@@ -105,9 +105,11 @@ final class LoanRepository
     {
         $pdo = Database::pdo();
         $stmt = $pdo->prepare(
-            'SELECT l.*, c.full_name AS customer_name, c.assigned_user_id AS customer_assigned_user_id
+            'SELECT l.*, c.full_name AS customer_name, c.email AS customer_email, c.assigned_user_id AS customer_assigned_user_id,
+                    lp.name AS loan_product_name
              FROM loans l
              INNER JOIN customers c ON c.id = l.customer_id
+             INNER JOIN loan_products lp ON lp.id = l.loan_product_id
              WHERE l.id = :id LIMIT 1'
         );
         $stmt->execute([':id' => $id]);
@@ -256,6 +258,24 @@ final class LoanRepository
              WHERE id = :id AND status = 'closed'"
         );
         $stmt->execute([':id' => $loanId]);
+        return $stmt->rowCount() > 0;
+    }
+
+    /**
+     * Optional amount shown in borrower payment reminders (active, disbursed loans only). Null clears the override.
+     */
+    public function updateReminderInstallment(int $loanId, ?float $amount): bool
+    {
+        if ($amount !== null && (!is_finite($amount) || $amount <= 0)) {
+            throw new InvalidArgumentException('Reminder amount must be positive or empty.');
+        }
+        $pdo = Database::pdo();
+        $v = $amount === null ? null : round($amount, 2);
+        $stmt = $pdo->prepare(
+            'UPDATE loans SET reminder_installment_amount = :a, updated_at = NOW()
+             WHERE id = :id AND status = \'active\' AND disbursed_at IS NOT NULL'
+        );
+        $stmt->execute([':a' => $v, ':id' => $loanId]);
         return $stmt->rowCount() > 0;
     }
 

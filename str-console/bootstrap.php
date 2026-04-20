@@ -75,6 +75,9 @@ require_once STR_CONSOLE_ROOT . '/repositories/LoanLedgerRepository.php';
 require_once STR_CONSOLE_ROOT . '/services/LoanLedgerService.php';
 require_once STR_CONSOLE_ROOT . '/repositories/ReportRepository.php';
 require_once STR_CONSOLE_ROOT . '/repositories/LoanRepository.php';
+require_once STR_CONSOLE_ROOT . '/repositories/PaymentReminderLogRepository.php';
+require_once STR_CONSOLE_ROOT . '/services/PaymentReminderMailer.php';
+require_once STR_CONSOLE_ROOT . '/services/PaymentReminderService.php';
 require_once STR_CONSOLE_ROOT . '/repositories/SearchRepository.php';
 require_once STR_CONSOLE_ROOT . '/repositories/AuditLogRepository.php';
 
@@ -87,6 +90,7 @@ require_once STR_CONSOLE_ROOT . '/controllers/SettingsController.php';
 require_once STR_CONSOLE_ROOT . '/controllers/SettingsUsersController.php';
 require_once STR_CONSOLE_ROOT . '/controllers/SettingsRolesController.php';
 require_once STR_CONSOLE_ROOT . '/controllers/SettingsSystemController.php';
+require_once STR_CONSOLE_ROOT . '/controllers/SettingsPaymentRemindersController.php';
 require_once STR_CONSOLE_ROOT . '/controllers/AccountController.php';
 require_once STR_CONSOLE_ROOT . '/controllers/SearchController.php';
 require_once STR_CONSOLE_ROOT . '/controllers/AuditController.php';

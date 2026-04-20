@@ -16,6 +16,8 @@ declare(strict_types=1);
 /** @var float|null $lastLinePayment */
 /** @var float|null $paymentAmountDueMax */
 /** @var bool $canEditLoan */
+/** @var bool $canReminderInstallment */
+/** @var array<string, mixed>|null $reminderProjection */
 /** @var mixed $flash */
 /** @var mixed $flashError */
 $basePath = Request::basePath();
@@ -43,6 +45,8 @@ $lastLineAmountDue = $lastLineAmountDue ?? 0.0;
 $lastLinePayment = $lastLinePayment ?? null;
 $paymentAmountDueMax = $paymentAmountDueMax ?? null;
 $canEditLoan = $canEditLoan ?? false;
+$canReminderInstallment = $canReminderInstallment ?? false;
+$reminderProjection = isset($reminderProjection) && is_array($reminderProjection) ? $reminderProjection : null;
 $today = InputValidate::todayYmd();
 $loanCreatedDay = substr((string) ($loan['created_at'] ?? ''), 0, 10);
 if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $loanCreatedDay)) {
@@ -178,6 +182,38 @@ if ($paymentDefault < $paymentDateMin) {
         <p style="margin: 10px 0 0; font-size: 12px; color: var(--muted2);">Maximum for this payment: within the <strong>same 30-day period</strong> from disbursement as the last line = balance only; <strong>new period</strong> = balance + one charge at the booked monthly rate. Matches the default payment date; the server rechecks if you change it. Larger amounts are rejected.</p>
       <?php endif; ?>
       <p style="margin: 12px 0 0; font-size: 12px; color: var(--muted2);">Interest runs in <strong>30-day steps</strong> from the disbursement date. A payment in the <strong>same</strong> step as the last line pays down the balance only; the <strong>next</strong> step adds one charge at the booked monthly rate, then your payment. Use <strong>Apply accrual</strong> (or cron) to insert unpaid period lines when that policy is on.</p>
+    </div>
+  <?php endif; ?>
+
+  <?php if ($canReminderInstallment && $st === 'active'): ?>
+    <?php
+      $rInst = $loan['reminder_installment_amount'] ?? null;
+      $rInstVal = $rInst !== null && $rInst !== '' ? (float) $rInst : null;
+      $rp = $reminderProjection;
+    ?>
+    <div style="background: var(--card); border: 1px solid var(--line2); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow2); margin-bottom: 28px;">
+      <h2 style="font-size: 15px; margin: 0 0 8px; font-weight: 800;">Borrower payment reminders</h2>
+      <p style="margin: 0 0 14px; font-size: 13px; color: var(--muted2); line-height: 1.45;">
+        If your team turns on automatic emails under <strong>Settings → Payment reminders</strong>, the customer receives plain-language messages before each due date and on the due day (when their profile has an email).
+        Optionally set the <strong>amount to mention</strong> for this loan (for example a fixed installment that is smaller than the full ledger step).
+      </p>
+      <?php if ($rp !== null): ?>
+        <p style="margin: 0 0 14px; font-size: 13px; color: var(--muted);">
+          Next scheduled payment date (from ledger / term): <strong><?= htmlspecialchars((string) ($rp['next_due_ymd'] ?? ''), ENT_QUOTES, 'UTF-8') ?></strong>.
+          Ledger amount for that step: <strong><?= $fmt((float) ($rp['ledger_amount_due'] ?? 0)) ?></strong>.
+        </p>
+      <?php endif; ?>
+      <form method="post" action="<?= htmlspecialchars($basePath . '/loans/' . $id . '/reminder-installment', ENT_QUOTES, 'UTF-8') ?>" style="display:flex; flex-wrap:wrap; gap:12px; align-items:flex-end;">
+        <?php require STR_CONSOLE_ROOT . '/views/partials/csrf.php'; ?>
+        <label style="display:grid; gap:4px; font-size:12px; font-weight:650; color:var(--muted);">
+          Amount to show in reminder emails (optional, ₦)
+          <input name="reminder_installment_amount" type="text" inputmode="decimal" placeholder="e.g. 10000" autocomplete="off"
+            value="<?= $rInstVal !== null ? htmlspecialchars((string) $rInstVal, ENT_QUOTES, 'UTF-8') : '' ?>"
+            style="padding:10px 12px; border-radius:12px; border:1px solid var(--line); width:160px;" />
+        </label>
+        <button type="submit" class="btn ghost">Save reminder amount</button>
+      </form>
+      <p style="margin: 12px 0 0; font-size: 12px; color: var(--muted2);">Leave blank to use only the calculated ledger amount. Email wording is edited under Settings (not here).</p>
     </div>
   <?php endif; ?>
 

@@ -436,6 +436,93 @@ final class LoanLedgerService
         return (float) $last['closing_balance'];
     }
 
+    /**
+     * Next payment anchor: last line date + 30 days while within the booked term, otherwise loan end date (maturity).
+     * "Amount due on that date" matches {@see maxPaymentForNextLine} as if the borrower paid on that calendar day.
+     *
+     * @return array{
+     *   next_due_ymd: string,
+     *   ledger_amount_due: float,
+     *   outstanding: float,
+     *   reminder_installment_amount: float|null
+     * }|null
+     */
+    public static function projectNextPaymentReminder(int $loanId): ?array
+    {
+        $pdo = Database::pdo();
+        $stmt = $pdo->prepare(
+            'SELECT id, status, rate_percent, principal_amount, interest_basis, period_months, disbursed_at, reminder_installment_amount
+             FROM loans WHERE id = :id LIMIT 1'
+        );
+        $stmt->execute([':id' => $loanId]);
+        $loan = $stmt->fetch();
+        if (!is_array($loan) || ($loan['status'] ?? '') !== 'active') {
+            return null;
+        }
+        $disbursedRaw = $loan['disbursed_at'] ?? null;
+        if ($disbursedRaw === null || $disbursedRaw === '') {
+            return null;
+        }
+        $disbStr = substr((string) $disbursedRaw, 0, 10);
+        $disbursed = DateTimeImmutable::createFromFormat('Y-m-d', $disbStr);
+        if ($disbursed === false || $disbursed->format('Y-m-d') !== $disbStr) {
+            return null;
+        }
+
+        $ledger = new LoanLedgerRepository();
+        $last = $ledger->lastLine($loanId);
+        if ($last === null) {
+            return null;
+        }
+        $opening = (float) $last['closing_balance'];
+        if ($opening <= 0.0000001) {
+            return null;
+        }
+
+        $lastPdStr = substr((string) ($last['period_date'] ?? ''), 0, 10);
+        $lastPdDt = DateTimeImmutable::createFromFormat('Y-m-d', $lastPdStr);
+        if ($lastPdDt === false || $lastPdDt->format('Y-m-d') !== $lastPdStr) {
+            return null;
+        }
+
+        $periodMonths = max(1, (int) ($loan['period_months'] ?? 1));
+        $termEnd = $disbursed->modify('+' . $periodMonths . ' months');
+        $nextBoundary = $lastPdDt->modify('+' . self::INTEREST_PERIOD_DAYS . ' days');
+        if ($nextBoundary <= $termEnd) {
+            $nextDue = $nextBoundary;
+        } else {
+            $nextDue = $termEnd;
+        }
+        $nextDueStr = $nextDue->format('Y-m-d');
+
+        $basis = (string) ($loan['interest_basis'] ?? LoanInterestBasis::REDUCING_BALANCE);
+        if (!in_array($basis, LoanInterestBasis::all(), true)) {
+            $basis = LoanInterestBasis::REDUCING_BALANCE;
+        }
+        $orig = (float) ($loan['principal_amount'] ?? 0);
+        $rate = (float) ($loan['rate_percent'] ?? 0);
+
+        $ledgerDue = self::maxPaymentForNextLine(
+            $opening,
+            $rate,
+            $nextDueStr,
+            $lastPdStr,
+            $disbStr,
+            $basis,
+            $orig
+        );
+
+        $instRaw = $loan['reminder_installment_amount'] ?? null;
+        $installment = ($instRaw !== null && $instRaw !== '') ? (float) $instRaw : null;
+
+        return [
+            'next_due_ymd' => $nextDueStr,
+            'ledger_amount_due' => $ledgerDue,
+            'outstanding' => self::money($opening),
+            'reminder_installment_amount' => $installment !== null ? self::money($installment) : null,
+        ];
+    }
+
     private static function syncLoanClosedState(int $loanId): void
     {
         $pdo = Database::pdo();
