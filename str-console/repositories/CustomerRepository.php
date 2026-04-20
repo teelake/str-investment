@@ -28,8 +28,9 @@ final class CustomerRepository
         }
 
         [$searchSql, $searchParams] = self::listSearchClause($searchQ);
-        $activeOnly = ' AND c.is_active = 1';
+        $activeOnly = SchemaSupport::customerActiveSql();
 
+        $selectCols = SchemaSupport::customerSelectColumnsPrefixed();
         if ($wide) {
             $countSql = 'SELECT COUNT(*) AS c FROM customers c WHERE 1=1' . $activeOnly . $searchSql;
             $stmtCount = $pdo->prepare($countSql);
@@ -38,7 +39,7 @@ final class CustomerRepository
             $page = Pagination::normalizePage($page, $total, $perPage);
             $offset = ($page - 1) * $perPage;
             $stmt = $pdo->prepare(
-                'SELECT c.id, c.full_name, c.phone, c.email, c.address, c.nin, c.bvn, c.assigned_user_id, c.created_at, c.updated_at,
+                'SELECT ' . $selectCols . ',
                         COALESCE(NULLIF(TRIM(cu.full_name), \'\'), cu.email) AS assigned_user_label
                  FROM customers c
                  LEFT JOIN console_users cu ON cu.id = c.assigned_user_id
@@ -62,7 +63,7 @@ final class CustomerRepository
             $page = Pagination::normalizePage($page, $total, $perPage);
             $offset = ($page - 1) * $perPage;
             $stmt = $pdo->prepare(
-                'SELECT c.id, c.full_name, c.phone, c.email, c.address, c.nin, c.bvn, c.assigned_user_id, c.created_at, c.updated_at,
+                'SELECT ' . $selectCols . ',
                         COALESCE(NULLIF(TRIM(cu.full_name), \'\'), cu.email) AS assigned_user_label
                  FROM customers c
                  LEFT JOIN console_users cu ON cu.id = c.assigned_user_id
@@ -106,17 +107,13 @@ final class CustomerRepository
             $t = mb_substr($t, 0, 120);
         }
         $like = '%' . addcslashes($t, '%_\\') . '%';
-        $parts = ['c.full_name LIKE :clistq', 'c.phone LIKE :clistq', 'c.email LIKE :clistq', 'c.nin LIKE :clistq', 'c.bvn LIKE :clistq'];
-        $params = [':clistq' => $like];
+        [$parts, $params] = SchemaSupport::customerMatchOrParts(':clistq', $like);
         if (ctype_digit($t) && (int) $t > 0) {
             $parts[] = 'c.id = :clistid';
             $params[':clistid'] = (int) $t;
         }
         $dig = preg_replace('/\D/', '', $t) ?? '';
-        if (strlen($dig) >= 2) {
-            $parts[] = "REGEXP_REPLACE(c.phone, '[^0-9]', '') LIKE :clistqd";
-            $params[':clistqd'] = '%' . addcslashes($dig, '%_\\') . '%';
-        }
+        SchemaSupport::appendPhoneDigitMatch($parts, $params, ':clistqd', $dig);
 
         return [' AND (' . implode(' OR ', $parts) . ')', $params];
     }
@@ -132,9 +129,12 @@ final class CustomerRepository
         }
         $pdo = Database::pdo();
         if ($wide) {
-            return (int) $pdo->query('SELECT COUNT(*) AS c FROM customers WHERE is_active = 1')->fetch()['c'];
+            $w = SchemaSupport::customersHasColumn('is_active') ? ' WHERE is_active = 1' : '';
+
+            return (int) $pdo->query('SELECT COUNT(*) AS c FROM customers' . $w)->fetch()['c'];
         }
-        $stmt = $pdo->prepare('SELECT COUNT(*) AS c FROM customers WHERE is_active = 1 AND assigned_user_id <=> :uid');
+        $act = SchemaSupport::customersHasColumn('is_active') ? 'is_active = 1 AND ' : '';
+        $stmt = $pdo->prepare('SELECT COUNT(*) AS c FROM customers WHERE ' . $act . 'assigned_user_id <=> :uid');
         $stmt->execute([':uid' => $consoleUserId]);
         return (int) ($stmt->fetch()['c'] ?? 0);
     }
@@ -145,9 +145,15 @@ final class CustomerRepository
     public function find(int $id, ?int $consoleUserId, array $grants): ?array
     {
         $pdo = Database::pdo();
+        $cols = ['id', 'full_name', 'phone', 'address', 'nin', 'bvn', 'assigned_user_id', 'created_at', 'updated_at'];
+        if (SchemaSupport::customersHasColumn('email')) {
+            $cols[] = 'email';
+        }
+        if (SchemaSupport::customersHasColumn('is_active')) {
+            $cols[] = 'is_active';
+        }
         $stmt = $pdo->prepare(
-            'SELECT id, full_name, phone, email, address, nin, bvn, assigned_user_id, is_active, created_at, updated_at
-             FROM customers WHERE id = :id LIMIT 1'
+            'SELECT ' . implode(', ', $cols) . ' FROM customers WHERE id = :id LIMIT 1'
         );
         $stmt->execute([':id' => $id]);
         $row = $stmt->fetch();
@@ -177,13 +183,14 @@ final class CustomerRepository
             return [];
         }
         $pdo = Database::pdo();
+        $act = SchemaSupport::customersHasColumn('is_active') ? ' AND is_active = 1' : '';
         if ($wide) {
-            $stmt = $pdo->prepare('SELECT id, full_name, phone FROM customers WHERE is_active = 1 ORDER BY full_name ASC LIMIT :lim');
+            $stmt = $pdo->prepare('SELECT id, full_name, phone FROM customers WHERE 1=1' . $act . ' ORDER BY full_name ASC LIMIT :lim');
             $stmt->bindValue(':lim', $limit, PDO::PARAM_INT);
             $stmt->execute();
         } else {
             $stmt = $pdo->prepare(
-                'SELECT id, full_name, phone FROM customers WHERE is_active = 1 AND assigned_user_id <=> :uid ORDER BY full_name ASC LIMIT :lim'
+                'SELECT id, full_name, phone FROM customers WHERE assigned_user_id <=> :uid' . $act . ' ORDER BY full_name ASC LIMIT :lim'
             );
             $stmt->bindValue(':uid', $consoleUserId, PDO::PARAM_INT);
             $stmt->bindValue(':lim', $limit, PDO::PARAM_INT);

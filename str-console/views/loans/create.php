@@ -6,6 +6,44 @@ declare(strict_types=1);
 /** @var mixed $error */
 $basePath = Request::basePath();
 $err = is_string($error) ? $error : '';
+
+$customerOptions = [];
+foreach ($customers as $c) {
+    $cid = (int) ($c['id'] ?? 0);
+    if ($cid <= 0) {
+        continue;
+    }
+    $cname = (string) ($c['full_name'] ?? '');
+    $cphone = (string) ($c['phone'] ?? '');
+    $customerOptions[] = [
+        'id' => $cid,
+        'label' => $cname . ($cphone !== '' ? ' — ' . $cphone : ''),
+    ];
+}
+
+$productOptions = [];
+foreach ($products as $p) {
+    $pid = (int) ($p['id'] ?? 0);
+    if ($pid <= 0) {
+        continue;
+    }
+    $pRate = (string) ($p['rate_percent'] ?? '');
+    $pBasis = (string) ($p['default_interest_basis'] ?? LoanInterestBasis::REDUCING_BALANCE);
+    $pAr = (int) ($p['allow_reducing_balance'] ?? 1) ? 1 : 0;
+    $pAf = (int) ($p['allow_flat_monthly'] ?? 1) ? 1 : 0;
+    $pname = (string) ($p['name'] ?? '');
+    $productOptions[] = [
+        'id' => $pid,
+        'label' => $pname . ' — ' . $pRate . '% suggested',
+        'rate' => $pRate,
+        'basis' => $pBasis,
+        'allowR' => $pAr,
+        'allowF' => $pAf,
+    ];
+}
+
+$noCust = count($customers) === 0;
+$noProd = count($products) === 0;
 ?>
 <div class="container" style="padding:0; max-width:560px;">
   <h1 style="font-size: var(--h2); margin: 0 0 8px;">New loan</h1>
@@ -15,7 +53,7 @@ $err = is_string($error) ? $error : '';
     <div style="background: rgba(180, 40, 40, .08); border: 1px solid rgba(180, 40, 40, .2); color: #7f1d1d; padding: 12px 14px; border-radius: 14px; margin-bottom: 16px; font-size: 14px;"><?= htmlspecialchars($err, ENT_QUOTES, 'UTF-8') ?></div>
   <?php endif; ?>
 
-  <?php if (count($products) === 0): ?>
+  <?php if ($noProd): ?>
     <div style="background: rgba(180, 120, 20, .1); border: 1px solid rgba(180, 120, 20, .25); padding: 14px 16px; border-radius: 14px; margin-bottom: 16px; font-size: 14px;">
       No active loan products. <?php if (str_console_authorize_route(ConsoleAuth::grants(), 'loan_products.create')): ?>
         <a href="<?= htmlspecialchars($basePath . '/loan-products/create', ENT_QUOTES, 'UTF-8') ?>">Create a product first</a>.
@@ -23,48 +61,40 @@ $err = is_string($error) ? $error : '';
     </div>
   <?php endif; ?>
 
-  <?php if (count($customers) === 0): ?>
+  <?php if ($noCust): ?>
     <div style="background: rgba(180, 120, 20, .1); border: 1px solid rgba(180, 120, 20, .25); padding: 14px 16px; border-radius: 14px; margin-bottom: 16px; font-size: 14px;">No customers in your scope yet. Register a customer first.</div>
   <?php endif; ?>
 
   <div style="background: var(--card); border: 1px solid var(--line2); border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow2);">
     <form method="post" action="<?= htmlspecialchars($basePath . '/loans', ENT_QUOTES, 'UTF-8') ?>" style="display:grid; gap:14px;">
       <?php require STR_CONSOLE_ROOT . '/views/partials/csrf.php'; ?>
-      <label style="display:grid; gap:6px; font-size:13px; font-weight:650; color:var(--muted);">
-        Customer
-        <input type="search" id="loan_customer_filter" placeholder="Type to filter by name or phone…" autocomplete="off" inputmode="search" style="padding:10px 12px; border-radius:14px; border:1px solid var(--line); background:#fff; margin-bottom:8px; font-size:14px;" <?= count($customers) === 0 ? 'disabled' : '' ?> />
-        <select id="loan_customer_select" name="customer_id" required style="padding:12px 14px; border-radius:14px; border:1px solid var(--line); background:#fff;" <?= count($customers) === 0 ? 'disabled' : '' ?>>
-          <?php if (count($customers) > 0): ?>
-            <option value="" disabled <?= $preCustomerId <= 0 ? 'selected' : '' ?>>Select a customer…</option>
-          <?php endif; ?>
-          <?php foreach ($customers as $c): ?>
-            <?php
-            $cid = (int) ($c['id'] ?? 0);
-            $cname = (string) ($c['full_name'] ?? '');
-            $cphone = (string) ($c['phone'] ?? '');
-            $optLabel = $cname . ($cphone !== '' ? ' — ' . $cphone : '');
-            ?>
-            <option value="<?= $cid ?>" <?= $cid === $preCustomerId ? 'selected' : '' ?>><?= htmlspecialchars($optLabel, ENT_QUOTES, 'UTF-8') ?></option>
-          <?php endforeach; ?>
-        </select>
-      </label>
-      <label style="display:grid; gap:6px; font-size:13px; font-weight:650; color:var(--muted);">
-        Product
-        <input type="search" id="loan_product_filter" placeholder="Type to filter products…" autocomplete="off" inputmode="search" style="padding:10px 12px; border-radius:14px; border:1px solid var(--line); background:#fff; margin-bottom:8px; font-size:14px;" <?= count($products) === 0 ? 'disabled' : '' ?> />
-        <select id="loan_product_id" name="loan_product_id" required style="padding:12px 14px; border-radius:14px; border:1px solid var(--line); background:#fff;">
-          <option value="" selected disabled>Select a product…</option>
-          <?php foreach ($products as $p): ?>
-            <?php
-            $pid = (int) ($p['id'] ?? 0);
-            $pRate = htmlspecialchars((string) ($p['rate_percent'] ?? ''), ENT_QUOTES, 'UTF-8');
-            $pBasis = htmlspecialchars((string) ($p['default_interest_basis'] ?? LoanInterestBasis::REDUCING_BALANCE), ENT_QUOTES, 'UTF-8');
-            $pAr = (int) ($p['allow_reducing_balance'] ?? 1) ? '1' : '0';
-            $pAf = (int) ($p['allow_flat_monthly'] ?? 1) ? '1' : '0';
-            ?>
-            <option value="<?= $pid ?>" data-product-rate="<?= $pRate ?>" data-product-basis="<?= $pBasis ?>" data-allow-r="<?= $pAr ?>" data-allow-f="<?= $pAf ?>"><?= htmlspecialchars((string) ($p['name'] ?? ''), ENT_QUOTES, 'UTF-8') ?> — <?= $pRate ?>% suggested</option>
-          <?php endforeach; ?>
-        </select>
-      </label>
+      <?php
+      $combobox = [
+          'id' => 'loan_customer',
+          'name' => 'customer_id',
+          'label' => 'Customer',
+          'options' => $customerOptions,
+          'selectedId' => $preCustomerId > 0 ? $preCustomerId : 0,
+          'placeholder' => 'Search by name or phone, then pick…',
+          'disabled' => $noCust,
+          'required' => !$noCust && $preCustomerId <= 0,
+          'syncProduct' => false,
+      ];
+      require STR_CONSOLE_ROOT . '/views/partials/loan_combobox.php';
+      $combobox = [
+          'id' => 'loan_product',
+          'name' => 'loan_product_id',
+          'label' => 'Product',
+          'options' => $productOptions,
+          'selectedId' => 0,
+          'placeholder' => 'Search products, then pick…',
+          'disabled' => $noProd,
+          'required' => !$noProd,
+          'syncProduct' => true,
+      ];
+      require STR_CONSOLE_ROOT . '/views/partials/loan_combobox.php';
+      require STR_CONSOLE_ROOT . '/views/partials/loan_combobox_boot.php';
+      ?>
       <label style="display:grid; gap:6px; font-size:13px; font-weight:650; color:var(--muted);">
         Monthly rate (%)
         <input name="rate_percent" type="number" step="0.0001" min="0.0001" required
@@ -86,39 +116,7 @@ $err = is_string($error) ? $error : '';
         <input name="principal_amount" type="number" step="0.01" min="0.01" required
           style="padding:12px 14px; border-radius:14px; border:1px solid var(--line); background:#fff;" />
       </label>
-      <?php
-      $filterInputId = 'loan_customer_filter';
-      $selectId = 'loan_customer_select';
-      require STR_CONSOLE_ROOT . '/views/partials/searchable_select_filter.php';
-      $filterInputId = 'loan_product_filter';
-      $selectId = 'loan_product_id';
-      require STR_CONSOLE_ROOT . '/views/partials/searchable_select_filter.php';
-      ?>
-      <script>
-        (function () {
-          var sel = document.getElementById('loan_product_id');
-          var rateIn = document.querySelector('input[name="rate_percent"]');
-          var rRed = document.querySelector('input[name="interest_basis"][value="<?= LoanInterestBasis::REDUCING_BALANCE ?>"]');
-          var rFlat = document.querySelector('input[name="interest_basis"][value="<?= LoanInterestBasis::FLAT_MONTHLY ?>"]');
-          if (!sel || !rateIn || !rRed || !rFlat) return;
-          function sync() {
-            var o = sel.options[sel.selectedIndex];
-            if (!o || !o.value) return;
-            var pr = o.getAttribute('data-product-rate');
-            if (pr) rateIn.value = pr;
-            var ar = o.getAttribute('data-allow-r') === '1';
-            var af = o.getAttribute('data-allow-f') === '1';
-            rRed.disabled = !ar;
-            rFlat.disabled = !af;
-            var b = o.getAttribute('data-product-basis');
-            if (b === '<?= LoanInterestBasis::FLAT_MONTHLY ?>' && af) rFlat.checked = true;
-            else if (ar) rRed.checked = true;
-            else if (af) rFlat.checked = true;
-          }
-          sel.addEventListener('change', sync);
-        })();
-      </script>
-      <button type="submit" class="btn primary" <?= (count($products) === 0 || count($customers) === 0) ? 'disabled' : '' ?>>Create draft loan</button>
+      <button type="submit" class="btn primary" <?= ($noProd || $noCust) ? 'disabled' : '' ?>>Create draft loan</button>
     </form>
   </div>
 </div>

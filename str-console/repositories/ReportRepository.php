@@ -159,6 +159,16 @@ final class ReportRepository
 
         [$filterSql, $filterParams] = self::customerReportFilters($dateFromYmd, $dateToYmd, $searchQ);
 
+        $repSel = 'c.id, c.full_name, c.phone';
+        if (SchemaSupport::customersHasColumn('email')) {
+            $repSel .= ', c.email';
+        }
+        $repSel .= ', c.assigned_user_id';
+        if (SchemaSupport::customersHasColumn('is_active')) {
+            $repSel .= ', c.is_active';
+        }
+        $repSel .= ', c.created_at, c.updated_at';
+
         if ($wide) {
             $stmtCount = $pdo->prepare('SELECT COUNT(*) AS c FROM customers c WHERE 1=1' . $filterSql);
             $stmtCount->execute($filterParams);
@@ -166,7 +176,7 @@ final class ReportRepository
             $page = Pagination::normalizePage($page, $total, $perPage);
             $offset = ($page - 1) * $perPage;
             $stmt = $pdo->prepare(
-                'SELECT c.id, c.full_name, c.phone, c.email, c.assigned_user_id, c.is_active, c.created_at, c.updated_at,
+                'SELECT ' . $repSel . ',
                         COALESCE(NULLIF(TRIM(cu.full_name), \'\'), cu.email) AS assigned_user_label
                  FROM customers c
                  LEFT JOIN console_users cu ON cu.id = c.assigned_user_id
@@ -188,7 +198,7 @@ final class ReportRepository
             $page = Pagination::normalizePage($page, $total, $perPage);
             $offset = ($page - 1) * $perPage;
             $stmt = $pdo->prepare(
-                'SELECT c.id, c.full_name, c.phone, c.email, c.assigned_user_id, c.is_active, c.created_at, c.updated_at,
+                'SELECT ' . $repSel . ',
                         COALESCE(NULLIF(TRIM(cu.full_name), \'\'), cu.email) AS assigned_user_label
                  FROM customers c
                  LEFT JOIN console_users cu ON cu.id = c.assigned_user_id
@@ -231,9 +241,19 @@ final class ReportRepository
         [$filterSql, $filterParams] = self::customerReportFilters($dateFromYmd, $dateToYmd, $searchQ);
         $lim = self::EXPORT_MAX_ROWS;
 
+        $expSel = 'c.id, c.full_name, c.phone';
+        if (SchemaSupport::customersHasColumn('email')) {
+            $expSel .= ', c.email';
+        }
+        $expSel .= ', c.address, c.nin, c.bvn, c.assigned_user_id';
+        if (SchemaSupport::customersHasColumn('is_active')) {
+            $expSel .= ', c.is_active';
+        }
+        $expSel .= ', c.created_at';
+
         if ($wide) {
             $stmt = $pdo->prepare(
-                'SELECT c.id, c.full_name, c.phone, c.email, c.address, c.nin, c.bvn, c.assigned_user_id, c.is_active, c.created_at,
+                'SELECT ' . $expSel . ',
                         COALESCE(NULLIF(TRIM(cu.full_name), \'\'), cu.email) AS assigned_to
                  FROM customers c
                  LEFT JOIN console_users cu ON cu.id = c.assigned_user_id
@@ -245,7 +265,7 @@ final class ReportRepository
             $scope = ' AND c.assigned_user_id <=> :uid';
             $params = array_merge($filterParams, [':uid' => $consoleUserId]);
             $stmt = $pdo->prepare(
-                'SELECT c.id, c.full_name, c.phone, c.email, c.address, c.nin, c.bvn, c.assigned_user_id, c.is_active, c.created_at,
+                'SELECT ' . $expSel . ',
                         COALESCE(NULLIF(TRIM(cu.full_name), \'\'), cu.email) AS assigned_to
                  FROM customers c
                  LEFT JOIN console_users cu ON cu.id = c.assigned_user_id
@@ -306,18 +326,17 @@ final class ReportRepository
         $t = trim((string) $searchRaw);
         if ($t !== '' && mb_strlen($t) <= 200) {
             $like = '%' . addcslashes($t, '%_\\') . '%';
-            $parts = ['c.full_name LIKE :rptq', 'c.phone LIKE :rptq', 'c.email LIKE :rptq', 'c.nin LIKE :rptq', 'c.bvn LIKE :rptq'];
-            $params[':rptq'] = $like;
+            [$parts, $searchParams] = SchemaSupport::customerMatchOrParts(':rptq', $like);
+            foreach ($searchParams as $k => $v) {
+                $params[$k] = $v;
+            }
             if (ctype_digit($t) && (int) $t > 0) {
                 $nid = (int) $t;
                 $parts[] = '(l.id = :rpn OR l.customer_id = :rpn OR c.id = :rpn)';
                 $params[':rpn'] = $nid;
             }
             $dig = preg_replace('/\D/', '', $t) ?? '';
-            if (strlen($dig) >= 2) {
-                $parts[] = "REGEXP_REPLACE(c.phone, '[^0-9]', '') LIKE :rptqd";
-                $params[':rptqd'] = '%' . addcslashes($dig, '%_\\') . '%';
-            }
+            SchemaSupport::appendPhoneDigitMatch($parts, $params, ':rptqd', $dig);
             $conditions[] = '(' . implode(' OR ', $parts) . ')';
         }
         $sql = $conditions === [] ? '' : ' AND ' . implode(' AND ', $conditions);
@@ -356,17 +375,13 @@ final class ReportRepository
             return [$sql, $params];
         }
         $like = '%' . addcslashes($t, '%_\\') . '%';
-        $parts = ['c.full_name LIKE :crpq', 'c.phone LIKE :crpq', 'c.email LIKE :crpq', 'c.nin LIKE :crpq', 'c.bvn LIKE :crpq'];
-        $extra = [':crpq' => $like];
+        [$parts, $extra] = SchemaSupport::customerMatchOrParts(':crpq', $like);
         if (ctype_digit($t) && (int) $t > 0) {
             $parts[] = 'c.id = :crpid';
             $extra[':crpid'] = (int) $t;
         }
         $dig = preg_replace('/\D/', '', $t) ?? '';
-        if (strlen($dig) >= 2) {
-            $parts[] = "REGEXP_REPLACE(c.phone, '[^0-9]', '') LIKE :crpqd";
-            $extra[':crpqd'] = '%' . addcslashes($dig, '%_\\') . '%';
-        }
+        SchemaSupport::appendPhoneDigitMatch($parts, $extra, ':crpqd', $dig);
         $sql .= ' AND (' . implode(' OR ', $parts) . ')';
 
         return [$sql, array_merge($params, $extra)];

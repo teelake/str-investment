@@ -53,25 +53,22 @@ final class SearchRepository
         $customersTotal = 0;
         $customersPage = 1;
         if (str_console_authorize($grants, ['customers.list']) && ($custWide || $consoleUserId !== null)) {
-            $conds = ['c.full_name LIKE :q', 'c.phone LIKE :q', 'c.email LIKE :q', 'c.nin LIKE :q', 'c.bvn LIKE :q'];
-            $params = [':q' => $like];
+            [$conds, $params] = SchemaSupport::customerMatchOrParts(':q', $like);
             $n = self::positiveIntId($query);
             if ($n !== null) {
                 $conds[] = 'c.id = :cid';
                 $params[':cid'] = $n;
             }
             $dig = preg_replace('/\D/', '', $query) ?? '';
-            if (strlen($dig) >= 2) {
-                $conds[] = "REGEXP_REPLACE(c.phone, '[^0-9]', '') LIKE :qdig";
-                $params[':qdig'] = '%' . addcslashes($dig, '%_\\') . '%';
-            }
+            SchemaSupport::appendPhoneDigitMatch($conds, $params, ':qdig', $dig);
             $match = '(' . implode(' OR ', $conds) . ')';
             $from = 'FROM customers c
                      LEFT JOIN console_users cu ON cu.id = c.assigned_user_id';
-            $selectList = 'SELECT c.id, c.full_name, c.phone, c.email, c.assigned_user_id,
+            $emailCol = SchemaSupport::customersHasColumn('email') ? 'c.email' : 'NULL AS email';
+            $selectList = 'SELECT c.id, c.full_name, c.phone, ' . $emailCol . ', c.assigned_user_id,
                            COALESCE(NULLIF(TRIM(cu.full_name), \'\'), cu.email) AS assigned_user_label ';
 
-            $activeCust = $match . ' AND c.is_active = 1';
+            $activeCust = $match . SchemaSupport::customerActiveSql();
             if ($custWide) {
                 $stmtCt = $pdo->prepare('SELECT COUNT(*) AS c ' . $from . ' WHERE ' . $activeCust);
                 $stmtCt->execute($params);
@@ -122,18 +119,14 @@ final class SearchRepository
         $loansTotal = 0;
         $loansPage = 1;
         if (str_console_authorize($grants, ['loans.list']) && ($loanWide || $consoleUserId !== null)) {
-            $conds = ['c.full_name LIKE :q', 'c.phone LIKE :q', 'c.email LIKE :q', 'c.nin LIKE :q', 'c.bvn LIKE :q'];
-            $params = [':q' => $like];
+            [$conds, $params] = SchemaSupport::customerMatchOrParts(':q', $like);
             $n = self::positiveIntId($query);
             if ($n !== null) {
                 $conds[] = '(l.id = :num OR l.customer_id = :num OR c.id = :num)';
                 $params[':num'] = $n;
             }
             $dig = preg_replace('/\D/', '', $query) ?? '';
-            if (strlen($dig) >= 2) {
-                $conds[] = "REGEXP_REPLACE(c.phone, '[^0-9]', '') LIKE :qdig";
-                $params[':qdig'] = '%' . addcslashes($dig, '%_\\') . '%';
-            }
+            SchemaSupport::appendPhoneDigitMatch($conds, $params, ':qdig', $dig);
             $inner = '(' . implode(' OR ', $conds) . ')';
             $base = 'FROM loans l INNER JOIN customers c ON c.id = l.customer_id';
             $sel = 'SELECT l.id, l.status, l.principal_amount, l.customer_id, c.full_name AS customer_name ';

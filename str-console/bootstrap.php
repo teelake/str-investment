@@ -59,6 +59,7 @@ require_once STR_CONSOLE_ROOT . '/core/ErrorPage.php';
 require_once STR_CONSOLE_ROOT . '/core/ConsoleAuth.php';
 require_once STR_CONSOLE_ROOT . '/core/BaseController.php';
 require_once STR_CONSOLE_ROOT . '/core/Database.php';
+require_once STR_CONSOLE_ROOT . '/core/SchemaSupport.php';
 
 require_once STR_CONSOLE_ROOT . '/services/AuditLogger.php';
 require_once STR_CONSOLE_ROOT . '/services/CustomerDocumentStorage.php';

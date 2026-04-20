@@ -53,8 +53,12 @@ final class SearchController extends BaseController
                     $customersPage = (int) $res['customers_page'];
                     $loansPage = (int) $res['loans_page'];
                     $perPage = (int) $res['per_page'];
-                } catch (Throwable) {
+                } catch (Throwable $e) {
+                    error_log('[str-console] search.index: ' . $e->getMessage());
                     $error = 'Search failed. Try again.';
+                    if (str_console_debug()) {
+                        $error .= ' ' . $e->getMessage();
+                    }
                 }
             }
         }
