@@ -60,6 +60,58 @@ $canViewPassport = str_console_authorize_route(ConsoleAuth::grants(), 'customers
       grid-template-columns: 1fr;
     }
   }
+  .customer-profile-layout {
+    display: grid;
+    gap: 18px;
+    align-items: start;
+  }
+  .customer-profile-layout--with-dp {
+    grid-template-columns: 1fr;
+  }
+  .customer-profile-layout--with-dp .customer-profile-dp-column {
+    justify-self: center;
+  }
+  @media (min-width: 520px) {
+    .customer-profile-layout--with-dp {
+      grid-template-columns: auto 1fr;
+      gap: 22px;
+    }
+    .customer-profile-layout--with-dp .customer-profile-dp-column {
+      justify-self: start;
+      padding-top: 2px;
+    }
+  }
+  .customer-profile-dp-column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+  .customer-profile-dp {
+    display: block;
+    width: 112px;
+    height: 112px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid var(--line2);
+    box-shadow: var(--shadow2);
+    background: rgba(0, 0, 0, .04);
+    flex-shrink: 0;
+  }
+  .customer-profile-dp img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center center;
+    display: block;
+  }
+  .customer-profile-dp:hover {
+    border-color: rgba(15, 106, 74, .35);
+  }
+  .customer-profile-fields {
+    min-width: 0;
+    width: 100%;
+  }
 </style>
 <div class="console-form-page console-form-page--wide">
   <div class="container" style="padding:0">
@@ -97,30 +149,39 @@ $canViewPassport = str_console_authorize_route(ConsoleAuth::grants(), 'customers
 
   <div class="customer-show-main-grid">
     <div style="background: var(--card); border: 1px solid var(--line2); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow2);">
-      <h2 style="font-size: 15px; margin: 0 0 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted);">Profile</h2>
-      <dl style="margin:0; display:grid; gap: 12px; font-size: 14px;">
-        <div><dt style="color: var(--muted2); font-size: 12px; font-weight: 650;">Phone</dt><dd style="margin: 4px 0 0; font-weight: 650;"><?= htmlspecialchars($phone, ENT_QUOTES, 'UTF-8') ?></dd></div>
-        <div><dt style="color: var(--muted2); font-size: 12px; font-weight: 650;">Email</dt><dd style="margin: 4px 0 0;"><?= $email !== '' ? htmlspecialchars($email, ENT_QUOTES, 'UTF-8') : '—' ?></dd></div>
-        <div><dt style="color: var(--muted2); font-size: 12px; font-weight: 650;">Address</dt><dd style="margin: 4px 0 0;"><?= $address !== '' ? nl2br(htmlspecialchars($address, ENT_QUOTES, 'UTF-8')) : '—' ?></dd></div>
-        <div><dt style="color: var(--muted2); font-size: 12px; font-weight: 650;">NIN</dt><dd style="margin: 4px 0 0; font-family: ui-monospace, monospace;"><?= $ninHtml ?></dd></div>
-        <div><dt style="color: var(--muted2); font-size: 12px; font-weight: 650;">BVN</dt><dd style="margin: 4px 0 0; font-family: ui-monospace, monospace;"><?= $bvnHtml ?></dd></div>
-      </dl>
-      <?php if (!$showSensitiveIds && (($nin !== null && $nin !== '') || ($bvn !== null && $bvn !== ''))): ?>
-        <p style="margin: 14px 0 0; font-size: 12px; color: var(--muted2);">Identifiers are masked. Users with the right permission see full values.</p>
-      <?php endif; ?>
-      <?php if ($passportDocument !== null && $canViewPassport): ?>
-        <?php
-        $ppId = (int) ($passportDocument['id'] ?? 0);
-        $ppUrl = $basePath . '/customers/' . $id . '/documents/' . $ppId . '/file';
-        ?>
-        <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line2);">
-          <div style="font-size: 12px; font-weight: 650; color: var(--muted2); margin-bottom: 8px;">Passport photo</div>
-          <a href="<?= htmlspecialchars($ppUrl, ENT_QUOTES, 'UTF-8') ?>" style="display: inline-block; border-radius: 12px; overflow: hidden; border: 1px solid var(--line2); max-width: 220px;">
-            <img src="<?= htmlspecialchars($ppUrl, ENT_QUOTES, 'UTF-8') ?>" alt="" width="220" height="auto" style="display: block; max-width: 100%; height: auto; vertical-align: middle;" />
-          </a>
-          <div style="margin-top: 8px;"><a class="btn ghost" style="font-size: 13px; padding: 8px 12px;" href="<?= htmlspecialchars($ppUrl, ENT_QUOTES, 'UTF-8') ?>" download>Download</a></div>
+      <?php
+      $ppUrl = null;
+      if ($passportDocument !== null && $canViewPassport) {
+          $ppId = (int) ($passportDocument['id'] ?? 0);
+          $ppUrl = $basePath . '/customers/' . $id . '/documents/' . $ppId . '/file';
+      }
+      $profileDpClass = $ppUrl !== null ? 'customer-profile-layout customer-profile-layout--with-dp' : 'customer-profile-layout';
+      ?>
+      <div class="<?= htmlspecialchars($profileDpClass, ENT_QUOTES, 'UTF-8') ?>">
+        <?php if ($ppUrl !== null): ?>
+          <div class="customer-profile-dp-column">
+            <a href="<?= htmlspecialchars($ppUrl, ENT_QUOTES, 'UTF-8') ?>" class="customer-profile-dp" title="Passport photo — open full image">
+              <img src="<?= htmlspecialchars($ppUrl, ENT_QUOTES, 'UTF-8') ?>" alt="Passport photo" width="112" height="112" loading="lazy" decoding="async" />
+            </a>
+            <div style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;">
+              <a class="btn ghost" style="font-size: 13px; padding: 8px 12px;" href="<?= htmlspecialchars($ppUrl, ENT_QUOTES, 'UTF-8') ?>" download>Download</a>
+            </div>
+          </div>
+        <?php endif; ?>
+        <div class="customer-profile-fields">
+          <h2 style="font-size: 15px; margin: 0 0 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted);">Profile</h2>
+          <dl style="margin:0; display:grid; gap: 12px; font-size: 14px;">
+            <div><dt style="color: var(--muted2); font-size: 12px; font-weight: 650;">Phone</dt><dd style="margin: 4px 0 0; font-weight: 650;"><?= htmlspecialchars($phone, ENT_QUOTES, 'UTF-8') ?></dd></div>
+            <div><dt style="color: var(--muted2); font-size: 12px; font-weight: 650;">Email</dt><dd style="margin: 4px 0 0;"><?= $email !== '' ? htmlspecialchars($email, ENT_QUOTES, 'UTF-8') : '—' ?></dd></div>
+            <div><dt style="color: var(--muted2); font-size: 12px; font-weight: 650;">Address</dt><dd style="margin: 4px 0 0;"><?= $address !== '' ? nl2br(htmlspecialchars($address, ENT_QUOTES, 'UTF-8')) : '—' ?></dd></div>
+            <div><dt style="color: var(--muted2); font-size: 12px; font-weight: 650;">NIN</dt><dd style="margin: 4px 0 0; font-family: ui-monospace, monospace;"><?= $ninHtml ?></dd></div>
+            <div><dt style="color: var(--muted2); font-size: 12px; font-weight: 650;">BVN</dt><dd style="margin: 4px 0 0; font-family: ui-monospace, monospace;"><?= $bvnHtml ?></dd></div>
+          </dl>
+          <?php if (!$showSensitiveIds && (($nin !== null && $nin !== '') || ($bvn !== null && $bvn !== ''))): ?>
+            <p style="margin: 14px 0 0; font-size: 12px; color: var(--muted2);">Identifiers are masked. Users with the right permission see full values.</p>
+          <?php endif; ?>
         </div>
-      <?php endif; ?>
+      </div>
     </div>
 
     <div style="background: var(--card); border: 1px solid var(--line2); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow2);">
