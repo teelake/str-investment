@@ -50,7 +50,7 @@ $flashErr = is_string($qerr) ? $qerr : '';
   <form method="get" action="<?= htmlspecialchars($basePath . '/customers', ENT_QUOTES, 'UTF-8') ?>" style="display:flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; margin-bottom: 16px;">
     <label style="display:grid; gap: 6px; font-size: 13px; font-weight: 650; color: var(--muted); flex: 1; min-width: 200px;">
       Search
-      <input type="search" name="q" value="<?= htmlspecialchars($filterQ, ENT_QUOTES, 'UTF-8') ?>" placeholder="Name, phone, passport phone, email, NIN, BVN, id…" autocomplete="off" style="padding: 10px 12px; border: 1px solid var(--line2); border-radius: var(--radius); font-size: 14px; background: var(--card); color: inherit; width: 100%;">
+      <input type="search" name="q" value="<?= htmlspecialchars($filterQ, ENT_QUOTES, 'UTF-8') ?>" placeholder="Name, phone, email, NIN, BVN, id…" autocomplete="off" style="padding: 10px 12px; border: 1px solid var(--line2); border-radius: var(--radius); font-size: 14px; background: var(--card); color: inherit; width: 100%;">
     </label>
     <button type="submit" class="btn primary" style="font-size: 14px;">Apply</button>
     <?php if ($hasFilter): ?>
@@ -65,6 +65,7 @@ $flashErr = is_string($qerr) ? $qerr : '';
           <th style="padding: 12px 14px; width: 1%; white-space: nowrap;">ID</th>
           <th style="padding: 12px 14px;">Name</th>
           <th style="padding: 12px 14px;">Phone</th>
+          <th style="padding: 12px 14px;">Email</th>
           <th style="padding: 12px 14px;">Assigned</th>
           <th style="padding: 12px 14px;">Created</th>
           <th style="padding: 12px 14px; width: 1%; white-space: nowrap; text-align: right;">Actions</th>
@@ -73,7 +74,7 @@ $flashErr = is_string($qerr) ? $qerr : '';
       <tbody>
         <?php if (count($rows) === 0): ?>
           <tr>
-            <td colspan="6" style="padding: 28px 14px; color: var(--muted);"><?= $hasFilter ? 'No customers match your search.' : 'No customers in your scope yet.' ?></td>
+            <td colspan="7" style="padding: 28px 14px; color: var(--muted);"><?= $hasFilter ? 'No customers match your search.' : 'No customers in your scope yet.' ?></td>
           </tr>
         <?php else: ?>
           <?php foreach ($rows as $i => $r): ?>
@@ -95,6 +96,10 @@ $flashErr = is_string($qerr) ? $qerr : '';
                 <?php endif; ?>
               </td>
               <td style="padding: 12px 14px;"><?= htmlspecialchars((string) ($r['phone'] ?? ''), ENT_QUOTES, 'UTF-8') ?></td>
+              <td style="padding: 12px 14px; color: var(--muted);"><?php
+                $em = trim((string) ($r['email'] ?? ''));
+                echo $em !== '' ? htmlspecialchars($em, ENT_QUOTES, 'UTF-8') : '—';
+              ?></td>
               <td style="padding: 12px 14px; color: var(--muted);"><?php
                 $alabel = trim((string) ($r['assigned_user_label'] ?? ''));
                 if ($alabel !== '') {

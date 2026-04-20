@@ -7,7 +7,7 @@ $err = is_string($error) ? $error : '';
 <div class="console-form-page">
   <div class="container" style="padding:0;">
     <h1 style="font-size: var(--h2); margin: 0 0 8px;">Register customer</h1>
-    <p style="color: var(--muted); margin: 0 0 22px;">Capture core KYC fields. Upload supporting documents from the customer profile after save.</p>
+    <p style="color: var(--muted); margin: 0 0 22px;">Capture core KYC fields. Email and passport photo are optional. You can upload more documents from the profile after save.</p>
 
   <?php if ($err !== ''): ?>
     <div style="background: rgba(180, 40, 40, .08); border: 1px solid rgba(180, 40, 40, .2); color: #7f1d1d; padding: 12px 14px; border-radius: 14px; margin-bottom: 16px; font-size: 14px;">
@@ -16,7 +16,7 @@ $err = is_string($error) ? $error : '';
   <?php endif; ?>
 
   <div style="background: var(--card); border: 1px solid var(--line2); border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow2);">
-    <form method="post" action="<?= htmlspecialchars($basePath . '/customers', ENT_QUOTES, 'UTF-8') ?>" style="display:grid; gap: 14px;">
+    <form method="post" action="<?= htmlspecialchars($basePath . '/customers', ENT_QUOTES, 'UTF-8') ?>" enctype="multipart/form-data" style="display:grid; gap: 14px;">
       <?php require STR_CONSOLE_ROOT . '/views/partials/csrf.php'; ?>
       <label style="display:grid; gap:6px; font-size: 13px; font-weight: 650; color: var(--muted);">
         Full name
@@ -31,17 +31,17 @@ $err = is_string($error) ? $error : '';
         <span style="font-size: 12px; font-weight: 500; color: var(--muted2);">Local mobile: 11 digits only—do not enter country code (e.g. 08012345678). Spaces or dashes are ignored.</span>
       </label>
       <label style="display:grid; gap:6px; font-size: 13px; font-weight: 650; color: var(--muted);">
-        Passport phone (optional)
-        <input name="passport_phone" type="tel" inputmode="tel" autocomplete="off" maxlength="18"
-          title="11-digit local number, or leave blank"
-          style="padding: 12px 14px; border-radius: 14px; border: 1px solid var(--line); background: #fff; color: var(--ink);" />
-        <span style="font-size: 12px; font-weight: 500; color: var(--muted2);">Second Nigerian mobile if different from main phone. Same 11-digit rules; leave blank if not used.</span>
-      </label>
-      <label style="display:grid; gap:6px; font-size: 13px; font-weight: 650; color: var(--muted);">
         Email (optional)
         <input name="email" type="email" inputmode="email" autocomplete="email" maxlength="<?= (int) InputValidate::EMAIL_MAX ?>"
+          placeholder="name@example.com"
           style="padding: 12px 14px; border-radius: 14px; border: 1px solid var(--line); background: #fff; color: var(--ink);" />
-        <span style="font-size: 12px; font-weight: 500; color: var(--muted2);">Customer’s email if they have one. Leave blank if they don’t use email.</span>
+        <span style="font-size: 12px; font-weight: 500; color: var(--muted2);">Leave blank if the customer does not use email.</span>
+      </label>
+      <label style="display:grid; gap:6px; font-size: 13px; font-weight: 650; color: var(--muted);">
+        Passport photo (optional)
+        <input name="passport_photo" type="file" accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp"
+          style="margin-top: 4px; width: 100%; font-size: 14px;" />
+        <span style="font-size: 12px; font-weight: 500; color: var(--muted2);">JPG, PNG, or WebP · max 8 MB</span>
       </label>
       <label style="display:grid; gap:6px; font-size: 13px; font-weight: 650; color: var(--muted);">
         Address

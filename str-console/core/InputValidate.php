@@ -83,9 +83,9 @@ final class InputValidate
     }
 
     /**
-     * Optional customer contact email: empty → null, otherwise must be valid and normalized to lowercase.
+     * Optional customer email: empty → null; otherwise must be valid (normalized lowercase).
      *
-     * @return null|non-empty-string|false false = invalid format
+     * @return null|non-empty-string|false null if omitted, false if invalid
      */
     public static function optionalCustomerEmail(string $raw): null|string|false
     {
@@ -93,7 +93,10 @@ final class InputValidate
         if ($t === '') {
             return null;
         }
-        if (!self::emailOk($t)) {
+        if (mb_strlen($t) > self::EMAIL_MAX) {
+            return false;
+        }
+        if (!filter_var($t, FILTER_VALIDATE_EMAIL)) {
             return false;
         }
         return mb_strtolower($t);

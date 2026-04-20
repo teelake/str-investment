@@ -9,6 +9,9 @@ final class CustomerDocumentStorage
     /** @var list<string> */
     private const ALLOWED_EXT = ['pdf', 'jpg', 'jpeg', 'png', 'webp'];
 
+    /** @var list<string> Passport / portrait uploads: images only */
+    private const IMAGE_EXT = ['jpg', 'jpeg', 'png', 'webp'];
+
     public static function baseDir(): string
     {
         return STR_CONSOLE_ROOT . '/storage/uploads/customers';
@@ -18,7 +21,7 @@ final class CustomerDocumentStorage
      * @param array{name: string, type: string, tmp_name: string, error: int, size: int} $file
      * @return array{relative_path: string, mime: string, size: int, original_name: string}
      */
-    public static function store(int $customerId, array $file): array
+    public static function store(int $customerId, array $file, bool $imagesOnly = false): array
     {
         if (($file['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE) {
             throw new InvalidArgumentException('No file uploaded.');
@@ -39,8 +42,13 @@ final class CustomerDocumentStorage
         }
 
         $ext = strtolower(pathinfo($original, PATHINFO_EXTENSION));
-        if (!in_array($ext, self::ALLOWED_EXT, true)) {
-            throw new InvalidArgumentException('Allowed types: PDF, JPG, PNG, WebP.');
+        $allowedExt = $imagesOnly ? self::IMAGE_EXT : self::ALLOWED_EXT;
+        if (!in_array($ext, $allowedExt, true)) {
+            throw new InvalidArgumentException(
+                $imagesOnly
+                    ? 'Passport photo must be JPG, PNG, or WebP.'
+                    : 'Allowed types: PDF, JPG, PNG, WebP.'
+            );
         }
 
         $finfo = new finfo(FILEINFO_MIME_TYPE);
@@ -49,14 +57,20 @@ final class CustomerDocumentStorage
             throw new RuntimeException('Invalid upload.');
         }
         $mime = $finfo->file($tmp) ?: 'application/octet-stream';
-        $allowedMimes = [
-            'application/pdf',
-            'image/jpeg',
-            'image/png',
-            'image/webp',
-        ];
+        $allowedMimes = $imagesOnly
+            ? ['image/jpeg', 'image/png', 'image/webp']
+            : [
+                'application/pdf',
+                'image/jpeg',
+                'image/png',
+                'image/webp',
+            ];
         if (!in_array($mime, $allowedMimes, true)) {
-            throw new InvalidArgumentException('File content does not match an allowed type.');
+            throw new InvalidArgumentException(
+                $imagesOnly
+                    ? 'File must be a real image (JPG, PNG, or WebP).'
+                    : 'File content does not match an allowed type.'
+            );
         }
 
         $dir = self::baseDir() . '/' . $customerId;

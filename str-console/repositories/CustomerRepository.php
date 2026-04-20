@@ -38,7 +38,7 @@ final class CustomerRepository
             $page = Pagination::normalizePage($page, $total, $perPage);
             $offset = ($page - 1) * $perPage;
             $stmt = $pdo->prepare(
-                'SELECT c.id, c.full_name, c.phone, c.passport_phone, c.email, c.address, c.nin, c.bvn, c.assigned_user_id, c.created_at, c.updated_at,
+                'SELECT c.id, c.full_name, c.phone, c.email, c.address, c.nin, c.bvn, c.assigned_user_id, c.created_at, c.updated_at,
                         COALESCE(NULLIF(TRIM(cu.full_name), \'\'), cu.email) AS assigned_user_label
                  FROM customers c
                  LEFT JOIN console_users cu ON cu.id = c.assigned_user_id
@@ -62,7 +62,7 @@ final class CustomerRepository
             $page = Pagination::normalizePage($page, $total, $perPage);
             $offset = ($page - 1) * $perPage;
             $stmt = $pdo->prepare(
-                'SELECT c.id, c.full_name, c.phone, c.passport_phone, c.email, c.address, c.nin, c.bvn, c.assigned_user_id, c.created_at, c.updated_at,
+                'SELECT c.id, c.full_name, c.phone, c.email, c.address, c.nin, c.bvn, c.assigned_user_id, c.created_at, c.updated_at,
                         COALESCE(NULLIF(TRIM(cu.full_name), \'\'), cu.email) AS assigned_user_label
                  FROM customers c
                  LEFT JOIN console_users cu ON cu.id = c.assigned_user_id
@@ -106,7 +106,7 @@ final class CustomerRepository
             $t = mb_substr($t, 0, 120);
         }
         $like = '%' . addcslashes($t, '%_\\') . '%';
-        $parts = ['c.full_name LIKE :clistq', 'c.phone LIKE :clistq', 'c.passport_phone LIKE :clistq', 'c.email LIKE :clistq', 'c.nin LIKE :clistq', 'c.bvn LIKE :clistq'];
+        $parts = ['c.full_name LIKE :clistq', 'c.phone LIKE :clistq', 'c.email LIKE :clistq', 'c.nin LIKE :clistq', 'c.bvn LIKE :clistq'];
         $params = [':clistq' => $like];
         if (ctype_digit($t) && (int) $t > 0) {
             $parts[] = 'c.id = :clistid';
@@ -115,9 +115,7 @@ final class CustomerRepository
         $dig = preg_replace('/\D/', '', $t) ?? '';
         if (strlen($dig) >= 2) {
             $parts[] = "REGEXP_REPLACE(c.phone, '[^0-9]', '') LIKE :clistqd";
-            $parts[] = "REGEXP_REPLACE(IFNULL(c.passport_phone, ''), '[^0-9]', '') LIKE :clistqd2";
             $params[':clistqd'] = '%' . addcslashes($dig, '%_\\') . '%';
-            $params[':clistqd2'] = '%' . addcslashes($dig, '%_\\') . '%';
         }
 
         return [' AND (' . implode(' OR ', $parts) . ')', $params];
@@ -148,7 +146,7 @@ final class CustomerRepository
     {
         $pdo = Database::pdo();
         $stmt = $pdo->prepare(
-            'SELECT id, full_name, phone, passport_phone, email, address, nin, bvn, assigned_user_id, is_active, created_at, updated_at
+            'SELECT id, full_name, phone, email, address, nin, bvn, assigned_user_id, is_active, created_at, updated_at
              FROM customers WHERE id = :id LIMIT 1'
         );
         $stmt->execute([':id' => $id]);
@@ -204,7 +202,6 @@ final class CustomerRepository
         string $phone,
         ?string $nin,
         ?string $bvn,
-        ?string $passportPhoneNorm,
         ?int $exceptCustomerId
     ): ?string {
         $pdo = Database::pdo();
@@ -254,26 +251,12 @@ final class CustomerRepository
                 return 'This BVN is already registered for customer #' . (int) ($row['id'] ?? 0) . '.';
             }
         }
-        if ($passportPhoneNorm !== null && $passportPhoneNorm !== '') {
-            $sql = 'SELECT id FROM customers WHERE (phone_digits = :ppd OR passport_phone <=> :ppp) AND id != :e LIMIT 1';
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute([
-                ':ppd' => $passportPhoneNorm,
-                ':ppp' => $passportPhoneNorm,
-                ':e' => $exceptCustomerId ?? 0,
-            ]);
-            $row = $stmt->fetch();
-            if (is_array($row)) {
-                return 'This passport phone is already used as a main or passport phone for customer #' . (int) ($row['id'] ?? 0) . '.';
-            }
-        }
         return null;
     }
 
     public function create(
         string $fullName,
         string $phone,
-        ?string $passportPhone,
         ?string $email,
         ?string $address,
         ?string $nin,
@@ -282,13 +265,12 @@ final class CustomerRepository
     ): int {
         $pdo = Database::pdo();
         $stmt = $pdo->prepare(
-            'INSERT INTO customers (full_name, phone, passport_phone, email, address, nin, bvn, assigned_user_id, is_active, created_at, updated_at)
-             VALUES (:name, :phone, :pp, :em, :addr, :nin, :bvn, :aid, 1, NOW(), NOW())'
+            'INSERT INTO customers (full_name, phone, email, address, nin, bvn, assigned_user_id, is_active, created_at, updated_at)
+             VALUES (:name, :phone, :em, :addr, :nin, :bvn, :aid, 1, NOW(), NOW())'
         );
         $stmt->execute([
             ':name' => $fullName,
             ':phone' => $phone,
-            ':pp' => $passportPhone,
             ':em' => $email,
             ':addr' => $address,
             ':nin' => $nin,
@@ -305,7 +287,6 @@ final class CustomerRepository
         int $id,
         string $fullName,
         string $phone,
-        ?string $passportPhone,
         ?string $email,
         ?string $address,
         ?string $nin,
@@ -316,13 +297,12 @@ final class CustomerRepository
         $pdo = Database::pdo();
         if ($setAssignee) {
             $stmt = $pdo->prepare(
-                'UPDATE customers SET full_name = :name, phone = :phone, passport_phone = :pp, email = :em, address = :addr, nin = :nin, bvn = :bvn,
+                'UPDATE customers SET full_name = :name, phone = :phone, email = :em, address = :addr, nin = :nin, bvn = :bvn,
                  assigned_user_id = :aid, updated_at = NOW() WHERE id = :id'
             );
             $stmt->execute([
                 ':name' => $fullName,
                 ':phone' => $phone,
-                ':pp' => $passportPhone,
                 ':em' => $email,
                 ':addr' => $address,
                 ':nin' => $nin,
@@ -333,13 +313,12 @@ final class CustomerRepository
             return;
         }
         $stmt = $pdo->prepare(
-            'UPDATE customers SET full_name = :name, phone = :phone, passport_phone = :pp, email = :em, address = :addr, nin = :nin, bvn = :bvn,
+            'UPDATE customers SET full_name = :name, phone = :phone, email = :em, address = :addr, nin = :nin, bvn = :bvn,
              updated_at = NOW() WHERE id = :id'
         );
         $stmt->execute([
             ':name' => $fullName,
             ':phone' => $phone,
-            ':pp' => $passportPhone,
             ':em' => $email,
             ':addr' => $address,
             ':nin' => $nin,

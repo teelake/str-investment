@@ -53,7 +53,7 @@ final class SearchRepository
         $customersTotal = 0;
         $customersPage = 1;
         if (str_console_authorize($grants, ['customers.list']) && ($custWide || $consoleUserId !== null)) {
-            $conds = ['c.full_name LIKE :q', 'c.phone LIKE :q', 'c.passport_phone LIKE :q', 'c.email LIKE :q', 'c.nin LIKE :q', 'c.bvn LIKE :q'];
+            $conds = ['c.full_name LIKE :q', 'c.phone LIKE :q', 'c.email LIKE :q', 'c.nin LIKE :q', 'c.bvn LIKE :q'];
             $params = [':q' => $like];
             $n = self::positiveIntId($query);
             if ($n !== null) {
@@ -63,14 +63,12 @@ final class SearchRepository
             $dig = preg_replace('/\D/', '', $query) ?? '';
             if (strlen($dig) >= 2) {
                 $conds[] = "REGEXP_REPLACE(c.phone, '[^0-9]', '') LIKE :qdig";
-                $conds[] = "REGEXP_REPLACE(IFNULL(c.passport_phone, ''), '[^0-9]', '') LIKE :qdig2";
                 $params[':qdig'] = '%' . addcslashes($dig, '%_\\') . '%';
-                $params[':qdig2'] = '%' . addcslashes($dig, '%_\\') . '%';
             }
             $match = '(' . implode(' OR ', $conds) . ')';
             $from = 'FROM customers c
                      LEFT JOIN console_users cu ON cu.id = c.assigned_user_id';
-            $selectList = 'SELECT c.id, c.full_name, c.phone, c.assigned_user_id,
+            $selectList = 'SELECT c.id, c.full_name, c.phone, c.email, c.assigned_user_id,
                            COALESCE(NULLIF(TRIM(cu.full_name), \'\'), cu.email) AS assigned_user_label ';
 
             $activeCust = $match . ' AND c.is_active = 1';
@@ -124,7 +122,7 @@ final class SearchRepository
         $loansTotal = 0;
         $loansPage = 1;
         if (str_console_authorize($grants, ['loans.list']) && ($loanWide || $consoleUserId !== null)) {
-            $conds = ['c.full_name LIKE :q', 'c.phone LIKE :q', 'c.passport_phone LIKE :q', 'c.email LIKE :q', 'c.nin LIKE :q', 'c.bvn LIKE :q'];
+            $conds = ['c.full_name LIKE :q', 'c.phone LIKE :q', 'c.email LIKE :q', 'c.nin LIKE :q', 'c.bvn LIKE :q'];
             $params = [':q' => $like];
             $n = self::positiveIntId($query);
             if ($n !== null) {

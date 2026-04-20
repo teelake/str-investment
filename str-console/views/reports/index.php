@@ -103,7 +103,7 @@ $statusLabel = static function (string $s): string {
       </label>
       <label style="display:grid; gap:6px; font-size: 13px; font-weight: 650; color: var(--muted); flex: 1; min-width: 200px;">
         Search
-        <input type="search" name="q" value="<?= htmlspecialchars($q, ENT_QUOTES, 'UTF-8') ?>" placeholder="<?= $kind === 'loans' ? 'Customer name, loan id…' : 'Name, phone, id…' ?>" autocomplete="off" style="padding: 10px 12px; border-radius: 14px; border: 1px solid var(--line); background: #fff; width: 100%;" />
+        <input type="search" name="q" value="<?= htmlspecialchars($q, ENT_QUOTES, 'UTF-8') ?>" placeholder="<?= $kind === 'loans' ? 'Customer name, loan id…' : 'Name, phone, email, id…' ?>" autocomplete="off" style="padding: 10px 12px; border-radius: 14px; border: 1px solid var(--line); background: #fff; width: 100%;" />
       </label>
       <button type="submit" class="btn primary" style="font-size: 14px;">Apply</button>
       <?php if ($canExport && ($kind === 'loans' ? $canLoans : $canCustomers)): ?>
@@ -182,6 +182,7 @@ $statusLabel = static function (string $s): string {
             <th style="padding: 12px 14px; width: 1%; white-space: nowrap;">ID</th>
             <th style="padding: 12px 14px;">Name</th>
             <th style="padding: 12px 14px;">Phone</th>
+            <th style="padding: 12px 14px;">Email</th>
             <th style="padding: 12px 14px;">Assigned</th>
             <th style="padding: 12px 14px;">Created</th>
             <th style="padding: 12px 14px; width: 1%; white-space: nowrap; text-align: right;">Actions</th>
@@ -189,7 +190,7 @@ $statusLabel = static function (string $s): string {
         </thead>
         <tbody>
           <?php if (count($rows) === 0): ?>
-            <tr><td colspan="6" style="padding: 28px 14px; color: var(--muted);">No rows match.</td></tr>
+            <tr><td colspan="7" style="padding: 28px 14px; color: var(--muted);">No rows match.</td></tr>
           <?php else: ?>
             <?php foreach ($rows as $i => $r): ?>
               <?php
@@ -209,6 +210,10 @@ $statusLabel = static function (string $s): string {
                   <?php endif; ?>
                 </td>
                 <td style="padding: 12px 14px;"><?= htmlspecialchars((string) ($r['phone'] ?? ''), ENT_QUOTES, 'UTF-8') ?></td>
+                <td style="padding: 12px 14px; color: var(--muted);"><?php
+                $em = trim((string) ($r['email'] ?? ''));
+                echo $em !== '' ? htmlspecialchars($em, ENT_QUOTES, 'UTF-8') : '—';
+              ?></td>
                 <td style="padding: 12px 14px; color: var(--muted);"><?php
                 $alabel = trim((string) ($r['assigned_user_label'] ?? ''));
                 if ($alabel !== '') {

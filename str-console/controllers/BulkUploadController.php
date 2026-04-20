@@ -151,7 +151,7 @@ final class BulkUploadController extends BaseController
                 $seenBvns[$bvnNorm] = $lineNo;
             }
 
-            $dupMsg = $repo->validateOnboardingUniqueness($phone, $ninNorm, $bvnNorm, null, null);
+            $dupMsg = $repo->validateOnboardingUniqueness($phone, $ninNorm, $bvnNorm, null);
             if ($dupMsg !== null) {
                 $errors[] = ['line' => $lineNo, 'message' => $dupMsg];
                 continue;
@@ -161,7 +161,6 @@ final class BulkUploadController extends BaseController
                 $newId = $repo->create(
                     $name,
                     $phone,
-                    null,
                     null,
                     $address === '' ? null : $address,
                     $ninNorm,

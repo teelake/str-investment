@@ -83,4 +83,21 @@ final class CustomerDocumentRepository
         $stmt->execute([':id' => $documentId, ':cid' => $customerId]);
         return $stmt->rowCount() > 0;
     }
+
+    /**
+     * Remove all stored files of a given document type for a customer (e.g. replacing passport photo).
+     */
+    public function deleteByCustomerAndType(int $customerId, string $documentType): void
+    {
+        $pdo = Database::pdo();
+        $stmt = $pdo->prepare(
+            'SELECT id FROM customer_documents WHERE customer_id = :cid AND document_type = :dt'
+        );
+        $stmt->execute([':cid' => $customerId, ':dt' => $documentType]);
+        /** @var list<array{id: int|string}> $rows */
+        $rows = $stmt->fetchAll();
+        foreach ($rows as $row) {
+            $this->delete((int) ($row['id'] ?? 0), $customerId);
+        }
+    }
 }

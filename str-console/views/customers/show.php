@@ -11,12 +11,12 @@ declare(strict_types=1);
 /** @var mixed $docOk */
 /** @var mixed $editOk */
 /** @var mixed $editError */
+/** @var array<string, mixed>|null $passportDocument */
 $basePath = Request::basePath();
 $id = (int) ($customer['id'] ?? 0);
 $name = (string) ($customer['full_name'] ?? '');
 $phone = (string) ($customer['phone'] ?? '');
-$passportPhone = (string) ($customer['passport_phone'] ?? '');
-$custEmail = (string) ($customer['email'] ?? '');
+$email = trim((string) ($customer['email'] ?? ''));
 $address = (string) ($customer['address'] ?? '');
 $nin = $customer['nin'] ?? null;
 $bvn = $customer['bvn'] ?? null;
@@ -44,6 +44,8 @@ $canEdit = $canEdit ?? false;
 $editErr = is_string($editError ?? null) ? (string) $editError : '';
 $editDone = $editOk === '1' || $editOk === 1;
 $custInactive = (int) ($customer['is_active'] ?? 1) !== 1;
+$passportDocument = isset($passportDocument) && is_array($passportDocument) ? $passportDocument : null;
+$canViewPassport = str_console_authorize_route(ConsoleAuth::grants(), 'customers.documents.download');
 ?>
 <style>
   .customer-show-main-grid {
@@ -98,20 +100,26 @@ $custInactive = (int) ($customer['is_active'] ?? 1) !== 1;
       <h2 style="font-size: 15px; margin: 0 0 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted);">Profile</h2>
       <dl style="margin:0; display:grid; gap: 12px; font-size: 14px;">
         <div><dt style="color: var(--muted2); font-size: 12px; font-weight: 650;">Phone</dt><dd style="margin: 4px 0 0; font-weight: 650;"><?= htmlspecialchars($phone, ENT_QUOTES, 'UTF-8') ?></dd></div>
-        <div><dt style="color: var(--muted2); font-size: 12px; font-weight: 650;">Passport phone</dt><dd style="margin: 4px 0 0; font-weight: 650;"><?= $passportPhone !== '' ? htmlspecialchars($passportPhone, ENT_QUOTES, 'UTF-8') : '—' ?></dd></div>
-        <div><dt style="color: var(--muted2); font-size: 12px; font-weight: 650;">Email</dt><dd style="margin: 4px 0 0;"><?php
-          if ($custEmail !== '') {
-              echo '<a href="mailto:' . htmlspecialchars($custEmail, ENT_QUOTES, 'UTF-8') . '" style="color: inherit; font-weight: 650;">' . htmlspecialchars($custEmail, ENT_QUOTES, 'UTF-8') . '</a>';
-          } else {
-              echo '—';
-          }
-        ?></dd></div>
+        <div><dt style="color: var(--muted2); font-size: 12px; font-weight: 650;">Email</dt><dd style="margin: 4px 0 0;"><?= $email !== '' ? htmlspecialchars($email, ENT_QUOTES, 'UTF-8') : '—' ?></dd></div>
         <div><dt style="color: var(--muted2); font-size: 12px; font-weight: 650;">Address</dt><dd style="margin: 4px 0 0;"><?= $address !== '' ? nl2br(htmlspecialchars($address, ENT_QUOTES, 'UTF-8')) : '—' ?></dd></div>
         <div><dt style="color: var(--muted2); font-size: 12px; font-weight: 650;">NIN</dt><dd style="margin: 4px 0 0; font-family: ui-monospace, monospace;"><?= $ninHtml ?></dd></div>
         <div><dt style="color: var(--muted2); font-size: 12px; font-weight: 650;">BVN</dt><dd style="margin: 4px 0 0; font-family: ui-monospace, monospace;"><?= $bvnHtml ?></dd></div>
       </dl>
       <?php if (!$showSensitiveIds && (($nin !== null && $nin !== '') || ($bvn !== null && $bvn !== ''))): ?>
         <p style="margin: 14px 0 0; font-size: 12px; color: var(--muted2);">Identifiers are masked. Users with the right permission see full values.</p>
+      <?php endif; ?>
+      <?php if ($passportDocument !== null && $canViewPassport): ?>
+        <?php
+        $ppId = (int) ($passportDocument['id'] ?? 0);
+        $ppUrl = $basePath . '/customers/' . $id . '/documents/' . $ppId . '/file';
+        ?>
+        <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line2);">
+          <div style="font-size: 12px; font-weight: 650; color: var(--muted2); margin-bottom: 8px;">Passport photo</div>
+          <a href="<?= htmlspecialchars($ppUrl, ENT_QUOTES, 'UTF-8') ?>" style="display: inline-block; border-radius: 12px; overflow: hidden; border: 1px solid var(--line2); max-width: 220px;">
+            <img src="<?= htmlspecialchars($ppUrl, ENT_QUOTES, 'UTF-8') ?>" alt="" width="220" height="auto" style="display: block; max-width: 100%; height: auto; vertical-align: middle;" />
+          </a>
+          <div style="margin-top: 8px;"><a class="btn ghost" style="font-size: 13px; padding: 8px 12px;" href="<?= htmlspecialchars($ppUrl, ENT_QUOTES, 'UTF-8') ?>" download>Download</a></div>
+        </div>
       <?php endif; ?>
     </div>
 

@@ -53,6 +53,12 @@ final class CustomersController extends BaseController
         $address = trim(str_replace(["\0", "\r"], '', (string) Request::post('address', '')));
         $ninRaw = (string) Request::post('nin', '');
         $bvnRaw = (string) Request::post('bvn', '');
+        $emailRaw = (string) Request::post('email', '');
+        $emailNorm = InputValidate::optionalCustomerEmail($emailRaw);
+        if ($emailNorm === false) {
+            $this->redirect('/customers/create?error=' . rawurlencode('Enter a valid email address, or leave the field blank.'));
+            return;
+        }
         $ninNorm = InputValidate::optionalNinBvn($ninRaw);
         if ($ninNorm === false) {
             $this->redirect('/customers/create?error=' . rawurlencode('NIN must be exactly 11 digits (Nigeria NIMC), or leave blank.'));
@@ -83,20 +89,8 @@ final class CustomersController extends BaseController
         $ninVal = $ninNorm;
         $bvnVal = $bvnNorm;
 
-        $passportRaw = trim(str_replace(["\0", "\r"], '', (string) Request::post('passport_phone', '')));
-        $passportNorm = InputValidate::optionalPhone11($passportRaw);
-        if ($passportRaw !== '' && $passportNorm === false) {
-            $this->redirect('/customers/create?error=' . rawurlencode('Passport phone must be 11 digits (local number, no country code), or leave blank.'));
-            return;
-        }
-        $emailNorm = InputValidate::optionalCustomerEmail((string) Request::post('email', ''));
-        if ($emailNorm === false) {
-            $this->redirect('/customers/create?error=' . rawurlencode('Enter a valid email address, or leave blank.'));
-            return;
-        }
-
         $repo = new CustomerRepository();
-        $dupMsg = $repo->validateOnboardingUniqueness($phone, $ninVal, $bvnVal, $passportNorm, null);
+        $dupMsg = $repo->validateOnboardingUniqueness($phone, $ninVal, $bvnVal, null);
         if ($dupMsg !== null) {
             $this->redirect('/customers/create?error=' . rawurlencode($dupMsg));
             return;
@@ -104,12 +98,22 @@ final class CustomersController extends BaseController
 
         try {
             $assignee = ConsoleAuth::userId();
-            $id = $repo->create($name, $phone, $passportNorm, $emailNorm, $addrVal, $ninVal, $bvnVal, $assignee);
+            $id = $repo->create($name, $phone, $emailNorm, $addrVal, $ninVal, $bvnVal, $assignee);
 
             AuditLogger::log(ConsoleAuth::userId(), 'customer.create', 'customer', $id, [
                 'full_name' => $name,
                 'phone' => $phone,
+                'email' => $emailNorm,
             ]);
+
+            $passportFile = self::normalizedPassportUpload();
+            if ($passportFile !== null) {
+                $photoErr = $this->attachPassportPhoto($id, $passportFile);
+                if ($photoErr !== null) {
+                    $this->redirect('/customers/' . $id . '?doc_error=' . rawurlencode($photoErr));
+                    return;
+                }
+            }
 
             $this->redirect('/customers/' . $id);
         } catch (PDOException $e) {
@@ -149,9 +153,17 @@ final class CustomersController extends BaseController
             }
 
             $grants = ConsoleAuth::grants();
+            $passportDocument = null;
+            foreach ($documents as $d) {
+                if (($d['document_type'] ?? '') === 'passport_photo' && str_starts_with((string) ($d['mime_type'] ?? ''), 'image/')) {
+                    $passportDocument = $d;
+                    break;
+                }
+            }
             $this->render('customers/show', [
                 'customer' => $customer,
                 'documents' => $documents,
+                'passportDocument' => $passportDocument,
                 'documentTypes' => str_console_customer_document_types(),
                 'showSensitiveIds' => str_console_authorize($grants, ['customers.view_sensitive_ids']),
                 'canUpload' => str_console_authorize($grants, ['documents.upload']),
@@ -223,6 +235,11 @@ final class CustomersController extends BaseController
         $name = trim(str_replace(["\0", "\r"], '', (string) Request::post('full_name', '')));
         $phone = trim(str_replace(["\0", "\r"], '', (string) Request::post('phone', '')));
         $address = trim(str_replace(["\0", "\r"], '', (string) Request::post('address', '')));
+        $emailNorm = InputValidate::optionalCustomerEmail((string) Request::post('email', ''));
+        if ($emailNorm === false) {
+            $this->redirect('/customers/' . $customerId . '/edit?error=' . rawurlencode('Enter a valid email address, or leave the field blank.'));
+            return;
+        }
         $ninNorm = InputValidate::optionalNinBvn((string) Request::post('nin', ''));
         if ($ninNorm === false) {
             $this->redirect('/customers/' . $customerId . '/edit?error=' . rawurlencode('NIN must be exactly 11 digits, or leave blank.'));
@@ -253,19 +270,7 @@ final class CustomersController extends BaseController
         $ninVal = $ninNorm;
         $bvnVal = $bvnNorm;
 
-        $passportRaw = trim(str_replace(["\0", "\r"], '', (string) Request::post('passport_phone', '')));
-        $passportNorm = InputValidate::optionalPhone11($passportRaw);
-        if ($passportRaw !== '' && $passportNorm === false) {
-            $this->redirect('/customers/' . $customerId . '/edit?error=' . rawurlencode('Passport phone must be 11 digits (local number, no country code), or leave blank.'));
-            return;
-        }
-        $emailNorm = InputValidate::optionalCustomerEmail((string) Request::post('email', ''));
-        if ($emailNorm === false) {
-            $this->redirect('/customers/' . $customerId . '/edit?error=' . rawurlencode('Enter a valid email address, or leave blank.'));
-            return;
-        }
-
-        $dupMsg = $repo->validateOnboardingUniqueness($phone, $ninVal, $bvnVal, $passportNorm, $customerId);
+        $dupMsg = $repo->validateOnboardingUniqueness($phone, $ninVal, $bvnVal, $customerId);
         if ($dupMsg !== null) {
             $this->redirect('/customers/' . $customerId . '/edit?error=' . rawurlencode($dupMsg));
             return;
@@ -293,12 +298,20 @@ final class CustomersController extends BaseController
         }
 
         try {
-            $repo->update($customerId, $name, $phone, $passportNorm, $emailNorm, $addrVal, $ninVal, $bvnVal, $setAssignee, $assignedUserId);
+            $repo->update($customerId, $name, $phone, $emailNorm, $addrVal, $ninVal, $bvnVal, $setAssignee, $assignedUserId);
             AuditLogger::log(ConsoleAuth::userId(), 'customer.update', 'customer', $customerId, [
                 'full_name' => $name,
                 'phone' => $phone,
                 'assigned_changed' => $setAssignee,
             ]);
+            $passportFile = self::normalizedPassportUpload();
+            if ($passportFile !== null) {
+                $photoErr = $this->attachPassportPhoto($customerId, $passportFile);
+                if ($photoErr !== null) {
+                    $this->redirect('/customers/' . $customerId . '?edit_ok=1&doc_error=' . rawurlencode($photoErr));
+                    return;
+                }
+            }
             $this->redirect('/customers/' . $customerId . '?edit_ok=1');
         } catch (PDOException $e) {
             if ((int) ($e->errorInfo[1] ?? 0) === 1062) {
@@ -448,7 +461,8 @@ final class CustomersController extends BaseController
         $mime = (string) ($row['mime_type'] ?: 'application/octet-stream');
 
         header('Content-Type: ' . $mime);
-        header('Content-Disposition: attachment; filename="' . str_replace('"', '', $name) . '"');
+        $disp = str_starts_with($mime, 'image/') ? 'inline' : 'attachment';
+        header('Content-Disposition: ' . $disp . '; filename="' . str_replace('"', '', $name) . '"');
         header('Content-Length: ' . (string) filesize($abs));
         readfile($abs);
         exit;
@@ -476,6 +490,62 @@ final class CustomersController extends BaseController
         }
 
         $this->redirect('/customers/' . $customerId);
+    }
+
+    /**
+     * @param array{name: string, type: string, tmp_name: string, error: int, size: int} $file
+     */
+    private function attachPassportPhoto(int $customerId, array $file): ?string
+    {
+        if (($file['error'] ?? UPLOAD_ERR_OK) !== UPLOAD_ERR_OK) {
+            return 'Passport photo could not be uploaded. Try again or leave it out.';
+        }
+        $docRepo = new CustomerDocumentRepository();
+        $docRepo->deleteByCustomerAndType($customerId, 'passport_photo');
+        try {
+            $stored = CustomerDocumentStorage::store($customerId, $file, true);
+            $newId = $docRepo->create(
+                $customerId,
+                ConsoleAuth::userId(),
+                'passport_photo',
+                $stored['original_name'],
+                $stored['relative_path'],
+                $stored['mime'],
+                $stored['size']
+            );
+            AuditLogger::log(ConsoleAuth::userId(), 'customer_document.upload', 'customer_document', $newId, [
+                'customer_id' => $customerId,
+                'document_type' => 'passport_photo',
+                'name' => $stored['original_name'],
+            ]);
+        } catch (InvalidArgumentException $e) {
+            return $e->getMessage();
+        } catch (Throwable) {
+            return 'Could not save passport photo.';
+        }
+
+        return null;
+    }
+
+    /**
+     * @return array{name: string, type: string, tmp_name: string, error: int, size: int}|null
+     */
+    private static function normalizedPassportUpload(): ?array
+    {
+        if (!isset($_FILES['passport_photo']) || !is_array($_FILES['passport_photo'])) {
+            return null;
+        }
+        $f = $_FILES['passport_photo'];
+        if ((int) ($f['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE) {
+            return null;
+        }
+        return [
+            'name' => (string) ($f['name'] ?? ''),
+            'type' => (string) ($f['type'] ?? ''),
+            'tmp_name' => (string) ($f['tmp_name'] ?? ''),
+            'error' => (int) ($f['error'] ?? UPLOAD_ERR_NO_FILE),
+            'size' => (int) ($f['size'] ?? 0),
+        ];
     }
 
     public function deactivate(int $customerId): void

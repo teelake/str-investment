@@ -11,6 +11,7 @@ declare(strict_types=1);
 function str_console_customer_document_types(): array
 {
     return [
+        'passport_photo' => 'Passport photo',
         'bill_of_sale' => 'Bill of sale',
         'id_card' => 'ID card',
         'cheque' => 'Cheque',
