@@ -24,6 +24,8 @@ CREATE TABLE IF NOT EXISTS customers (
   full_name VARCHAR(190) NOT NULL,
   phone VARCHAR(32) NOT NULL,
   phone_digits VARCHAR(32) GENERATED ALWAYS AS (REGEXP_REPLACE(phone, '[^0-9]', '')) STORED,
+  passport_phone VARCHAR(32) NULL,
+  email VARCHAR(190) NULL,
   address TEXT NULL,
   nin VARCHAR(32) NULL,
   bvn VARCHAR(32) NULL,
@@ -36,6 +38,7 @@ CREATE TABLE IF NOT EXISTS customers (
   UNIQUE KEY uq_customers_nin (nin),
   UNIQUE KEY uq_customers_bvn (bvn),
   KEY idx_customers_phone (phone),
+  KEY idx_customers_email (email(64)),
   KEY idx_customers_assigned (assigned_user_id),
   KEY idx_customers_active (is_active),
   KEY idx_customers_created (created_at)

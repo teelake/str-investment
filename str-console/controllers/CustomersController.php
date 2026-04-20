@@ -83,8 +83,20 @@ final class CustomersController extends BaseController
         $ninVal = $ninNorm;
         $bvnVal = $bvnNorm;
 
+        $passportRaw = trim(str_replace(["\0", "\r"], '', (string) Request::post('passport_phone', '')));
+        $passportNorm = InputValidate::optionalPhone11($passportRaw);
+        if ($passportRaw !== '' && $passportNorm === false) {
+            $this->redirect('/customers/create?error=' . rawurlencode('Passport phone must be 11 digits (local number, no country code), or leave blank.'));
+            return;
+        }
+        $emailNorm = InputValidate::optionalCustomerEmail((string) Request::post('email', ''));
+        if ($emailNorm === false) {
+            $this->redirect('/customers/create?error=' . rawurlencode('Enter a valid email address, or leave blank.'));
+            return;
+        }
+
         $repo = new CustomerRepository();
-        $dupMsg = $repo->validateOnboardingUniqueness($phone, $ninVal, $bvnVal, null);
+        $dupMsg = $repo->validateOnboardingUniqueness($phone, $ninVal, $bvnVal, $passportNorm, null);
         if ($dupMsg !== null) {
             $this->redirect('/customers/create?error=' . rawurlencode($dupMsg));
             return;
@@ -92,7 +104,7 @@ final class CustomersController extends BaseController
 
         try {
             $assignee = ConsoleAuth::userId();
-            $id = $repo->create($name, $phone, $addrVal, $ninVal, $bvnVal, $assignee);
+            $id = $repo->create($name, $phone, $passportNorm, $emailNorm, $addrVal, $ninVal, $bvnVal, $assignee);
 
             AuditLogger::log(ConsoleAuth::userId(), 'customer.create', 'customer', $id, [
                 'full_name' => $name,
@@ -241,7 +253,19 @@ final class CustomersController extends BaseController
         $ninVal = $ninNorm;
         $bvnVal = $bvnNorm;
 
-        $dupMsg = $repo->validateOnboardingUniqueness($phone, $ninVal, $bvnVal, $customerId);
+        $passportRaw = trim(str_replace(["\0", "\r"], '', (string) Request::post('passport_phone', '')));
+        $passportNorm = InputValidate::optionalPhone11($passportRaw);
+        if ($passportRaw !== '' && $passportNorm === false) {
+            $this->redirect('/customers/' . $customerId . '/edit?error=' . rawurlencode('Passport phone must be 11 digits (local number, no country code), or leave blank.'));
+            return;
+        }
+        $emailNorm = InputValidate::optionalCustomerEmail((string) Request::post('email', ''));
+        if ($emailNorm === false) {
+            $this->redirect('/customers/' . $customerId . '/edit?error=' . rawurlencode('Enter a valid email address, or leave blank.'));
+            return;
+        }
+
+        $dupMsg = $repo->validateOnboardingUniqueness($phone, $ninVal, $bvnVal, $passportNorm, $customerId);
         if ($dupMsg !== null) {
             $this->redirect('/customers/' . $customerId . '/edit?error=' . rawurlencode($dupMsg));
             return;
@@ -269,7 +293,7 @@ final class CustomersController extends BaseController
         }
 
         try {
-            $repo->update($customerId, $name, $phone, $addrVal, $ninVal, $bvnVal, $setAssignee, $assignedUserId);
+            $repo->update($customerId, $name, $phone, $passportNorm, $emailNorm, $addrVal, $ninVal, $bvnVal, $setAssignee, $assignedUserId);
             AuditLogger::log(ConsoleAuth::userId(), 'customer.update', 'customer', $customerId, [
                 'full_name' => $name,
                 'phone' => $phone,

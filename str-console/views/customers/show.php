@@ -15,6 +15,8 @@ $basePath = Request::basePath();
 $id = (int) ($customer['id'] ?? 0);
 $name = (string) ($customer['full_name'] ?? '');
 $phone = (string) ($customer['phone'] ?? '');
+$passportPhone = (string) ($customer['passport_phone'] ?? '');
+$custEmail = (string) ($customer['email'] ?? '');
 $address = (string) ($customer['address'] ?? '');
 $nin = $customer['nin'] ?? null;
 $bvn = $customer['bvn'] ?? null;
@@ -96,6 +98,14 @@ $custInactive = (int) ($customer['is_active'] ?? 1) !== 1;
       <h2 style="font-size: 15px; margin: 0 0 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted);">Profile</h2>
       <dl style="margin:0; display:grid; gap: 12px; font-size: 14px;">
         <div><dt style="color: var(--muted2); font-size: 12px; font-weight: 650;">Phone</dt><dd style="margin: 4px 0 0; font-weight: 650;"><?= htmlspecialchars($phone, ENT_QUOTES, 'UTF-8') ?></dd></div>
+        <div><dt style="color: var(--muted2); font-size: 12px; font-weight: 650;">Passport phone</dt><dd style="margin: 4px 0 0; font-weight: 650;"><?= $passportPhone !== '' ? htmlspecialchars($passportPhone, ENT_QUOTES, 'UTF-8') : '—' ?></dd></div>
+        <div><dt style="color: var(--muted2); font-size: 12px; font-weight: 650;">Email</dt><dd style="margin: 4px 0 0;"><?php
+          if ($custEmail !== '') {
+              echo '<a href="mailto:' . htmlspecialchars($custEmail, ENT_QUOTES, 'UTF-8') . '" style="color: inherit; font-weight: 650;">' . htmlspecialchars($custEmail, ENT_QUOTES, 'UTF-8') . '</a>';
+          } else {
+              echo '—';
+          }
+        ?></dd></div>
         <div><dt style="color: var(--muted2); font-size: 12px; font-weight: 650;">Address</dt><dd style="margin: 4px 0 0;"><?= $address !== '' ? nl2br(htmlspecialchars($address, ENT_QUOTES, 'UTF-8')) : '—' ?></dd></div>
         <div><dt style="color: var(--muted2); font-size: 12px; font-weight: 650;">NIN</dt><dd style="margin: 4px 0 0; font-family: ui-monospace, monospace;"><?= $ninHtml ?></dd></div>
         <div><dt style="color: var(--muted2); font-size: 12px; font-weight: 650;">BVN</dt><dd style="margin: 4px 0 0; font-family: ui-monospace, monospace;"><?= $bvnHtml ?></dd></div>

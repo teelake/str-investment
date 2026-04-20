@@ -166,7 +166,7 @@ final class ReportRepository
             $page = Pagination::normalizePage($page, $total, $perPage);
             $offset = ($page - 1) * $perPage;
             $stmt = $pdo->prepare(
-                'SELECT c.id, c.full_name, c.phone, c.assigned_user_id, c.is_active, c.created_at, c.updated_at,
+                'SELECT c.id, c.full_name, c.phone, c.passport_phone, c.email, c.assigned_user_id, c.is_active, c.created_at, c.updated_at,
                         COALESCE(NULLIF(TRIM(cu.full_name), \'\'), cu.email) AS assigned_user_label
                  FROM customers c
                  LEFT JOIN console_users cu ON cu.id = c.assigned_user_id
@@ -188,7 +188,7 @@ final class ReportRepository
             $page = Pagination::normalizePage($page, $total, $perPage);
             $offset = ($page - 1) * $perPage;
             $stmt = $pdo->prepare(
-                'SELECT c.id, c.full_name, c.phone, c.assigned_user_id, c.is_active, c.created_at, c.updated_at,
+                'SELECT c.id, c.full_name, c.phone, c.passport_phone, c.email, c.assigned_user_id, c.is_active, c.created_at, c.updated_at,
                         COALESCE(NULLIF(TRIM(cu.full_name), \'\'), cu.email) AS assigned_user_label
                  FROM customers c
                  LEFT JOIN console_users cu ON cu.id = c.assigned_user_id
@@ -233,7 +233,7 @@ final class ReportRepository
 
         if ($wide) {
             $stmt = $pdo->prepare(
-                'SELECT c.id, c.full_name, c.phone, c.address, c.nin, c.bvn, c.assigned_user_id, c.is_active, c.created_at,
+                'SELECT c.id, c.full_name, c.phone, c.passport_phone, c.email, c.address, c.nin, c.bvn, c.assigned_user_id, c.is_active, c.created_at,
                         COALESCE(NULLIF(TRIM(cu.full_name), \'\'), cu.email) AS assigned_to
                  FROM customers c
                  LEFT JOIN console_users cu ON cu.id = c.assigned_user_id
@@ -245,7 +245,7 @@ final class ReportRepository
             $scope = ' AND c.assigned_user_id <=> :uid';
             $params = array_merge($filterParams, [':uid' => $consoleUserId]);
             $stmt = $pdo->prepare(
-                'SELECT c.id, c.full_name, c.phone, c.address, c.nin, c.bvn, c.assigned_user_id, c.is_active, c.created_at,
+                'SELECT c.id, c.full_name, c.phone, c.passport_phone, c.email, c.address, c.nin, c.bvn, c.assigned_user_id, c.is_active, c.created_at,
                         COALESCE(NULLIF(TRIM(cu.full_name), \'\'), cu.email) AS assigned_to
                  FROM customers c
                  LEFT JOIN console_users cu ON cu.id = c.assigned_user_id
@@ -356,7 +356,7 @@ final class ReportRepository
             return [$sql, $params];
         }
         $like = '%' . addcslashes($t, '%_\\') . '%';
-        $parts = ['c.full_name LIKE :crpq', 'c.phone LIKE :crpq', 'c.nin LIKE :crpq', 'c.bvn LIKE :crpq'];
+        $parts = ['c.full_name LIKE :crpq', 'c.phone LIKE :crpq', 'c.passport_phone LIKE :crpq', 'c.email LIKE :crpq', 'c.nin LIKE :crpq', 'c.bvn LIKE :crpq'];
         $extra = [':crpq' => $like];
         if (ctype_digit($t) && (int) $t > 0) {
             $parts[] = 'c.id = :crpid';
@@ -365,7 +365,9 @@ final class ReportRepository
         $dig = preg_replace('/\D/', '', $t) ?? '';
         if (strlen($dig) >= 2) {
             $parts[] = "REGEXP_REPLACE(c.phone, '[^0-9]', '') LIKE :crpqd";
+            $parts[] = "REGEXP_REPLACE(IFNULL(c.passport_phone, ''), '[^0-9]', '') LIKE :crpqd2";
             $extra[':crpqd'] = '%' . addcslashes($dig, '%_\\') . '%';
+            $extra[':crpqd2'] = '%' . addcslashes($dig, '%_\\') . '%';
         }
         $sql .= ' AND (' . implode(' OR ', $parts) . ')';
 

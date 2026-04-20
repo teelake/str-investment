@@ -82,6 +82,23 @@ final class InputValidate
         return (bool) filter_var($email, FILTER_VALIDATE_EMAIL);
     }
 
+    /**
+     * Optional customer contact email: empty → null, otherwise must be valid and normalized to lowercase.
+     *
+     * @return null|non-empty-string|false false = invalid format
+     */
+    public static function optionalCustomerEmail(string $raw): null|string|false
+    {
+        $t = trim(str_replace(["\0", "\r"], '', $raw));
+        if ($t === '') {
+            return null;
+        }
+        if (!self::emailOk($t)) {
+            return false;
+        }
+        return mb_strtolower($t);
+    }
+
     /** Real calendar day Y-m-d, or null if malformed. */
     public static function parseDateYmd(string $raw): ?string
     {

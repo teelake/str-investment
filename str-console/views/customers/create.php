@@ -31,6 +31,19 @@ $err = is_string($error) ? $error : '';
         <span style="font-size: 12px; font-weight: 500; color: var(--muted2);">Local mobile: 11 digits only—do not enter country code (e.g. 08012345678). Spaces or dashes are ignored.</span>
       </label>
       <label style="display:grid; gap:6px; font-size: 13px; font-weight: 650; color: var(--muted);">
+        Passport phone (optional)
+        <input name="passport_phone" type="tel" inputmode="tel" autocomplete="off" maxlength="18"
+          title="11-digit local number, or leave blank"
+          style="padding: 12px 14px; border-radius: 14px; border: 1px solid var(--line); background: #fff; color: var(--ink);" />
+        <span style="font-size: 12px; font-weight: 500; color: var(--muted2);">Second Nigerian mobile if different from main phone. Same 11-digit rules; leave blank if not used.</span>
+      </label>
+      <label style="display:grid; gap:6px; font-size: 13px; font-weight: 650; color: var(--muted);">
+        Email (optional)
+        <input name="email" type="email" inputmode="email" autocomplete="email" maxlength="<?= (int) InputValidate::EMAIL_MAX ?>"
+          style="padding: 12px 14px; border-radius: 14px; border: 1px solid var(--line); background: #fff; color: var(--ink);" />
+        <span style="font-size: 12px; font-weight: 500; color: var(--muted2);">Customer’s email if they have one. Leave blank if they don’t use email.</span>
+      </label>
+      <label style="display:grid; gap:6px; font-size: 13px; font-weight: 650; color: var(--muted);">
         Address
         <textarea name="address" rows="3"
           style="padding: 12px 14px; border-radius: 14px; border: 1px solid var(--line); background: #fff; color: var(--ink); resize: vertical;"></textarea>

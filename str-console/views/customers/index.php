@@ -50,7 +50,7 @@ $flashErr = is_string($qerr) ? $qerr : '';
   <form method="get" action="<?= htmlspecialchars($basePath . '/customers', ENT_QUOTES, 'UTF-8') ?>" style="display:flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; margin-bottom: 16px;">
     <label style="display:grid; gap: 6px; font-size: 13px; font-weight: 650; color: var(--muted); flex: 1; min-width: 200px;">
       Search
-      <input type="search" name="q" value="<?= htmlspecialchars($filterQ, ENT_QUOTES, 'UTF-8') ?>" placeholder="Name, phone, NIN, BVN, id…" autocomplete="off" style="padding: 10px 12px; border: 1px solid var(--line2); border-radius: var(--radius); font-size: 14px; background: var(--card); color: inherit; width: 100%;">
+      <input type="search" name="q" value="<?= htmlspecialchars($filterQ, ENT_QUOTES, 'UTF-8') ?>" placeholder="Name, phone, passport phone, email, NIN, BVN, id…" autocomplete="off" style="padding: 10px 12px; border: 1px solid var(--line2); border-radius: var(--radius); font-size: 14px; background: var(--card); color: inherit; width: 100%;">
     </label>
     <button type="submit" class="btn primary" style="font-size: 14px;">Apply</button>
     <?php if ($hasFilter): ?>
