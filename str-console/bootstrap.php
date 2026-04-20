@@ -40,6 +40,16 @@ function str_console_dev_login_enabled(): bool
     return defined('STR_CONSOLE_DEV_LOGIN') && STR_CONSOLE_DEV_LOGIN === true;
 }
 
+/** Verbose errors in UI (e.g. SQL message) — set STR_CONSOLE_DEBUG=1 or APP_DEBUG=1. */
+function str_console_debug(): bool
+{
+    if (getenv('STR_CONSOLE_DEBUG') === '1' || getenv('APP_DEBUG') === '1') {
+        return true;
+    }
+
+    return defined('STR_CONSOLE_DEBUG') && STR_CONSOLE_DEBUG === true;
+}
+
 require_once STR_CONSOLE_ROOT . '/core/Request.php';
 require_once STR_CONSOLE_ROOT . '/core/Pagination.php';
 require_once STR_CONSOLE_ROOT . '/core/FormGuard.php';

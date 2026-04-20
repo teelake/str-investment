@@ -33,8 +33,9 @@ $err = is_string($error) ? $error : '';
 
   <div style="background: rgba(0,0,0,.03); border: 1px solid var(--line2); border-radius: var(--radius); padding: 16px; margin-bottom: 20px; font-size: 13px;">
     <strong style="display:block; margin-bottom:8px;">Expected columns</strong>
-    <code style="display:block; white-space: pre-wrap; word-break: break-all;">full_name,name,phone,address,nin,bvn</code>
+    <code style="display:block; white-space: pre-wrap; word-break: break-all;">full_name,name,phone,email,address,nin,bvn</code>
     <p style="margin: 10px 0 0; color: var(--muted2);"><code>full_name</code> (or <code>name</code>) and <code>phone</code> are required per row. <code>phone</code> is the <strong>local</strong> mobile: <strong>11 digits</strong> only—<strong>no country code</strong> (not <code>+234</code>); e.g. <code>08012345678</code>. Spaces or symbols are stripped.</p>
+    <p style="margin: 8px 0 0; color: var(--muted2);"><code>email</code> is optional; if present it must be valid and must not duplicate another customer’s email (in this file or already in the system).</p>
     <p style="margin: 8px 0 0; color: var(--muted2);"><code>nin</code> and <code>bvn</code> are optional; if present, each must be exactly <strong>11 digits</strong> (Nigeria NIN / BVN). Spaces or dashes are ignored.</p>
     <p style="margin: 12px 0 0;">
       <a class="btn ghost" style="font-size: 13px; padding: 10px 14px;" href="<?= htmlspecialchars($basePath . '/downloads/customers-import-template.csv', ENT_QUOTES, 'UTF-8') ?>" download>Download CSV template</a>

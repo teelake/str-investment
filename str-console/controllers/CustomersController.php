@@ -24,11 +24,18 @@ final class CustomersController extends BaseController
             $repo = new CustomerRepository();
             $data = $repo->paginateForConsoleUser(ConsoleAuth::userId(), ConsoleAuth::grants(), $page, $q === '' ? null : $q);
             $this->render('customers/index', ['pagination' => $data, 'filterQ' => $q, 'dbError' => null]);
-        } catch (Throwable) {
+        } catch (Throwable $e) {
+            error_log('[str-console] customers.index: ' . $e->getMessage());
+            $msg = 'Could not load customers. If you upgraded the app, apply pending SQL migrations in order (see database/migrations).';
+            if (str_console_debug()) {
+                $msg .= ' ' . $e->getMessage();
+            } elseif (preg_match('/Unknown column|doesn\'t exist/i', $e->getMessage()) === 1) {
+                $msg .= ' The database is missing columns (often customers.email or customers.is_active).';
+            }
             $this->render('customers/index', [
                 'pagination' => ['rows' => [], 'total' => 0, 'page' => 1, 'per_page' => 20],
                 'filterQ' => $q,
-                'dbError' => 'Could not load customers. Check the database connection and schema.',
+                'dbError' => $msg,
             ]);
         }
     }
@@ -90,7 +97,7 @@ final class CustomersController extends BaseController
         $bvnVal = $bvnNorm;
 
         $repo = new CustomerRepository();
-        $dupMsg = $repo->validateOnboardingUniqueness($phone, $ninVal, $bvnVal, null);
+        $dupMsg = $repo->validateOnboardingUniqueness($phone, $ninVal, $bvnVal, $emailNorm, null);
         if ($dupMsg !== null) {
             $this->redirect('/customers/create?error=' . rawurlencode($dupMsg));
             return;
@@ -118,7 +125,7 @@ final class CustomersController extends BaseController
             $this->redirect('/customers/' . $id);
         } catch (PDOException $e) {
             if ((int) ($e->errorInfo[1] ?? 0) === 1062) {
-                $this->redirect('/customers/create?error=' . rawurlencode('Another customer already uses this phone, NIN, or BVN.'));
+                $this->redirect('/customers/create?error=' . rawurlencode('Another customer already uses this phone, NIN, BVN, or email.'));
                 return;
             }
             $this->redirect('/customers/create?error=' . rawurlencode('Could not save customer. Try again.'));
@@ -270,7 +277,7 @@ final class CustomersController extends BaseController
         $ninVal = $ninNorm;
         $bvnVal = $bvnNorm;
 
-        $dupMsg = $repo->validateOnboardingUniqueness($phone, $ninVal, $bvnVal, $customerId);
+        $dupMsg = $repo->validateOnboardingUniqueness($phone, $ninVal, $bvnVal, $emailNorm, $customerId);
         if ($dupMsg !== null) {
             $this->redirect('/customers/' . $customerId . '/edit?error=' . rawurlencode($dupMsg));
             return;
@@ -315,7 +322,7 @@ final class CustomersController extends BaseController
             $this->redirect('/customers/' . $customerId . '?edit_ok=1');
         } catch (PDOException $e) {
             if ((int) ($e->errorInfo[1] ?? 0) === 1062) {
-                $this->redirect('/customers/' . $customerId . '/edit?error=' . rawurlencode('Another customer already uses this phone, NIN, or BVN.'));
+                $this->redirect('/customers/' . $customerId . '/edit?error=' . rawurlencode('Another customer already uses this phone, NIN, BVN, or email.'));
                 return;
             }
             $this->redirect('/customers/' . $customerId . '/edit?error=' . rawurlencode('Could not save changes. Try again.'));

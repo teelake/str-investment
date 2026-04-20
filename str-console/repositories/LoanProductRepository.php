@@ -71,6 +71,24 @@ final class LoanProductRepository
     }
 
     /**
+     * Whether another row already uses this exact name (trimmed in controller; DB collation is case-insensitive).
+     */
+    public function nameExists(string $name, ?int $exceptId = null): bool
+    {
+        $pdo = Database::pdo();
+        $sql = 'SELECT id FROM loan_products WHERE name = :n';
+        $params = [':n' => $name];
+        if ($exceptId !== null) {
+            $sql .= ' AND id != :e';
+            $params[':e'] = $exceptId;
+        }
+        $sql .= ' LIMIT 1';
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($params);
+        return is_array($stmt->fetch());
+    }
+
+    /**
      * @return array<string, mixed>|null
      */
     public function find(int $id): ?array

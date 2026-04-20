@@ -42,15 +42,22 @@ $st = (string) ($loan['status'] ?? '');
       <?php require STR_CONSOLE_ROOT . '/views/partials/csrf.php'; ?>
       <label style="display:grid; gap:6px; font-size:13px; font-weight:650; color:var(--muted);">
         Customer
-        <select name="customer_id" required style="padding:12px 14px; border-radius:14px; border:1px solid var(--line); background:#fff;" <?= count($customers) === 0 ? 'disabled' : '' ?>>
+        <input type="search" id="loan_customer_filter" placeholder="Type to filter by name or phone…" autocomplete="off" inputmode="search" style="padding:10px 12px; border-radius:14px; border:1px solid var(--line); background:#fff; margin-bottom:8px; font-size:14px;" <?= count($customers) === 0 ? 'disabled' : '' ?> />
+        <select id="loan_customer_select" name="customer_id" required style="padding:12px 14px; border-radius:14px; border:1px solid var(--line); background:#fff;" <?= count($customers) === 0 ? 'disabled' : '' ?>>
           <?php foreach ($customers as $c): ?>
-            <?php $cid = (int) ($c['id'] ?? 0); ?>
-            <option value="<?= $cid ?>" <?= $cid === $curCid ? 'selected' : '' ?>><?= htmlspecialchars((string) ($c['full_name'] ?? ''), ENT_QUOTES, 'UTF-8') ?></option>
+            <?php
+            $cid = (int) ($c['id'] ?? 0);
+            $cname = (string) ($c['full_name'] ?? '');
+            $cphone = (string) ($c['phone'] ?? '');
+            $optLabel = $cname . ($cphone !== '' ? ' — ' . $cphone : '');
+            ?>
+            <option value="<?= $cid ?>" <?= $cid === $curCid ? 'selected' : '' ?>><?= htmlspecialchars($optLabel, ENT_QUOTES, 'UTF-8') ?></option>
           <?php endforeach; ?>
         </select>
       </label>
       <label style="display:grid; gap:6px; font-size:13px; font-weight:650; color:var(--muted);">
         Product
+        <input type="search" id="loan_product_filter" placeholder="Type to filter products…" autocomplete="off" inputmode="search" style="padding:10px 12px; border-radius:14px; border:1px solid var(--line); background:#fff; margin-bottom:8px; font-size:14px;" <?= count($products) === 0 ? 'disabled' : '' ?> />
         <select id="loan_product_id" name="loan_product_id" required style="padding:12px 14px; border-radius:14px; border:1px solid var(--line); background:#fff;">
           <?php foreach ($products as $p): ?>
             <?php
@@ -81,6 +88,14 @@ $st = (string) ($loan['status'] ?? '');
           <?= htmlspecialchars(LoanInterestBasis::label(LoanInterestBasis::FLAT_MONTHLY), ENT_QUOTES, 'UTF-8') ?>
         </label>
       </fieldset>
+      <?php
+      $filterInputId = 'loan_customer_filter';
+      $selectId = 'loan_customer_select';
+      require STR_CONSOLE_ROOT . '/views/partials/searchable_select_filter.php';
+      $filterInputId = 'loan_product_filter';
+      $selectId = 'loan_product_id';
+      require STR_CONSOLE_ROOT . '/views/partials/searchable_select_filter.php';
+      ?>
       <script>
         (function () {
           var sel = document.getElementById('loan_product_id');

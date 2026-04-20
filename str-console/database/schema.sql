@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS customers (
   UNIQUE KEY uq_customers_nin (nin),
   UNIQUE KEY uq_customers_bvn (bvn),
   KEY idx_customers_phone (phone),
-  KEY idx_customers_email (email),
+  UNIQUE KEY uq_customers_email (email),
   KEY idx_customers_assigned (assigned_user_id),
   KEY idx_customers_active (is_active),
   KEY idx_customers_created (created_at)
@@ -82,6 +82,7 @@ CREATE TABLE IF NOT EXISTS loan_products (
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (id),
+  UNIQUE KEY uq_loan_products_name (name),
   KEY idx_loan_products_active (is_active)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 

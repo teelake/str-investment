@@ -92,9 +92,19 @@ final class LoanProductsController extends BaseController
         }
         try {
             $repo = new LoanProductRepository();
+            if ($repo->nameExists($name, null)) {
+                $this->redirect('/loan-products/create?error=' . rawurlencode('A loan product with this name already exists.'));
+                return;
+            }
             $repo->create($name, $rate, $pm, $defBasis, $allowR, $allowF);
             AuditLogger::log(ConsoleAuth::userId(), 'loan_product.create', 'loan_product', null, ['name' => $name]);
             $this->redirect('/loan-products');
+        } catch (PDOException $e) {
+            if ((int) ($e->errorInfo[1] ?? 0) === 1062) {
+                $this->redirect('/loan-products/create?error=' . rawurlencode('A loan product with this name already exists.'));
+                return;
+            }
+            $this->redirect('/loan-products/create?error=' . rawurlencode('Could not save product.'));
         } catch (Throwable) {
             $this->redirect('/loan-products/create?error=' . rawurlencode('Could not save product.'));
         }
@@ -160,9 +170,19 @@ final class LoanProductsController extends BaseController
                 $this->redirect('/loan-products');
                 return;
             }
+            if ($repo->nameExists($name, $id)) {
+                $this->redirect('/loan-products/' . $id . '/edit?error=' . rawurlencode('A loan product with this name already exists.'));
+                return;
+            }
             $repo->update($id, $name, $rate, $pm, $defBasis, $allowR, $allowF, $active);
             AuditLogger::log(ConsoleAuth::userId(), 'loan_product.update', 'loan_product', $id, ['name' => $name]);
             $this->redirect('/loan-products');
+        } catch (PDOException $e) {
+            if ((int) ($e->errorInfo[1] ?? 0) === 1062) {
+                $this->redirect('/loan-products/' . $id . '/edit?error=' . rawurlencode('A loan product with this name already exists.'));
+                return;
+            }
+            $this->redirect('/loan-products/' . $id . '/edit?error=' . rawurlencode('Could not update.'));
         } catch (Throwable) {
             $this->redirect('/loan-products/' . $id . '/edit?error=' . rawurlencode('Could not update.'));
         }

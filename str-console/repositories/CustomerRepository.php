@@ -168,7 +168,7 @@ final class CustomerRepository
     }
 
     /**
-     * @return list<array{id: int, full_name: string}>
+     * @return list<array{id: int, full_name: string, phone: string}>
      */
     public function listNamesForConsoleUser(?int $consoleUserId, array $grants, int $limit = 500): array
     {
@@ -178,23 +178,23 @@ final class CustomerRepository
         }
         $pdo = Database::pdo();
         if ($wide) {
-            $stmt = $pdo->prepare('SELECT id, full_name FROM customers WHERE is_active = 1 ORDER BY full_name ASC LIMIT :lim');
+            $stmt = $pdo->prepare('SELECT id, full_name, phone FROM customers WHERE is_active = 1 ORDER BY full_name ASC LIMIT :lim');
             $stmt->bindValue(':lim', $limit, PDO::PARAM_INT);
             $stmt->execute();
         } else {
             $stmt = $pdo->prepare(
-                'SELECT id, full_name FROM customers WHERE is_active = 1 AND assigned_user_id <=> :uid ORDER BY full_name ASC LIMIT :lim'
+                'SELECT id, full_name, phone FROM customers WHERE is_active = 1 AND assigned_user_id <=> :uid ORDER BY full_name ASC LIMIT :lim'
             );
             $stmt->bindValue(':uid', $consoleUserId, PDO::PARAM_INT);
             $stmt->bindValue(':lim', $limit, PDO::PARAM_INT);
             $stmt->execute();
         }
-        /** @var list<array{id: int, full_name: string}> */
+        /** @var list<array{id: int, full_name: string, phone: string}> */
         return $stmt->fetchAll();
     }
 
     /**
-     * Block duplicate phone (digits-only match), NIN, or BVN vs other customers.
+     * Block duplicate phone (digits-only match), NIN, BVN, or email vs other customers.
      *
      * @return non-empty-string|null Error message, or null if OK
      */
@@ -202,6 +202,7 @@ final class CustomerRepository
         string $phone,
         ?string $nin,
         ?string $bvn,
+        ?string $email,
         ?int $exceptCustomerId
     ): ?string {
         $pdo = Database::pdo();
@@ -249,6 +250,21 @@ final class CustomerRepository
             $row = $stmt->fetch();
             if (is_array($row)) {
                 return 'This BVN is already registered for customer #' . (int) ($row['id'] ?? 0) . '.';
+            }
+        }
+        if ($email !== null && $email !== '') {
+            $sql = 'SELECT id FROM customers WHERE email = :em';
+            $params = [':em' => $email];
+            if ($exceptCustomerId !== null) {
+                $sql .= ' AND id != :e';
+                $params[':e'] = $exceptCustomerId;
+            }
+            $sql .= ' LIMIT 1';
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute($params);
+            $row = $stmt->fetch();
+            if (is_array($row)) {
+                return 'This email is already registered for customer #' . (int) ($row['id'] ?? 0) . '.';
             }
         }
         return null;

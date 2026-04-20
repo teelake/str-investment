@@ -19,8 +19,8 @@ final class BulkUploadController extends BaseController
             echo 'Could not build file.';
             return;
         }
-        fputcsv($out, ['full_name', 'phone', 'address', 'nin', 'bvn']);
-        fputcsv($out, ['Ada Okafor', '08012345678', '12 Sample Street, Lagos', '', '']);
+        fputcsv($out, ['full_name', 'phone', 'email', 'address', 'nin', 'bvn']);
+        fputcsv($out, ['Ada Okafor', '08012345678', '', '12 Sample Street, Lagos', '', '']);
         fclose($out);
         exit;
     }
@@ -94,6 +94,8 @@ final class BulkUploadController extends BaseController
         $seenNins = [];
         /** @var array<string, int> */
         $seenBvns = [];
+        /** @var array<string, int> */
+        $seenEmails = [];
         $lineNo = 1;
 
         foreach ($rows as $row) {
@@ -103,6 +105,7 @@ final class BulkUploadController extends BaseController
             }
             $name = trim((string) self::cell($row, $col['full_name'] ?? null));
             $phone = trim((string) self::cell($row, $col['phone'] ?? null));
+            $emailRaw = isset($col['email']) ? trim((string) self::cell($row, $col['email'])) : '';
             $address = isset($col['address']) ? trim((string) self::cell($row, $col['address'])) : '';
             $nin = isset($col['nin']) ? trim((string) self::cell($row, $col['nin'])) : '';
             $bvn = isset($col['bvn']) ? trim((string) self::cell($row, $col['bvn'])) : '';
@@ -118,6 +121,12 @@ final class BulkUploadController extends BaseController
                 continue;
             }
             $phone = $phoneNorm;
+
+            $emailNorm = InputValidate::optionalCustomerEmail($emailRaw);
+            if ($emailNorm === false) {
+                $errors[] = ['line' => $lineNo, 'message' => 'Email must be blank or a valid address.'];
+                continue;
+            }
 
             $ninNorm = InputValidate::optionalNinBvn($nin);
             if ($ninNorm === false) {
@@ -150,8 +159,15 @@ final class BulkUploadController extends BaseController
                 }
                 $seenBvns[$bvnNorm] = $lineNo;
             }
+            if ($emailNorm !== null) {
+                if (isset($seenEmails[$emailNorm])) {
+                    $errors[] = ['line' => $lineNo, 'message' => 'Duplicate email in this file (same as line ' . $seenEmails[$emailNorm] . ').'];
+                    continue;
+                }
+                $seenEmails[$emailNorm] = $lineNo;
+            }
 
-            $dupMsg = $repo->validateOnboardingUniqueness($phone, $ninNorm, $bvnNorm, null);
+            $dupMsg = $repo->validateOnboardingUniqueness($phone, $ninNorm, $bvnNorm, $emailNorm, null);
             if ($dupMsg !== null) {
                 $errors[] = ['line' => $lineNo, 'message' => $dupMsg];
                 continue;
@@ -161,7 +177,7 @@ final class BulkUploadController extends BaseController
                 $newId = $repo->create(
                     $name,
                     $phone,
-                    null,
+                    $emailNorm,
                     $address === '' ? null : $address,
                     $ninNorm,
                     $bvnNorm,
@@ -174,7 +190,7 @@ final class BulkUploadController extends BaseController
                 ]);
             } catch (PDOException $e) {
                 if ((int) ($e->errorInfo[1] ?? 0) === 1062) {
-                    $errors[] = ['line' => $lineNo, 'message' => 'Phone, NIN, or BVN already exists for another customer.'];
+                    $errors[] = ['line' => $lineNo, 'message' => 'Phone, NIN, BVN, or email already exists for another customer.'];
                 } else {
                     $errors[] = ['line' => $lineNo, 'message' => 'Save failed.'];
                 }
