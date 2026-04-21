@@ -68,20 +68,36 @@ final class SchemaSupport
 
     /**
      * OR-group for text search on customers (name, phone, optional email, nin, bvn).
-     * $likeParam is a single bound name (e.g. ':q') reused for all LIKE clauses.
+     * Each LIKE uses a distinct placeholder — required when PDO::ATTR_EMULATE_PREPARES is false
+     * (MySQL native prepares do not allow the same name bound multiple times).
      *
+     * @param string $namePrefix Alphanumeric prefix for placeholder names (e.g. 'sc', 'rptq').
      * @return array{0: list<string>, 1: array<string, mixed>}
      */
-    public static function customerMatchOrParts(string $likeParam, string $likeValue): array
+    public static function customerMatchOrParts(string $likeValue, string $namePrefix = 'cm'): array
     {
-        $parts = ['c.full_name LIKE ' . $likeParam, 'c.phone LIKE ' . $likeParam];
-        if (self::customersHasColumn('email')) {
-            $parts[] = 'c.email LIKE ' . $likeParam;
+        $p = preg_replace('/[^a-zA-Z0-9_]/', '', $namePrefix);
+        if ($p === '') {
+            $p = 'cm';
         }
-        $parts[] = 'c.nin LIKE ' . $likeParam;
-        $parts[] = 'c.bvn LIKE ' . $likeParam;
+        $parts = [
+            'c.full_name LIKE :' . $p . '_fn',
+            'c.phone LIKE :' . $p . '_ph',
+        ];
+        $params = [
+            ':' . $p . '_fn' => $likeValue,
+            ':' . $p . '_ph' => $likeValue,
+        ];
+        if (self::customersHasColumn('email')) {
+            $parts[] = 'c.email LIKE :' . $p . '_em';
+            $params[':' . $p . '_em'] = $likeValue;
+        }
+        $parts[] = 'c.nin LIKE :' . $p . '_nin';
+        $params[':' . $p . '_nin'] = $likeValue;
+        $parts[] = 'c.bvn LIKE :' . $p . '_bvn';
+        $params[':' . $p . '_bvn'] = $likeValue;
 
-        return [$parts, [$likeParam => $likeValue]];
+        return [$parts, $params];
     }
 
     /**

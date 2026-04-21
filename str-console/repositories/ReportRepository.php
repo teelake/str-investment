@@ -326,17 +326,19 @@ final class ReportRepository
         $t = trim((string) $searchRaw);
         if ($t !== '' && mb_strlen($t) <= 200) {
             $like = '%' . addcslashes($t, '%_\\') . '%';
-            [$parts, $searchParams] = SchemaSupport::customerMatchOrParts(':rptq', $like);
+            [$parts, $searchParams] = SchemaSupport::customerMatchOrParts($like, 'rptq');
             foreach ($searchParams as $k => $v) {
                 $params[$k] = $v;
             }
             if (ctype_digit($t) && (int) $t > 0) {
                 $nid = (int) $t;
-                $parts[] = '(l.id = :rpn OR l.customer_id = :rpn OR c.id = :rpn)';
-                $params[':rpn'] = $nid;
+                $parts[] = '(l.id = :rptq_lid OR l.customer_id = :rptq_cust OR c.id = :rptq_cc)';
+                $params[':rptq_lid'] = $nid;
+                $params[':rptq_cust'] = $nid;
+                $params[':rptq_cc'] = $nid;
             }
             $dig = preg_replace('/\D/', '', $t) ?? '';
-            SchemaSupport::appendPhoneDigitMatch($parts, $params, ':rptqd', $dig);
+            SchemaSupport::appendPhoneDigitMatch($parts, $params, ':rptq_dig', $dig);
             $conditions[] = '(' . implode(' OR ', $parts) . ')';
         }
         $sql = $conditions === [] ? '' : ' AND ' . implode(' AND ', $conditions);
@@ -375,13 +377,13 @@ final class ReportRepository
             return [$sql, $params];
         }
         $like = '%' . addcslashes($t, '%_\\') . '%';
-        [$parts, $extra] = SchemaSupport::customerMatchOrParts(':crpq', $like);
+        [$parts, $extra] = SchemaSupport::customerMatchOrParts($like, 'crpq');
         if (ctype_digit($t) && (int) $t > 0) {
-            $parts[] = 'c.id = :crpid';
-            $extra[':crpid'] = (int) $t;
+            $parts[] = 'c.id = :crpq_id';
+            $extra[':crpq_id'] = (int) $t;
         }
         $dig = preg_replace('/\D/', '', $t) ?? '';
-        SchemaSupport::appendPhoneDigitMatch($parts, $extra, ':crpqd', $dig);
+        SchemaSupport::appendPhoneDigitMatch($parts, $extra, ':crpq_dig', $dig);
         $sql .= ' AND (' . implode(' OR ', $parts) . ')';
 
         return [$sql, array_merge($params, $extra)];

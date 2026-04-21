@@ -107,13 +107,13 @@ final class CustomerRepository
             $t = mb_substr($t, 0, 120);
         }
         $like = '%' . addcslashes($t, '%_\\') . '%';
-        [$parts, $params] = SchemaSupport::customerMatchOrParts(':clistq', $like);
+        [$parts, $params] = SchemaSupport::customerMatchOrParts($like, 'clist');
         if (ctype_digit($t) && (int) $t > 0) {
-            $parts[] = 'c.id = :clistid';
-            $params[':clistid'] = (int) $t;
+            $parts[] = 'c.id = :clist_id';
+            $params[':clist_id'] = (int) $t;
         }
         $dig = preg_replace('/\D/', '', $t) ?? '';
-        SchemaSupport::appendPhoneDigitMatch($parts, $params, ':clistqd', $dig);
+        SchemaSupport::appendPhoneDigitMatch($parts, $params, ':clist_dig', $dig);
 
         return [' AND (' . implode(' OR ', $parts) . ')', $params];
     }

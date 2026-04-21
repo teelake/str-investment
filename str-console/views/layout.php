@@ -82,11 +82,20 @@ $docTitle = match (true) {
     .console-topbar__start { display: flex; align-items: center; gap: 12px; }
     .console-topbar__brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink); }
     .console-topbar__brand img { height: 32px; width: auto; }
-    .console-topbar__search { flex: 1; min-width: 160px; max-width: none; margin: 0; }
+    .console-topbar__search {
+      flex: 1; min-width: 160px; max-width: none; margin: 0;
+      display: flex; align-items: center; gap: 8px;
+    }
     .console-topbar__search input {
-      width: 100%; padding: 10px 14px; border-radius: 12px; border: 1px solid var(--line2);
+      flex: 1; min-width: 0; padding: 10px 14px; border-radius: 12px; border: 1px solid var(--line2);
       font-size: 14px; background: var(--card); color: var(--ink);
     }
+    .console-topbar__search-go {
+      flex-shrink: 0; padding: 10px 14px; border-radius: 12px; border: 1px solid var(--line2);
+      background: var(--green2); color: #fff; font-size: 13px; font-weight: 650; cursor: pointer;
+      font-family: inherit;
+    }
+    .console-topbar__search-go:hover { filter: brightness(1.05); }
     .console-topbar__end { margin-left: auto; display: flex; align-items: center; gap: 12px; }
     [data-sidebar-open] {
       display: none; border: 1px solid var(--line); background: var(--card); border-radius: 12px;
@@ -210,6 +219,7 @@ $docTitle = match (true) {
             <form class="console-topbar__search" method="get" action="<?= htmlspecialchars($basePath . '/search', ENT_QUOTES, 'UTF-8') ?>" role="search">
               <label class="visually-hidden" for="topbar-search-q">Search customers and loans</label>
               <input id="topbar-search-q" type="search" name="q" value="<?= htmlspecialchars((string) Request::query('q', ''), ENT_QUOTES, 'UTF-8') ?>" placeholder="Search customers & loans…" minlength="0" autocomplete="off" />
+              <button type="submit" class="console-topbar__search-go">Search</button>
             </form>
           <?php endif; ?>
           <div class="console-topbar__end">
