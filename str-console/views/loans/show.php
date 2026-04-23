@@ -181,7 +181,6 @@ if ($paymentDefault < $paymentDateMin) {
       <?php if ($paymentAmountDueMax !== null): ?>
         <p style="margin: 10px 0 0; font-size: 12px; color: var(--muted2);">Max this payment: <strong><?= $fmt($paymentAmountDueMax) ?></strong> (same 30-day step = balance only; new step = balance + one month’s interest at the booked rate).</p>
       <?php endif; ?>
-      <p style="margin: 10px 0 0; font-size: 12px; color: var(--muted2);">Same step as the last line → pay principal only. New step → interest may apply, then your payment. Unpaid interest lines: <strong>Apply accrual</strong> (if on in Policies).</p>
     </div>
   <?php endif; ?>
 
@@ -192,8 +191,7 @@ if ($paymentDefault < $paymentDateMin) {
       $rp = $reminderProjection;
     ?>
     <div style="background: var(--card); border: 1px solid var(--line2); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow2); margin-bottom: 28px;">
-      <h2 style="font-size: 15px; margin: 0 0 8px; font-weight: 800;">Borrower payment reminders</h2>
-      <p style="margin: 0 0 12px; font-size: 12px; color: var(--muted2);">Emails: <strong>Settings → Payment reminders</strong>. Customer needs an email. Optional: fixed amount to show (if less than the ledger step).</p>
+      <h2 style="font-size: 15px; margin: 0 0 12px; font-weight: 800;">Borrower payment reminders</h2>
       <?php if ($rp !== null): ?>
         <p style="margin: 0 0 12px; font-size: 12px; color: var(--muted);">Next due: <strong><?= htmlspecialchars((string) ($rp['next_due_ymd'] ?? ''), ENT_QUOTES, 'UTF-8') ?></strong> · Ledger step: <strong><?= $fmt((float) ($rp['ledger_amount_due'] ?? 0)) ?></strong></p>
       <?php endif; ?>
@@ -214,7 +212,6 @@ if ($paymentDefault < $paymentDateMin) {
   <?php if ($st === 'active' && ($canVoidPayment || $canAdjustPayment)): ?>
     <div style="background: var(--card); border: 1px solid var(--line2); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow2); margin-bottom: 28px;">
       <h2 style="font-size: 15px; margin: 0 0 14px; font-weight: 800;">Ledger corrections</h2>
-      <p style="margin: 0 0 12px; font-size: 12px; color: var(--muted2);">Last payment line only. Void = remove line. Adjust = change paid amount.</p>
       <div style="display:flex; flex-wrap:wrap; gap: 20px; align-items:flex-end;">
         <?php if ($canVoidPayment): ?>
           <form method="post" action="<?= htmlspecialchars($basePath . '/loans/' . $id . '/payment-void', ENT_QUOTES, 'UTF-8') ?>" style="display:inline;" onsubmit="return confirm('Remove the last payment line from the ledger?');">
