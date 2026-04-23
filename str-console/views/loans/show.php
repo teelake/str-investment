@@ -238,8 +238,7 @@ if ($paymentDefault < $paymentDateMin) {
   <div style="background: var(--card); border: 1px solid var(--line2); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow2);">
     <h2 style="font-size: 15px; margin: 0 0 6px; font-weight: 800;">Ledger</h2>
     <p style="margin: 0 0 10px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: 13px;">
-      <a class="btn ghost" style="font-size: 13px; padding: 8px 12px;" href="<?= htmlspecialchars($basePath . '/loans/' . $id . '/ledger-export?format=csv', ENT_QUOTES, 'UTF-8') ?>">Download CSV</a>
-      <a class="btn ghost" style="font-size: 13px; padding: 8px 12px;" href="<?= htmlspecialchars($basePath . '/loans/' . $id . '/ledger-export?format=pdf', ENT_QUOTES, 'UTF-8') ?>">Download PDF</a>
+      <a class="btn ghost" style="font-size: 13px; padding: 8px 12px;" href="<?= htmlspecialchars($basePath . '/loans/' . $id . '/ledger-export', ENT_QUOTES, 'UTF-8') ?>">Download CSV</a>
       <a class="btn ghost" style="font-size: 13px; padding: 8px 12px;" href="<?= htmlspecialchars($basePath . '/loans/' . $id . '/ledger-print', ENT_QUOTES, 'UTF-8') ?>" target="_blank" rel="noopener noreferrer">Print</a>
     </p>
     <p style="margin: 0 0 14px; font-size: 12px; color: var(--muted2);">Interest = <strong>charge on this line only</strong>. ₦0 is normal on the first line, or if the payment is in the <strong>same 30-day step</strong> as the line above.</p>

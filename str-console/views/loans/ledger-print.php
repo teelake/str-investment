@@ -4,7 +4,6 @@ declare(strict_types=1);
 /** @var list<array<string, mixed>> $ledger */
 /** @var float $outstanding */
 /** @var string $customerName */
-/** @var bool $pdfNote */
 $basePath = Request::basePath();
 $id = (int) ($loan['id'] ?? 0);
 $st = (string) ($loan['status'] ?? '');
@@ -22,7 +21,6 @@ $title = 'Loan #' . $id . ' — Ledger';
     .ledger-doc { max-width: 1200px; margin: 0 auto; padding: 24px; font-size: 14px; }
     .ledger-doc h1 { font-size: 1.25rem; margin: 0 0 8px; }
     .ledger-doc .actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 16px; align-items: center; }
-    .ledger-doc .note { font-size: 13px; color: var(--muted, #5c6670); margin: 0 0 12px; padding: 10px 12px; border-radius: 10px; background: rgba(0,0,0,.04); }
     .ledger-doc .meta { margin: 0 0 14px; font-size: 13px; }
     .ledger-doc .meta dt { font-weight: 700; }
     .ledger-doc .meta dd { margin: 0 0 6px; }
@@ -42,13 +40,9 @@ $title = 'Loan #' . $id . ' — Ledger';
   <div class="ledger-doc">
     <div class="no-print actions">
       <a class="btn ghost" href="<?= htmlspecialchars($basePath . '/loans/' . $id, ENT_QUOTES, 'UTF-8') ?>">Back to loan</a>
-      <a class="btn ghost" href="<?= htmlspecialchars($basePath . '/loans/' . $id . '/ledger-export?format=csv', ENT_QUOTES, 'UTF-8') ?>">Download CSV</a>
-      <a class="btn ghost" href="<?= htmlspecialchars($basePath . '/loans/' . $id . '/ledger-export?format=pdf', ENT_QUOTES, 'UTF-8') ?>">Download PDF</a>
+      <a class="btn ghost" href="<?= htmlspecialchars($basePath . '/loans/' . $id . '/ledger-export', ENT_QUOTES, 'UTF-8') ?>">Download CSV</a>
       <button type="button" class="btn primary" onclick="window.print()">Print</button>
     </div>
-    <?php if (!empty($pdfNote)): ?>
-      <p class="note no-print">PDF download is not available (library not installed on this server). Use <strong>Print</strong> and choose &quot;Save as PDF&quot; in your browser, or download CSV.</p>
-    <?php endif; ?>
     <h1><?= htmlspecialchars($title, ENT_QUOTES, 'UTF-8') ?></h1>
     <dl class="meta" style="display:grid; grid-template-columns: auto 1fr; gap: 4px 16px; align-items: baseline;">
       <dt>Customer</dt><dd><?= htmlspecialchars($customerName, ENT_QUOTES, 'UTF-8') ?></dd>

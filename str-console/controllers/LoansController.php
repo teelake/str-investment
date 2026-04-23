@@ -391,15 +391,7 @@ final class LoansController extends BaseController
         }
         $format = strtolower(trim((string) Request::query('format', 'csv')));
         if ($format === 'pdf') {
-            if (!LedgerExportService::tryStreamPdf(
-                $loanId,
-                $data['loan'],
-                $data['customerName'],
-                $data['ledger'],
-                $data['outstanding'],
-            )) {
-                $this->redirect('/loans/' . $loanId . '/ledger-print?pdf=0');
-            }
+            $this->redirect('/loans/' . $loanId . '/ledger-print');
             return;
         }
         LedgerExportService::streamCsv(
@@ -421,13 +413,11 @@ final class LoansController extends BaseController
         if ($data === null) {
             return;
         }
-        $pdfNote = (string) Request::query('pdf', '') === '0';
         $this->renderDocument('loans/ledger-print', [
             'loan' => $data['loan'],
             'ledger' => $data['ledger'],
             'outstanding' => $data['outstanding'],
             'customerName' => $data['customerName'],
-            'pdfNote' => $pdfNote,
         ]);
     }
 
