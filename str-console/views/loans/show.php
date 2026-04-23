@@ -245,14 +245,7 @@ if ($paymentDefault < $paymentDateMin) {
   <?php endif; ?>
 
   <div style="background: var(--card); border: 1px solid var(--line2); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow2);">
-    <h2 style="font-size: 15px; margin: 0 0 8px; font-weight: 800;">Ledger</h2>
-    <p style="margin: 0 0 16px; font-size: 12px; line-height: 1.5; color: var(--muted2); max-width: 800px;">
-      <strong style="color: var(--ink);">Why is Interest sometimes ₦0?</strong>
-      The <strong>first line</strong> after disbursement is principal only (no interest in the first 30-day “step” from the disbursement date).
-      <strong>Interest</strong> here is the <em>new charge added on that line</em> (one monthly rate on the current balance, or on original principal for flat products)—not a running interest total.
-      If you record a payment in the <strong>same</strong> 30-day period as the previous line (often the same day as disbursement), the system does <strong>not</strong> add another interest charge on that line; it only reduces the balance, so you will see <strong>₦0.00</strong> in Interest.
-      A payment dated in a <strong>new</strong> 30-day period (from disbursement) will show the month’s interest, then the payment, in line with the “Record payment” help above.
-    </p>
+    <h2 style="font-size: 15px; margin: 0 0 16px; font-weight: 800;">Ledger</h2>
     <div style="overflow:auto;">
       <table style="width:100%; border-collapse:collapse; font-size:13px; min-width:720px;">
         <thead>
@@ -260,8 +253,8 @@ if ($paymentDefault < $paymentDateMin) {
             <th style="padding:10px 8px; text-align:left;">#</th>
             <th style="padding:10px 8px; text-align:left;">Date</th>
             <th style="padding:10px 8px;">Opening</th>
-            <th style="padding:10px 8px;" title="Booked monthly rate on the loan; not re-calculated from this row’s opening.">Rate % <span style="text-transform:none; font-weight:500; font-size:10px;">(booked)</span></th>
-            <th style="padding:10px 8px;" title="Interest charged on this line only (0 if this line is disbursement, or a payment in the same 30-day period as the line above).">Interest <span style="text-transform:none; font-weight:500; font-size:10px;">(this line)</span></th>
+            <th style="padding:10px 8px;">Rate %</th>
+            <th style="padding:10px 8px;">Interest</th>
             <th style="padding:10px 8px;">Total due</th>
             <th style="padding:10px 8px;">Paid</th>
             <th style="padding:10px 8px;">Closing</th>
