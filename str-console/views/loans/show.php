@@ -48,14 +48,14 @@ $canEditLoan = $canEditLoan ?? false;
 $canReminderInstallment = $canReminderInstallment ?? false;
 $reminderProjection = isset($reminderProjection) && is_array($reminderProjection) ? $reminderProjection : null;
 $today = InputValidate::todayYmd();
-$loanCreatedDay = substr((string) ($loan['created_at'] ?? ''), 0, 10);
-if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $loanCreatedDay)) {
-    $loanCreatedDay = InputValidate::LOAN_EVENT_DATE_MIN;
-}
-$disburseDateMin = max(InputValidate::LOAN_EVENT_DATE_MIN, $loanCreatedDay);
+$disburseDateMin = InputValidate::LOAN_EVENT_DATE_MIN;
+$disburseDateMax = InputValidate::loanDisburseDateMaxYmd();
 $disburseDefault = $today;
 if ($disburseDefault < $disburseDateMin) {
     $disburseDefault = $disburseDateMin;
+}
+if ($disburseDefault > $disburseDateMax) {
+    $disburseDefault = $disburseDateMax;
 }
 
 $disbursedDay = substr((string) ($loan['disbursed_at'] ?? ''), 0, 10);
@@ -139,11 +139,11 @@ if ($paymentDefault < $paymentDateMin) {
         <?php require STR_CONSOLE_ROOT . '/views/partials/csrf.php'; ?>
         <label style="display:grid; gap:4px; font-size:12px; font-weight:650; color:var(--muted);">
           Disbursement date
-          <input type="date" name="disbursed_on" value="<?= htmlspecialchars($disburseDefault, ENT_QUOTES, 'UTF-8') ?>" min="<?= htmlspecialchars($disburseDateMin, ENT_QUOTES, 'UTF-8') ?>" max="<?= htmlspecialchars($today, ENT_QUOTES, 'UTF-8') ?>" required style="padding:10px 12px; border-radius:12px; border:1px solid var(--line);" />
+          <input type="date" name="disbursed_on" value="<?= htmlspecialchars($disburseDefault, ENT_QUOTES, 'UTF-8') ?>" min="<?= htmlspecialchars($disburseDateMin, ENT_QUOTES, 'UTF-8') ?>" max="<?= htmlspecialchars($disburseDateMax, ENT_QUOTES, 'UTF-8') ?>" required style="padding:10px 12px; border-radius:12px; border:1px solid var(--line);" />
         </label>
         <button type="submit" class="btn primary">Disburse &amp; open ledger</button>
       </form>
-      <p style="margin:8px 0 0; font-size:12px; color:var(--muted2); max-width:520px;">First ledger line: <strong>principal only</strong>. New interest only appears in a <strong>later 30-day step</strong> (payment or accrual).</p>
+      <p style="margin:8px 0 0; font-size:12px; color:var(--muted2); max-width:520px;">Value date can be in the <strong>past or future</strong> (e.g. back-dated or scheduled disbursement). First ledger line: <strong>principal only</strong>. New interest only appears in a <strong>later 30-day step</strong> (payment or accrual).</p>
     <?php endif; ?>
     <?php if ($canClose): ?>
       <form method="post" action="<?= htmlspecialchars($basePath . '/loans/' . $id . '/close', ENT_QUOTES, 'UTF-8') ?>" style="display:inline;" onsubmit="return confirm('Close this loan? It must have zero outstanding balance.');">

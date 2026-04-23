@@ -503,7 +503,9 @@ final class LoansController extends BaseController
             return;
         }
         if (!InputValidate::loanDisburseDateOk($ymd, (string) ($loan['created_at'] ?? ''))) {
-            $this->redirect('/loans/' . $loanId . '?error=' . rawurlencode('Disbursement date must be from the loan creation date through today (not in the future).'));
+            $this->redirect('/loans/' . $loanId . '?error=' . rawurlencode(
+                'Disbursement date must be between ' . InputValidate::LOAN_EVENT_DATE_MIN . ' and ' . InputValidate::loanDisburseDateMaxYmd() . '.'
+            ));
             return;
         }
         try {

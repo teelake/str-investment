@@ -115,7 +115,7 @@ final class LoanLedgerService
             }
             if (!InputValidate::loanDisburseDateOk($periodDateYmd, (string) ($row['created_at'] ?? ''))) {
                 $pdo->rollBack();
-                throw new RuntimeException('Disbursement date must be from loan creation through today.');
+                throw new RuntimeException('Disbursement date must be a valid value between ' . InputValidate::LOAN_EVENT_DATE_MIN . ' and ' . InputValidate::loanDisburseDateMaxYmd() . '.');
             }
 
             $u = $pdo->prepare(
