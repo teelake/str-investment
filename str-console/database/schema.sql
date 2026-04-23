@@ -101,6 +101,7 @@ CREATE TABLE IF NOT EXISTS loans (
   approved_at DATETIME NULL,
   rejected_reason VARCHAR(500) NULL,
   disbursed_at DATETIME NULL,
+  disbursement_funds_on DATE NULL COMMENT 'When funds were actually released; may differ from disbursed_at',
   closed_at DATETIME NULL,
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

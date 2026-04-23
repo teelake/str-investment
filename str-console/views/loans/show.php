@@ -108,6 +108,19 @@ if ($paymentDefault < $paymentDateMin) {
     </div>
   </div>
 
+  <?php if ($st === 'active' && !empty($loan['disbursed_at'])): ?>
+    <?php
+    $bookDisburseDay = substr((string) ($loan['disbursed_at'] ?? ''), 0, 10);
+    $fundsOnRaw = $loan['disbursement_funds_on'] ?? null;
+    $fundsOnDay = is_string($fundsOnRaw) && preg_match('/^\d{4}-\d{2}-\d{2}/', $fundsOnRaw) ? substr($fundsOnRaw, 0, 10) : '';
+    ?>
+    <div style="background: var(--card); border: 1px solid var(--line2); border-radius: var(--radius); padding: 14px 18px; box-shadow: var(--shadow2); margin-bottom: 20px; font-size: 14px; line-height: 1.5;">
+      <div style="font-size: 12px; font-weight: 800; color: var(--muted); text-transform: uppercase; margin-bottom: 6px;">Disbursement</div>
+      <div><span style="color:var(--muted2);">Book / interest start</span> — <strong><?= htmlspecialchars($bookDisburseDay, ENT_QUOTES, 'UTF-8') ?></strong> <span style="color:var(--muted2); font-size:12px;">(drives the ledger)</span></div>
+      <div style="margin-top:4px;"><span style="color:var(--muted2);">Funds actually released</span> — <strong><?= $fundsOnDay !== '' ? htmlspecialchars($fundsOnDay, ENT_QUOTES, 'UTF-8') : '—' ?></strong> <?php if ($fundsOnDay === ''): ?><span style="color:var(--muted2); font-size:12px;">(not set)</span><?php endif; ?></div>
+    </div>
+  <?php endif; ?>
+
   <div style="display:flex; flex-wrap:wrap; gap: 10px; margin-bottom: 28px;">
     <?php if ($canEditLoan): ?>
       <a class="btn ghost" href="<?= htmlspecialchars($basePath . '/loans/' . $id . '/edit', ENT_QUOTES, 'UTF-8') ?>">Edit loan</a>
@@ -135,15 +148,19 @@ if ($paymentDefault < $paymentDateMin) {
       </form>
     <?php endif; ?>
     <?php if ($canDisburse): ?>
-      <form method="post" action="<?= htmlspecialchars($basePath . '/loans/' . $id . '/disburse', ENT_QUOTES, 'UTF-8') ?>" style="display:flex; flex-wrap:wrap; gap:8px; align-items:flex-end;">
+      <form method="post" action="<?= htmlspecialchars($basePath . '/loans/' . $id . '/disburse', ENT_QUOTES, 'UTF-8') ?>" style="display:flex; flex-wrap:wrap; gap:10px; align-items:flex-end;">
         <?php require STR_CONSOLE_ROOT . '/views/partials/csrf.php'; ?>
-        <label style="display:grid; gap:4px; font-size:12px; font-weight:650; color:var(--muted);">
-          Disbursement date
+        <label style="display:grid; gap:4px; font-size:12px; font-weight:650; color:var(--muted); max-width:220px;">
+          Book / interest start date
           <input type="date" name="disbursed_on" value="<?= htmlspecialchars($disburseDefault, ENT_QUOTES, 'UTF-8') ?>" min="<?= htmlspecialchars($disburseDateMin, ENT_QUOTES, 'UTF-8') ?>" max="<?= htmlspecialchars($disburseDateMax, ENT_QUOTES, 'UTF-8') ?>" required style="padding:10px 12px; border-radius:12px; border:1px solid var(--line);" />
+        </label>
+        <label style="display:grid; gap:4px; font-size:12px; font-weight:650; color:var(--muted); max-width:220px;">
+          Funds actually released <span style="font-weight:500; color:var(--muted2);">(optional)</span>
+          <input type="date" name="disbursement_funds_on" value="" min="<?= htmlspecialchars($disburseDateMin, ENT_QUOTES, 'UTF-8') ?>" max="<?= htmlspecialchars($disburseDateMax, ENT_QUOTES, 'UTF-8') ?>" style="padding:10px 12px; border-radius:12px; border:1px solid var(--line);" />
         </label>
         <button type="submit" class="btn primary">Disburse &amp; open ledger</button>
       </form>
-      <p style="margin:8px 0 0; font-size:12px; color:var(--muted2); max-width:520px;">Value date can be in the <strong>past or future</strong> (e.g. back-dated or scheduled disbursement). First ledger line: <strong>principal only</strong>. New interest only appears in a <strong>later 30-day step</strong> (payment or accrual).</p>
+      <p style="margin:8px 0 0; font-size:12px; color:var(--muted2); max-width:640px;">Use <strong>book / interest start</strong> for the value date that drives the ledger (may follow your office rules and need not match the bank). Optionally add <strong>funds actually released</strong> when the cash/bank date differs. First ledger line: <strong>principal only</strong>; interest accrues from a <strong>later 30-day step</strong>.</p>
     <?php endif; ?>
     <?php if ($canClose): ?>
       <form method="post" action="<?= htmlspecialchars($basePath . '/loans/' . $id . '/close', ENT_QUOTES, 'UTF-8') ?>" style="display:inline;" onsubmit="return confirm('Close this loan? It must have zero outstanding balance.');">

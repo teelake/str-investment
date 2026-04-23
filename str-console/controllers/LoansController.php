@@ -504,12 +504,24 @@ final class LoansController extends BaseController
         }
         if (!InputValidate::loanDisburseDateOk($ymd, (string) ($loan['created_at'] ?? ''))) {
             $this->redirect('/loans/' . $loanId . '?error=' . rawurlencode(
-                'Disbursement date must be between ' . InputValidate::LOAN_EVENT_DATE_MIN . ' and ' . InputValidate::loanDisburseDateMaxYmd() . '.'
+                'Book / interest start date must be between ' . InputValidate::LOAN_EVENT_DATE_MIN . ' and ' . InputValidate::loanDisburseDateMaxYmd() . '.'
+            ));
+            return;
+        }
+        $fundsRaw = trim((string) Request::post('disbursement_funds_on', ''));
+        $fundsYmd = $fundsRaw === '' ? null : InputValidate::parseDateYmd($fundsRaw);
+        if ($fundsRaw !== '' && $fundsYmd === null) {
+            $this->redirect('/loans/' . $loanId . '?error=' . rawurlencode('Funds actually released: use a valid date (YYYY-MM-DD) or leave blank.'));
+            return;
+        }
+        if ($fundsYmd !== null && !InputValidate::loanDisburseDateOk($fundsYmd, (string) ($loan['created_at'] ?? ''))) {
+            $this->redirect('/loans/' . $loanId . '?error=' . rawurlencode(
+                'Funds actually released must be between ' . InputValidate::LOAN_EVENT_DATE_MIN . ' and ' . InputValidate::loanDisburseDateMaxYmd() . '.'
             ));
             return;
         }
         try {
-            LoanLedgerService::completeDisbursement($loanId, $ymd);
+            LoanLedgerService::completeDisbursement($loanId, $ymd, $fundsYmd);
             AuditLogger::log(ConsoleAuth::userId(), 'loan.disburse', 'loan', $loanId, ['date' => $ymd]);
             $this->redirect('/loans/' . $loanId . '?flash=' . rawurlencode('Disbursed. First ledger line created.'));
         } catch (Throwable $e) {

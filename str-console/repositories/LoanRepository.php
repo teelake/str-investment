@@ -223,14 +223,14 @@ final class LoanRepository
         return $stmt->rowCount() > 0;
     }
 
-    public function markDisbursed(int $loanId, string $disbursedDateYmd): bool
+    public function markDisbursed(int $loanId, string $disbursedDateYmd, ?string $fundsOnYmd = null): bool
     {
         $pdo = Database::pdo();
         $stmt = $pdo->prepare(
-            'UPDATE loans SET status = \'active\', disbursed_at = :d, updated_at = NOW()
+            'UPDATE loans SET status = \'active\', disbursed_at = :d, disbursement_funds_on = :f, updated_at = NOW()
              WHERE id = :id AND status = \'approved\''
         );
-        $stmt->execute([':d' => $disbursedDateYmd, ':id' => $loanId]);
+        $stmt->execute([':d' => $disbursedDateYmd, ':f' => $fundsOnYmd, ':id' => $loanId]);
         return $stmt->rowCount() > 0;
     }
 

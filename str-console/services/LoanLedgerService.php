@@ -97,9 +97,11 @@ final class LoanLedgerService
     }
 
     /**
-     * Atomically mark loan active, set disbursed_at, and create the first ledger line (principal; no interest until first 30-day period).
+     * Atomically mark loan active, set disbursed_at, optional disbursement_funds_on, and create the first ledger line (principal; no interest until first 30-day period).
+     *
+     * @param string|null $fundsDisbursedOnYmd When funds were actually released, if the client uses a different date from the book/interest (ledger) value date.
      */
-    public static function completeDisbursement(int $loanId, string $periodDateYmd): void
+    public static function completeDisbursement(int $loanId, string $periodDateYmd, ?string $fundsDisbursedOnYmd = null): void
     {
         $pdo = Database::pdo();
         $pdo->beginTransaction();
@@ -117,12 +119,17 @@ final class LoanLedgerService
                 $pdo->rollBack();
                 throw new RuntimeException('Disbursement date must be a valid value between ' . InputValidate::LOAN_EVENT_DATE_MIN . ' and ' . InputValidate::loanDisburseDateMaxYmd() . '.');
             }
+            if ($fundsDisbursedOnYmd !== null && $fundsDisbursedOnYmd !== '' && !InputValidate::loanDisburseDateOk($fundsDisbursedOnYmd, (string) ($row['created_at'] ?? ''))) {
+                $pdo->rollBack();
+                throw new RuntimeException('The optional funds-released date must be a valid value between ' . InputValidate::LOAN_EVENT_DATE_MIN . ' and ' . InputValidate::loanDisburseDateMaxYmd() . '.');
+            }
+            $fundsYmd = ($fundsDisbursedOnYmd !== null && $fundsDisbursedOnYmd !== '') ? $fundsDisbursedOnYmd : null;
 
             $u = $pdo->prepare(
-                'UPDATE loans SET status = \'active\', disbursed_at = :d, updated_at = NOW()
+                'UPDATE loans SET status = \'active\', disbursed_at = :d, disbursement_funds_on = :f, updated_at = NOW()
                  WHERE id = :id AND status = \'approved\''
             );
-            $u->execute([':d' => $periodDateYmd, ':id' => $loanId]);
+            $u->execute([':d' => $periodDateYmd, ':f' => $fundsYmd, ':id' => $loanId]);
             if ($u->rowCount() === 0) {
                 $pdo->rollBack();
                 throw new RuntimeException('Loan is not approved for disbursement.');
