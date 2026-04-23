@@ -8,6 +8,12 @@ declare(strict_types=1);
 
 define('STR_CONSOLE_ROOT', __DIR__);
 
+$__str_autoload = STR_CONSOLE_ROOT . '/vendor/autoload.php';
+if (is_file($__str_autoload)) {
+    require_once $__str_autoload;
+}
+unset($__str_autoload);
+
 /**
  * Load optional local overrides first so STR_CONSOLE_ERROR_LOG / DB / env constants exist.
  */
@@ -73,6 +79,7 @@ require_once STR_CONSOLE_ROOT . '/repositories/CustomerDocumentRepository.php';
 require_once STR_CONSOLE_ROOT . '/repositories/LoanProductRepository.php';
 require_once STR_CONSOLE_ROOT . '/repositories/LoanLedgerRepository.php';
 require_once STR_CONSOLE_ROOT . '/services/LoanLedgerService.php';
+require_once STR_CONSOLE_ROOT . '/services/LedgerExportService.php';
 require_once STR_CONSOLE_ROOT . '/repositories/ReportRepository.php';
 require_once STR_CONSOLE_ROOT . '/repositories/LoanRepository.php';
 require_once STR_CONSOLE_ROOT . '/repositories/PaymentReminderLogRepository.php';

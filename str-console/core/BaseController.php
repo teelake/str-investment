@@ -31,6 +31,27 @@ abstract class BaseController
     }
 
     /**
+     * Full-page view without the main app layout (e.g. print document).
+     *
+     * @param array<string, mixed> $params
+     */
+    protected function renderDocument(string $view, array $params = []): void
+    {
+        $viewsDir = STR_CONSOLE_ROOT . '/views';
+        $file = $viewsDir . '/' . $view . '.php';
+        if (!is_file($file)) {
+            http_response_code(500);
+            echo 'View not found.';
+            return;
+        }
+        if (!array_key_exists('csrfToken', $params)) {
+            $params['csrfToken'] = FormGuard::token();
+        }
+        extract($params, EXTR_SKIP);
+        require $file;
+    }
+
+    /**
      * Reject POST when CSRF token is missing or wrong (session fixation / cross-site POST).
      */
     protected function requirePostedCsrf(string $redirectPath, string $errorMessage = 'This form expired or was blocked. Refresh the page and try again.'): void

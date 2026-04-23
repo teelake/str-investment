@@ -44,6 +44,8 @@ function str_console_routes(): array
 
         ['GET', '#^/loans/(\d+)/edit$#', LoansController::class, 'edit', 'loans.edit'],
         ['POST', '#^/loans/(\d+)/update$#', LoansController::class, 'update', 'loans.update'],
+        ['GET', '#^/loans/(\d+)/ledger-export$#', LoansController::class, 'ledgerExport', 'loans.ledger_export'],
+        ['GET', '#^/loans/(\d+)/ledger-print$#', LoansController::class, 'ledgerPrint', 'loans.ledger_print'],
         ['GET', '#^/loans/(\d+)$#', LoansController::class, 'show', 'loans.show'],
         ['POST', '#^/loans/(\d+)/submit$#', LoansController::class, 'submit', 'loans.submit'],
         ['POST', '#^/loans/(\d+)/approve$#', LoansController::class, 'approve', 'loans.approve'],

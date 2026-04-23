@@ -379,6 +379,86 @@ final class LoansController extends BaseController
         ]);
     }
 
+    public function ledgerExport(int $loanId): void
+    {
+        if (!str_console_database_ready()) {
+            $this->redirect('/loans');
+            return;
+        }
+        $data = $this->loanLedgerViewData($loanId);
+        if ($data === null) {
+            return;
+        }
+        $format = strtolower(trim((string) Request::query('format', 'csv')));
+        if ($format === 'pdf') {
+            if (!LedgerExportService::tryStreamPdf(
+                $loanId,
+                $data['loan'],
+                $data['customerName'],
+                $data['ledger'],
+                $data['outstanding'],
+            )) {
+                $this->redirect('/loans/' . $loanId . '/ledger-print?pdf=0');
+            }
+            return;
+        }
+        LedgerExportService::streamCsv(
+            $loanId,
+            $data['loan'],
+            $data['customerName'],
+            $data['ledger'],
+            $data['outstanding'],
+        );
+    }
+
+    public function ledgerPrint(int $loanId): void
+    {
+        if (!str_console_database_ready()) {
+            $this->redirect('/loans');
+            return;
+        }
+        $data = $this->loanLedgerViewData($loanId);
+        if ($data === null) {
+            return;
+        }
+        $pdfNote = (string) Request::query('pdf', '') === '0';
+        $this->renderDocument('loans/ledger-print', [
+            'loan' => $data['loan'],
+            'ledger' => $data['ledger'],
+            'outstanding' => $data['outstanding'],
+            'customerName' => $data['customerName'],
+            'pdfNote' => $pdfNote,
+        ]);
+    }
+
+    /**
+     * @return array{loan: array<string, mixed>, ledger: list<array<string, mixed>>, customerName: string, outstanding: float}|null
+     */
+    private function loanLedgerViewData(int $loanId): ?array
+    {
+        $loanRepo = new LoanRepository();
+        $loan = $loanRepo->find($loanId);
+        if ($loan === null || !LoanRepository::canAccessRow($loan, ConsoleAuth::userId(), ConsoleAuth::grants())) {
+            ErrorPage::respond(404, 'Loan not found', 'This loan does not exist or is outside your access scope.');
+            return null;
+        }
+        $lines = [];
+        try {
+            $lines = (new LoanLedgerRepository())->listByLoan($loanId);
+        } catch (Throwable) {
+            $lines = [];
+        }
+        $outstanding = LoanLedgerService::outstandingForLoan($loanId);
+        $customerName = (string) ($loan['customer_name'] ?? '');
+
+        return [
+            'loan' => $loan,
+            'ledger' => $lines,
+            'customerName' => $customerName,
+            'outstanding' => $outstanding,
+        ];
+    }
+
     public function submit(int $loanId): void
     {
         $this->requirePostedCsrf('/loans/' . $loanId);

@@ -126,6 +126,8 @@ function str_console_route_permissions(): array
 
         // Loans
         'loans.index' => [...$auth, 'loans.list'],
+        'loans.ledger_export' => [...$auth, 'loans.view'],
+        'loans.ledger_print' => [...$auth, 'loans.view'],
         'loans.show' => [...$auth, 'loans.view'],
         'loans.create' => [...$auth, 'loans.create'],
         'loans.store' => [...$auth, 'loans.create'],
