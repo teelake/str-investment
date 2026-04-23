@@ -143,7 +143,7 @@ if ($paymentDefault < $paymentDateMin) {
         </label>
         <button type="submit" class="btn primary">Disburse &amp; open ledger</button>
       </form>
-      <p style="margin:8px 0 0; font-size:12px; color:var(--muted2); max-width:560px;">Line 1 records <strong>principal only</strong> (no interest yet). Interest runs in <strong>30-day steps</strong> from this disbursement date—first charge in period 2 (day 30 onward), via payment or accrual.</p>
+      <p style="margin:8px 0 0; font-size:12px; color:var(--muted2); max-width:520px;">First ledger line: <strong>principal only</strong>. New interest only appears in a <strong>later 30-day step</strong> (payment or accrual).</p>
     <?php endif; ?>
     <?php if ($canClose): ?>
       <form method="post" action="<?= htmlspecialchars($basePath . '/loans/' . $id . '/close', ENT_QUOTES, 'UTF-8') ?>" style="display:inline;" onsubmit="return confirm('Close this loan? It must have zero outstanding balance.');">
@@ -179,9 +179,9 @@ if ($paymentDefault < $paymentDateMin) {
         <button type="submit" class="btn primary">Apply payment</button>
       </form>
       <?php if ($paymentAmountDueMax !== null): ?>
-        <p style="margin: 10px 0 0; font-size: 12px; color: var(--muted2);">Maximum for this payment: within the <strong>same 30-day period</strong> from disbursement as the last line = balance only; <strong>new period</strong> = balance + one charge at the booked monthly rate. Matches the default payment date; the server rechecks if you change it. Larger amounts are rejected.</p>
+        <p style="margin: 10px 0 0; font-size: 12px; color: var(--muted2);">Max this payment: <strong><?= $fmt($paymentAmountDueMax) ?></strong> (same 30-day step = balance only; new step = balance + one month’s interest at the booked rate).</p>
       <?php endif; ?>
-      <p style="margin: 12px 0 0; font-size: 12px; color: var(--muted2);">Interest runs in <strong>30-day steps</strong> from the disbursement date. A payment in the <strong>same</strong> step as the last line pays down the balance only; the <strong>next</strong> step adds one charge at the booked monthly rate, then your payment. Use <strong>Apply accrual</strong> (or cron) to insert unpaid period lines when that policy is on.</p>
+      <p style="margin: 10px 0 0; font-size: 12px; color: var(--muted2);">Same step as the last line → pay principal only. New step → interest may apply, then your payment. Unpaid interest lines: <strong>Apply accrual</strong> (if on in Policies).</p>
     </div>
   <?php endif; ?>
 
@@ -193,15 +193,9 @@ if ($paymentDefault < $paymentDateMin) {
     ?>
     <div style="background: var(--card); border: 1px solid var(--line2); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow2); margin-bottom: 28px;">
       <h2 style="font-size: 15px; margin: 0 0 8px; font-weight: 800;">Borrower payment reminders</h2>
-      <p style="margin: 0 0 14px; font-size: 13px; color: var(--muted2); line-height: 1.45;">
-        If your team turns on automatic emails under <strong>Settings → Payment reminders</strong>, the customer receives plain-language messages before each due date and on the due day (when their profile has an email).
-        Optionally set the <strong>amount to mention</strong> for this loan (for example a fixed installment that is smaller than the full ledger step).
-      </p>
+      <p style="margin: 0 0 12px; font-size: 12px; color: var(--muted2);">Emails: <strong>Settings → Payment reminders</strong>. Customer needs an email. Optional: fixed amount to show (if less than the ledger step).</p>
       <?php if ($rp !== null): ?>
-        <p style="margin: 0 0 14px; font-size: 13px; color: var(--muted);">
-          Next scheduled payment date (from ledger / term): <strong><?= htmlspecialchars((string) ($rp['next_due_ymd'] ?? ''), ENT_QUOTES, 'UTF-8') ?></strong>.
-          Ledger amount for that step: <strong><?= $fmt((float) ($rp['ledger_amount_due'] ?? 0)) ?></strong>.
-        </p>
+        <p style="margin: 0 0 12px; font-size: 12px; color: var(--muted);">Next due: <strong><?= htmlspecialchars((string) ($rp['next_due_ymd'] ?? ''), ENT_QUOTES, 'UTF-8') ?></strong> · Ledger step: <strong><?= $fmt((float) ($rp['ledger_amount_due'] ?? 0)) ?></strong></p>
       <?php endif; ?>
       <form method="post" action="<?= htmlspecialchars($basePath . '/loans/' . $id . '/reminder-installment', ENT_QUOTES, 'UTF-8') ?>" style="display:flex; flex-wrap:wrap; gap:12px; align-items:flex-end;">
         <?php require STR_CONSOLE_ROOT . '/views/partials/csrf.php'; ?>
@@ -213,14 +207,14 @@ if ($paymentDefault < $paymentDateMin) {
         </label>
         <button type="submit" class="btn ghost">Save reminder amount</button>
       </form>
-      <p style="margin: 12px 0 0; font-size: 12px; color: var(--muted2);">Leave blank to use only the calculated ledger amount. Email wording is edited under Settings (not here).</p>
+      <p style="margin: 10px 0 0; font-size: 12px; color: var(--muted2);">Leave blank to use the ledger amount. Edit email text in Settings.</p>
     </div>
   <?php endif; ?>
 
   <?php if ($st === 'active' && ($canVoidPayment || $canAdjustPayment)): ?>
     <div style="background: var(--card); border: 1px solid var(--line2); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow2); margin-bottom: 28px;">
       <h2 style="font-size: 15px; margin: 0 0 14px; font-weight: 800;">Ledger corrections</h2>
-      <p style="margin: 0 0 14px; font-size: 13px; color: var(--muted2);">Applies only to the <strong>last</strong> ledger line if it records a payment. Void removes that line; adjust changes the paid amount (closing balance is recalculated).</p>
+      <p style="margin: 0 0 12px; font-size: 12px; color: var(--muted2);">Last payment line only. Void = remove line. Adjust = change paid amount.</p>
       <div style="display:flex; flex-wrap:wrap; gap: 20px; align-items:flex-end;">
         <?php if ($canVoidPayment): ?>
           <form method="post" action="<?= htmlspecialchars($basePath . '/loans/' . $id . '/payment-void', ENT_QUOTES, 'UTF-8') ?>" style="display:inline;" onsubmit="return confirm('Remove the last payment line from the ledger?');">
@@ -245,7 +239,8 @@ if ($paymentDefault < $paymentDateMin) {
   <?php endif; ?>
 
   <div style="background: var(--card); border: 1px solid var(--line2); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow2);">
-    <h2 style="font-size: 15px; margin: 0 0 16px; font-weight: 800;">Ledger</h2>
+    <h2 style="font-size: 15px; margin: 0 0 6px; font-weight: 800;">Ledger</h2>
+    <p style="margin: 0 0 14px; font-size: 12px; color: var(--muted2);">Interest = <strong>charge on this line only</strong>. ₦0 is normal on the first line, or if the payment is in the <strong>same 30-day step</strong> as the line above.</p>
     <div style="overflow:auto;">
       <table style="width:100%; border-collapse:collapse; font-size:13px; min-width:720px;">
         <thead>

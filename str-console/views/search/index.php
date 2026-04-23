@@ -29,7 +29,7 @@ $hasQuery = trim($q) !== '';
 
   <div style="margin-bottom: 20px;">
     <h1 style="font-size: var(--h2); margin: 0 0 6px;">Search</h1>
-    <p style="color: var(--muted); margin: 0; font-size: 14px;">Search by name, phone (11-digit local or partial), NIN, BVN, customer #, loan #, or customer id on a loan. Results respect assignment and “view all” policies.</p>
+    <p style="color: var(--muted); margin: 0; font-size: 13px;">Name, phone, NIN, BVN, or customer/loan #. Results follow your access rules.</p>
   </div>
 
   <form method="get" action="<?= htmlspecialchars($basePath . '/search', ENT_QUOTES, 'UTF-8') ?>" style="display:flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 24px;">

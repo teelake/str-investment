@@ -20,8 +20,8 @@ $err = is_string($error) ? $error : '';
 ?>
 <div class="container" style="padding:0; max-width:720px;">
   <h1 style="font-size: var(--h2); margin: 0 0 8px;">Payment reminders (borrowers)</h1>
-  <p style="color: var(--muted); margin: 0 0 18px;">
-    Send <strong>automatic emails</strong> to customers before each scheduled payment and on the due day. Text below is merged with live numbers from each loan — use the placeholders in <strong>curly braces</strong> exactly as shown. No technical knowledge is needed: edit the wording to match how you speak to clients.
+  <p style="color: var(--muted); margin: 0 0 16px; font-size: 14px;">
+    Automatic borrower emails. Use <strong>{placeholders}</strong> below; they are filled from each loan. Edit the wording to match your brand.
   </p>
 
   <?php if ($ok !== ''): ?>
@@ -32,8 +32,8 @@ $err = is_string($error) ? $error : '';
   <?php endif; ?>
 
   <?php if (!$mailOk): ?>
-    <div style="background: rgba(180, 120, 20, .12); border: 1px solid rgba(180, 120, 20, .25); color: #7a4a00; padding: 12px 14px; border-radius: 14px; margin-bottom: 18px; font-size: 14px;">
-      <strong>No outgoing email is configured yet.</strong> Ask your technical contact to set the <code style="font-size:13px;">STR_CONSOLE_MAIL_FROM</code> environment variable (same as password-reset mail). Until then, reminders stay off even if you enable them below.
+    <div style="background: rgba(180, 120, 20, .12); border: 1px solid rgba(180, 120, 20, .25); color: #7a4a00; padding: 12px 14px; border-radius: 14px; margin-bottom: 18px; font-size: 13px;">
+      <strong>Mail not set up.</strong> Set <code style="font-size:12px;">STR_CONSOLE_MAIL_FROM</code> (or ask IT). Reminders will not send until that works.
     </div>
   <?php endif; ?>
 
@@ -45,21 +45,21 @@ $err = is_string($error) ? $error : '';
         <input type="checkbox" name="enabled" value="1" <?= $enabled ? 'checked' : '' ?> style="margin-top: 3px;" />
         <span>
           <strong>Turn on automatic payment reminders</strong><br />
-          <span style="color: var(--muted); font-size: 13px;">The server must run the daily reminder task (see below). Keep this off until you are ready.</span>
+          <span style="color: var(--muted); font-size: 13px;">Requires daily cron (see below). Off until you are ready.</span>
         </span>
       </label>
 
       <label style="display:grid; gap:6px;">
         <span style="font-size:13px; font-weight:650; color:var(--muted);">First reminder — how many days before the due date?</span>
         <input type="number" name="days_before" min="0" max="60" value="<?= (int) $daysBefore ?>" style="padding:10px 12px; border-radius:12px; border:1px solid var(--line); max-width:120px;" />
-        <span style="color: var(--muted); font-size: 12px;">Usually <strong>2</strong>. Use <strong>0</strong> if you only want an email <em>on</em> the due date (and turn on the next option).</span>
+        <span style="color: var(--muted); font-size: 12px;">Often <strong>2</strong>. <strong>0</strong> = no early email (use with “due today” on).</span>
       </label>
 
       <label style="display:flex; gap: 12px; align-items: flex-start; font-size: 14px; cursor: pointer;">
         <input type="checkbox" name="send_on_due" value="1" <?= $sendOnDue ? 'checked' : '' ?> style="margin-top: 3px;" />
         <span>
           <strong>Also email on the due date itself</strong><br />
-          <span style="color: var(--muted); font-size: 13px;">Sends a second, “due today” message (recommended).</span>
+          <span style="color: var(--muted); font-size: 13px;">Email on the due date (recommended).</span>
         </span>
       </label>
 
@@ -67,15 +67,13 @@ $err = is_string($error) ? $error : '';
         <span style="font-size:13px; font-weight:650; color:var(--muted);">Amount to show for “this payment”</span>
         <select name="amount_mode" style="padding:10px 12px; border-radius:12px; border:1px solid var(--line); max-width:420px;">
           <option value="installment_when_set" <?= $amountMode === 'installment_when_set' ? 'selected' : '' ?>>
-            Prefer the agreed installment when set on the loan (otherwise use the ledger amount)
+            Use optional installment on the loan if set (else ledger)
           </option>
           <option value="ledger_only" <?= $amountMode === 'ledger_only' ? 'selected' : '' ?>>
-            Always use the full ledger amount for the next step (ignore the optional installment on the loan)
+            Always use the ledger amount (ignore optional installment)
           </option>
         </select>
-        <span style="color: var(--muted); font-size: 12px;">
-          Example: ₦40,000 still owing, ₦10,000 per due — enter <strong>10,000</strong> on the loan page; emails use the smaller of that and what the ledger expects for the date. Totals still show the real balance owing.
-        </span>
+        <span style="color: var(--muted); font-size: 12px;">Example: set ₦10,000 on the loan to cap what the email shows; total balance in the email is still real.</span>
       </label>
 
       <label style="display:grid; gap:6px;">
@@ -88,11 +86,9 @@ $err = is_string($error) ? $error : '';
         <input type="text" name="currency_symbol" value="<?= htmlspecialchars($currencySymbol, ENT_QUOTES, 'UTF-8') ?>" maxlength="8" style="padding:10px 12px; border-radius:12px; border:1px solid var(--line); max-width:120px;" />
       </label>
 
-      <div style="padding:12px 14px; border-radius:12px; background:rgba(15,106,74,.06); border:1px solid rgba(15,106,74,.15); font-size:13px; line-height:1.45;">
-        <strong style="font-size:13px;">Placeholders (copy exactly)</strong>
-        <div style="margin-top:8px; font-family:ui-monospace,monospace; font-size:12px; word-break:break-all;">
-          {customer_name} {loan_title} {loan_id} {due_date} {amount_due_this_period} {ledger_amount_due} {outstanding_balance} {currency_symbol} {organization_name} {reminder_note} {days_until_due}
-        </div>
+      <div style="padding:10px 12px; border-radius:12px; background:rgba(15,106,74,.06); border:1px solid rgba(15,106,74,.15); font-size:12px; line-height:1.4;">
+        <strong>Placeholders</strong> (copy as-is):
+        <code style="display:block; margin-top:6px; font-size:11px; word-break:break-all; font-family:ui-monospace,monospace;">{customer_name} {loan_title} {loan_id} {due_date} {amount_due_this_period} {ledger_amount_due} {outstanding_balance} {currency_symbol} {organization_name} {reminder_note} {days_until_due}</code>
       </div>
 
       <label style="display:grid; gap:6px;">
@@ -117,10 +113,9 @@ $err = is_string($error) ? $error : '';
     </form>
   </div>
 
-  <div style="margin-top:22px; padding:16px 18px; border-radius:14px; border:1px solid var(--line2); background:var(--card); font-size:13px; color:var(--muted2); line-height:1.45;">
-    <strong style="color:var(--ink);">Automatic sending</strong><br />
-    Your server should run once per day (same idea as interest accrual), for example:<br />
-    <code style="display:block; margin-top:8px; font-size:12px; white-space:pre-wrap;">STR_CONSOLE_PAYMENT_REMINDER_CRON=1 php bin/send-payment-reminders.php</code>
-    <span style="display:block; margin-top:8px;">Each customer must have an email on their profile. Loans use the next payment date from the ledger (30-day steps from disbursement) or the loan end date for the final balance.</span>
+  <div style="margin-top:20px; padding:14px 16px; border-radius:14px; border:1px solid var(--line2); background:var(--card); font-size:12px; color:var(--muted2); line-height:1.45;">
+    <strong style="color:var(--ink);">Cron (daily):</strong>
+    <code style="display:block; margin-top:6px; font-size:11px; white-space:pre-wrap;">STR_CONSOLE_PAYMENT_REMINDER_CRON=1 php bin/send-payment-reminders.php</code>
+    <span style="display:block; margin-top:6px;">Customers need an email. Due dates follow the loan ledger / term.</span>
   </div>
 </div>
