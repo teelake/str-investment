@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/../config/company.php';
 $year = (int)date('Y');
 ?>
 <footer>
@@ -10,7 +11,7 @@ $year = (int)date('Y');
       <div class="foot-meta" aria-label="Office details">
         <div class="meta-row">
           <i class="bx bx-map" aria-hidden="true"></i>
-          <span>Address: 6, 2nd Avenue, Olorunkemi Estate, Elebu, Oluyole Extension, Ibadan</span>
+          <span>Address: <?= htmlspecialchars(STR_SITE_COMPANY_ADDRESS, ENT_QUOTES, 'UTF-8') ?></span>
         </div>
         <div class="meta-row">
           <i class="bx bx-phone-call" aria-hidden="true"></i>

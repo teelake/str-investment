@@ -8,6 +8,8 @@
  */
 declare(strict_types=1);
 
+require_once __DIR__ . '/config/company.php';
+
 session_start();
 
 header('Content-Type: application/json; charset=utf-8');
@@ -126,7 +128,8 @@ $body .= "Name: {$name}\n";
 $body .= "Phone: {$phone}\n";
 $body .= "Email: {$emailRaw}\n";
 $body .= "Product: {$productLabel}\n\n";
-$body .= "Message:\n{$message}\n";
+$body .= "Message:\n{$message}\n\n";
+$body .= 'Office: ' . STR_SITE_COMPANY_ADDRESS . "\n";
 
 // From must often match a domain mailbox on shared hosting; company address is reliable for deliverability tests.
 $fromSafe = strip_crlf($companyTo);
@@ -166,7 +169,8 @@ $ackBody = $greeting . "\n\n";
 $ackBody .= "Thank you for contacting STR Investment Services Limited.\n\n";
 $ackBody .= 'We have received your enquiry regarding "' . $productLabel . "\" and will respond as soon as we can.\n\n";
 $ackBody .= "If your matter is urgent, call or WhatsApp: 09054984777\n";
-$ackBody .= 'General email: ' . $companyTo . "\n\n";
+$ackBody .= 'General email: ' . $companyTo . "\n";
+$ackBody .= 'Office: ' . STR_SITE_COMPANY_ADDRESS . "\n\n";
 $ackBody .= "Kind regards,\nSTR Investment Services Limited\n";
 
 $ackHeaders = [

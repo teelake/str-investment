@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/config/company.php';
 session_start();
 $active = 'contact';
 $product = $_GET['product'] ?? '';
@@ -140,7 +141,7 @@ $formStartedAt = time();
                 <span aria-hidden="true"><i class="bx bx-map"></i></span>
                 <div>
                   <b>Headquarters</b><br />
-                  6, 2nd Avenue, Olorunkemi Estate, Elebu, Oluyole Extension, Ibadan
+                  <?= htmlspecialchars(STR_SITE_COMPANY_ADDRESS, ENT_QUOTES, 'UTF-8') ?>
                 </div>
               </div>
               <div class="row">
@@ -182,11 +183,11 @@ $formStartedAt = time();
         <div class="container">
           <div class="map-head">
             <h2 class="h2" style="margin: 0">Find us</h2>
-            <p class="sub" style="margin: 6px 0 0">6, 2nd Avenue, Olorunkemi Estate, Elebu, Oluyole Extension, Ibadan</p>
+            <p class="sub" style="margin: 6px 0 0"><?= htmlspecialchars(STR_SITE_COMPANY_ADDRESS, ENT_QUOTES, 'UTF-8') ?></p>
           </div>
           <div class="map-embed-full" aria-label="Office location map">
           <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d494.6233020332049!2d3.831665299454212!3d7.355418203058441!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x10398d000b02ddc9%3A0x1e6c5e85ece95e70!2sElebu%2C%20Ibadan!5e0!3m2!1sen!2sng!4v1775720775449!5m2!1sen!2sng"
+            src="https://maps.google.com/maps?q=<?= rawurlencode(STR_SITE_COMPANY_ADDRESS) ?>&amp;hl=en&amp;z=16&amp;output=embed"
             style="border: 0"
             allowfullscreen=""
             loading="lazy"

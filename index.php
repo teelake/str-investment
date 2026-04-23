@@ -1,4 +1,7 @@
-<?php $active = 'home'; ?>
+<?php
+$active = 'home';
+require_once __DIR__ . '/config/company.php';
+?>
 <!doctype html>
 <html lang="en-NG">
   <head>
@@ -44,7 +47,14 @@
         "url": "https://strinvestment.com.ng/",
         "areaServed": "NG",
         "foundingDate": "2026-02-01",
-        "email": "strinvestmentservicesltd@gmail.com"
+        "email": "strinvestmentservicesltd@gmail.com",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": <?= json_encode(STR_SITE_COMPANY_ADDRESS, JSON_UNESCAPED_UNICODE) ?>,
+          "addressLocality": "Ibadan",
+          "addressRegion": "Oyo",
+          "addressCountry": "NG"
+        }
       }
     </script>
     <script type="application/ld+json">
