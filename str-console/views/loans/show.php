@@ -49,7 +49,7 @@ $canReminderInstallment = $canReminderInstallment ?? false;
 $reminderProjection = isset($reminderProjection) && is_array($reminderProjection) ? $reminderProjection : null;
 $today = InputValidate::todayYmd();
 $disburseDateMin = InputValidate::LOAN_EVENT_DATE_MIN;
-$disburseDateMax = InputValidate::loanDisburseDateMaxYmd();
+$disburseDateMax = $today;
 $disburseDefault = $today;
 if ($disburseDefault < $disburseDateMin) {
     $disburseDefault = $disburseDateMin;
@@ -160,7 +160,7 @@ if ($paymentDefault < $paymentDateMin) {
         </label>
         <button type="submit" class="btn primary">Disburse &amp; open ledger</button>
       </form>
-      <p style="margin:8px 0 0; font-size:12px; color:var(--muted2); max-width:640px;">Use <strong>book / interest start</strong> for the value date that drives the ledger (may follow your office rules and need not match the bank). Optionally add <strong>funds actually released</strong> when the cash/bank date differs. First ledger line: <strong>principal only</strong>; interest accrues from a <strong>later 30-day step</strong>.</p>
+      <p style="margin:8px 0 0; font-size:12px; color:var(--muted2); max-width:640px;">Each date can be <strong>today or any past day</strong> (backdating). <strong>Book / interest start</strong> drives the ledger and may differ from the bank. Optionally add <strong>funds actually released</strong>. First ledger line: <strong>principal only</strong>; interest accrues from a <strong>later 30-day step</strong>.</p>
     <?php endif; ?>
     <?php if ($canClose): ?>
       <form method="post" action="<?= htmlspecialchars($basePath . '/loans/' . $id . '/close', ENT_QUOTES, 'UTF-8') ?>" style="display:inline;" onsubmit="return confirm('Close this loan? It must have zero outstanding balance.');">

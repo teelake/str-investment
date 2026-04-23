@@ -292,6 +292,9 @@ final class ReportRepository
         if ($dt === false || $dt->format('Y-m-d') !== $raw) {
             return null;
         }
+        if ($raw < InputValidate::LOAN_EVENT_DATE_MIN || $raw > InputValidate::todayYmd()) {
+            return null;
+        }
         return $raw;
     }
 

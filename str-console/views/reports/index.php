@@ -15,6 +15,8 @@ declare(strict_types=1);
 /** @var string|null $dbError */
 /** @var bool $canExport */
 $basePath = Request::basePath();
+$todayYmd = InputValidate::todayYmd();
+$dateFieldMin = InputValidate::LOAN_EVENT_DATE_MIN;
 $g = ConsoleAuth::grants();
 $dbError = $dbError ?? null;
 $q = $q ?? '';
@@ -95,11 +97,11 @@ $statusLabel = static function (string $s): string {
       <?php endif; ?>
       <label style="display:grid; gap:6px; font-size: 13px; font-weight: 650; color: var(--muted);">
         From (created)
-        <input type="date" name="from" value="<?= htmlspecialchars($from, ENT_QUOTES, 'UTF-8') ?>" style="padding: 10px 12px; border-radius: 14px; border: 1px solid var(--line); background: #fff;" />
+        <input type="date" name="from" value="<?= htmlspecialchars($from, ENT_QUOTES, 'UTF-8') ?>" min="<?= htmlspecialchars($dateFieldMin, ENT_QUOTES, 'UTF-8') ?>" max="<?= htmlspecialchars($todayYmd, ENT_QUOTES, 'UTF-8') ?>" style="padding: 10px 12px; border-radius: 14px; border: 1px solid var(--line); background: #fff;" />
       </label>
       <label style="display:grid; gap:6px; font-size: 13px; font-weight: 650; color: var(--muted);">
         To (created)
-        <input type="date" name="to" value="<?= htmlspecialchars($to, ENT_QUOTES, 'UTF-8') ?>" style="padding: 10px 12px; border-radius: 14px; border: 1px solid var(--line); background: #fff;" />
+        <input type="date" name="to" value="<?= htmlspecialchars($to, ENT_QUOTES, 'UTF-8') ?>" min="<?= htmlspecialchars($dateFieldMin, ENT_QUOTES, 'UTF-8') ?>" max="<?= htmlspecialchars($todayYmd, ENT_QUOTES, 'UTF-8') ?>" style="padding: 10px 12px; border-radius: 14px; border: 1px solid var(--line); background: #fff;" />
       </label>
       <label style="display:grid; gap:6px; font-size: 13px; font-weight: 650; color: var(--muted); flex: 1; min-width: 200px;">
         Search

@@ -14,6 +14,8 @@ $to = $to ?? '';
 $dateFromInvalid = $dateFromInvalid ?? false;
 $dateToInvalid = $dateToInvalid ?? false;
 $basePath = Request::basePath();
+$todayYmd = InputValidate::todayYmd();
+$dateFieldMin = InputValidate::LOAN_EVENT_DATE_MIN;
 $rows = $pagination['rows'];
 $total = (int) $pagination['total'];
 $page = (int) $pagination['page'];
@@ -59,11 +61,11 @@ $hasDateFilter = trim($from) !== '' || trim($to) !== '';
     </label>
     <label style="display:grid; gap:6px; font-size: 13px; font-weight: 650; color: var(--muted);">
       From
-      <input type="date" name="from" value="<?= htmlspecialchars($from, ENT_QUOTES, 'UTF-8') ?>" style="padding: 10px 12px; border-radius: 14px; border: 1px solid var(--line2); background: var(--card); color: inherit;" />
+      <input type="date" name="from" value="<?= htmlspecialchars($from, ENT_QUOTES, 'UTF-8') ?>" min="<?= htmlspecialchars($dateFieldMin, ENT_QUOTES, 'UTF-8') ?>" max="<?= htmlspecialchars($todayYmd, ENT_QUOTES, 'UTF-8') ?>" style="padding: 10px 12px; border-radius: 14px; border: 1px solid var(--line2); background: var(--card); color: inherit;" />
     </label>
     <label style="display:grid; gap:6px; font-size: 13px; font-weight: 650; color: var(--muted);">
       To
-      <input type="date" name="to" value="<?= htmlspecialchars($to, ENT_QUOTES, 'UTF-8') ?>" style="padding: 10px 12px; border-radius: 14px; border: 1px solid var(--line2); background: var(--card); color: inherit;" />
+      <input type="date" name="to" value="<?= htmlspecialchars($to, ENT_QUOTES, 'UTF-8') ?>" min="<?= htmlspecialchars($dateFieldMin, ENT_QUOTES, 'UTF-8') ?>" max="<?= htmlspecialchars($todayYmd, ENT_QUOTES, 'UTF-8') ?>" style="padding: 10px 12px; border-radius: 14px; border: 1px solid var(--line2); background: var(--card); color: inherit;" />
     </label>
     <button type="submit" class="btn primary" style="font-size: 14px;">Apply</button>
     <?php if ($filterType !== '' || $hasDateFilter): ?>

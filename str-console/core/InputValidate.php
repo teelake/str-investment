@@ -10,12 +10,6 @@ final class InputValidate
     /** Inclusive floor for loan disbursement, payments, and accrual dates (calendar). */
     public const LOAN_EVENT_DATE_MIN = '2000-01-01';
 
-    /** Farthest future calendar day allowed for recording disbursement (avoids fat-finger years). */
-    public static function loanDisburseDateMaxYmd(): string
-    {
-        return (new DateTimeImmutable('today'))->modify('+30 years')->format('Y-m-d');
-    }
-
     public const EMAIL_MAX = 190;
 
     public const PERSON_NAME_MAX = 190;
@@ -128,20 +122,17 @@ final class InputValidate
     }
 
     /**
-     * Disbursement value date: any real calendar day from LOAN_EVENT_DATE_MIN through
-     * loanDisburseDateMaxYmd (allows backdating before booking and future-dated disbursement).
-     * The booking time ($loanCreatedAt) does not cap the value date; operations after disburse
-     * still use loanPostDisburseDateOk relative to the chosen disbursed_at.
+     * Disbursement (book) and optional funds-released date: from LOAN_EVENT_DATE_MIN through
+     * **today** (backdating allowed; no future / “front” dates). $loanCreatedAt is unused; kept
+     * for call-site compatibility. Post-disburse rules use loanPostDisburseDateOk.
      *
      * @param string $ymd From parseDateYmd
-     * @param string $loanCreatedAt Kept for call-site compatibility; not used in range checks.
+     * @param string $loanCreatedAt Unused
      */
     public static function loanDisburseDateOk(string $ymd, string $loanCreatedAt): bool
     {
-        if ($ymd < self::LOAN_EVENT_DATE_MIN || $ymd > self::loanDisburseDateMaxYmd()) {
-            return false;
-        }
-        return true;
+        $today = self::todayYmd();
+        return $ymd >= self::LOAN_EVENT_DATE_MIN && $ymd <= $today;
     }
 
     /**

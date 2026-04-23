@@ -504,7 +504,7 @@ final class LoansController extends BaseController
         }
         if (!InputValidate::loanDisburseDateOk($ymd, (string) ($loan['created_at'] ?? ''))) {
             $this->redirect('/loans/' . $loanId . '?error=' . rawurlencode(
-                'Book / interest start date must be between ' . InputValidate::LOAN_EVENT_DATE_MIN . ' and ' . InputValidate::loanDisburseDateMaxYmd() . '.'
+                'Book / interest start date must be from ' . InputValidate::LOAN_EVENT_DATE_MIN . ' through today (backdate or today; not in the future).'
             ));
             return;
         }
@@ -516,7 +516,7 @@ final class LoansController extends BaseController
         }
         if ($fundsYmd !== null && !InputValidate::loanDisburseDateOk($fundsYmd, (string) ($loan['created_at'] ?? ''))) {
             $this->redirect('/loans/' . $loanId . '?error=' . rawurlencode(
-                'Funds actually released must be between ' . InputValidate::LOAN_EVENT_DATE_MIN . ' and ' . InputValidate::loanDisburseDateMaxYmd() . '.'
+                'Funds actually released must be from ' . InputValidate::LOAN_EVENT_DATE_MIN . ' through today, or left blank.'
             ));
             return;
         }
